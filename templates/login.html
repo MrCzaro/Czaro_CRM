@@ -1,23 +1,25 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="max-w-xl mx-auto py-8 bg-stone-400 text-center">
-    <h1 class="text-3xl text-black">Log in</h1>
-    
-    <form class="mt-9 px-8 space-y-4" method="post">
-        {% csrf_token %}
+<div class="flex items-center justify-center h-screen">
+    <div class="max-w-xl py-8 bg-stone-400 text-center">
+        <h1 class="text-3xl text-black">Log in</h1>
+        
+        <form class="mt-9 px-8 space-y-4" method="post">
+            {% csrf_token %}
 
-        <div>
-            <label class="text-black">E-mail</label><br>
-            <input name="email" type="email" class="w-full py-4 px-6 bg-stone-200 rounded-xl text-black">
-        </div>
+            <div>
+                <label class="text-black">E-mail</label><br>
+                <input name="email" type="email" class="w-full py-4 px-6 bg-stone-200 rounded-xl text-black">
+            </div>
 
-        <div>
-            <label class="text-black">Password</label><br>
-            <input name="password" type="password" class="w-full py-4 px-6 bg-stone-200 rounded-xl text-black">
-        <div>
-            <button class="mt-5 py-4 px-8 bg-zinc-600 rounded-xl text-white">Log in</button>
-        </div>
-    </form>
+            <div>
+                <label class="text-black">Password</label><br>
+                <input name="password" type="password" class="w-full py-4 px-6 bg-stone-200 rounded-xl text-black">
+            <div>
+                <button class="mt-5 py-4 px-8 bg-zinc-600 rounded-xl text-white">Log in</button>
+            </div>
+        </form>
+    </div>
 </div>
 {% endblock %}
