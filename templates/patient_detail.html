@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<h1 class="text-3xl font-bold text-center">{{ title }}</h1>
+
+  
+    {{ patient.first_name }}
+
+
+    {{ patient.last_name }}
+
+    {{ patient.date_of_birth }}
+
+
+    {{ patient.contact_number }}
+
+
+    {{ patient.country }}
+
+
+    {{ patient.city }}
+
+
+    {{ patient.street }}
+
+
+    {{ patient.zip_code }}
+
+
+    {{ patient.admitted_on }}
+
+
+    {{ patient.admitted_by }}
+
+    {{ patient.is_insured }}
+
+
+    {{ patient.insurance }}
+
+    {{ patient.consent }}
+
+
+    {{ patient.consent_contact_number }}
+
+    {{ patient.discharged_on }}
+
+    <div class="flex justify-center">
+        <div class="flex items-center mt-8">
+            
+            <a href="{% url 'patient:page' patient.id %}" class="py-4 px-6 bg-zinc-800 rounded-xl text-white mr-3">Back</a>
+            <a href="{% url 'patient:update' patient.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white mr-3">Edit</a>
+            <a href="{% url 'patient:delete' patient.id %}" class="py-4 px-6 bg-red-600 rounded-xl text-white mr-3">Delete</a>
+
+            {% if not patient.is_discharged %}
+                <form method="post" action="{% url 'patient:detail' patient.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="discharge">
+                    <button type="submit" class="py-4 px-6 bg-emerald-600 rounded-xl text-white">Discharge Patient</button>
+                </form>
+            {% else %}
+                <form method="post" action="{% url 'patient:detail' patient.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="readmit">
+                    <button type="submit" class="py-4 px-6 bg-emerald-600 rounded-xl text-white">Readmit Patient</button>
+                </form>
+            {% endif %}
+    
+        </div>
+
+</div>
+{% endblock %}

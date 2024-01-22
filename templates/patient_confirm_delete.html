@@ -3,9 +3,9 @@
 {% block content %}
 <div class="flex items-center justify-center h-screen">
     <div class="max-w-xl py-8 bg-stone-400 text-center">
-        <h1 class="mb-6 text-3xl">Delete Patient{{ title }}</h2>
+        <h1 class="mb-6 text-3xl">{{ title }}</h2>
             <div>
-                <p class="mx-5 text-2xl">Are you sure you want to <strong>delete</strong> Stefan Welaz{{ patient }}?</p>
+                <p class="mx-5 text-2xl">Are you sure you want to <strong>delete</strong>{{ patient }}?</p>
                 
             </div>
             <form class="mt-5 px-8 space-y-4" method="post">
