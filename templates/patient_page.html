@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<h1 class="text-3xl font-bold text-center">{{ title }}</h1>
+
+    
+    {{ patient.first_name }}
+
+
+    {{ patient.last_name }}
+
+    {{ patient.date_of_birth }}
+
+    <div class="flex justify-center">
+        <div class="flex items-center mt-8">
+            
+            <a href="{% url 'patient:detail' patient.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white mr-3">Patient Details</a>
+            <a href="{% url 'patient:index' %}" class="py-4 px-6 bg-zinc-800 rounded-xl text-white mr-3">Back</a>
+            
+            
+            
+        </div>
+        
+    </div>
+
+    <p class="text-2xl font-bold text-center mb-5">Patient Observations:</p>
+    <a href="{% url 'patient:observation_add' patient.id %}" class="mb-4 py-4 px-6 bg-zinc-500 rounded-xl text-white mr-3">Add Observation</a>
+    <div class="mt-6">
+        {% for observation in observations %}
+            <p>{{ observation.observation }}</p>
+            <p>Created by: {{ observation.created_by }} | Created_at: {{ observation.created_at}} | Modified at: {{ observation.modified_at }}</p>
+            {% if observation.created_by == user %}
+            <a href="{% url 'patient:observation_edit' patient.id observation.id %}" class="font-bold text-black mr-3">Edit</a>
+            {% endif %}
+        {% endfor %}
+
+    </div>
+{% endblock %}
