@@ -1,12 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="text-3xl font-bold text-center">{{ title }}</h1>
+<h1 class="text-4xl font-bold text-center">{{ title }}</h1>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.observation }}
-    <button class="mt-4 py-4 px-6 bg-zinc-500 rounded-xl text-white">{{ title }}</button>
-</form>
-    <a href="{% url 'patient:page' patient_id %}" class="py-4 px-6 bg-zinc-800 rounded-xl text-white mr-3">Back</a>
+<div class="flex items-center justify-center h-screen">
+    <div class="max-w-xl py-8 bg-stone-100 text-center">
+        <form method="post">
+            {% csrf_token %}
+            <h1 class="mb-5 text-2xl text-black">{{ form.observation.label_tag }}</h1>
+            {{ form.observation}}
+            {{ form.media }}
+            <div class="mt-4">
+                <a href="{% url 'patient:page' patient_id %}" class="inline-block py-4 px-6 bg-zinc-800 rounded-xl text-white mr-3">Back</a>
+                <button class="inline-block py-4 px-6 bg-zinc-500 rounded-xl text-white">{{ title }}</button>
+
+            </div>
+        </form>
+        
+        
+    </div>
+</div>
+
 {% endblock %}

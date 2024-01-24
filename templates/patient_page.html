@@ -29,11 +29,16 @@
     <a href="{% url 'patient:observation_add' patient.id %}" class="mb-4 py-4 px-6 bg-zinc-500 rounded-xl text-white mr-3">Add Observation</a>
     <div class="mt-6">
         {% for observation in observations %}
-            <p>{{ observation.observation }}</p>
-            <p>Created by: {{ observation.created_by }} | Created_at: {{ observation.created_at}} | Modified at: {{ observation.modified_at }}</p>
-            {% if observation.created_by == user %}
-            <a href="{% url 'patient:observation_edit' patient.id observation.id %}" class="font-bold text-black mr-3">Edit</a>
-            {% endif %}
+            <div>
+                <p>{{ observation.observation }}</p>
+
+            </div>
+            
+            <div>
+                <p>{% if observation.created_by == user %}<a href="{% url 'patient:observation_edit' patient.id observation.id %}" class="font-bold text-black mr-1">Edit</a>{% endif %}| Created by: {{ observation.created_by }} | Created at: {{ observation.created_at}} | Modified at: {{ observation.modified_at }}</p>
+
+            <div>
+            
         {% endfor %}
 
     </div>

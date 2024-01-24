@@ -1,4 +1,6 @@
 import uuid
+
+
 from django.db import models
 from django.utils import timezone
 from main.models import User
@@ -9,6 +11,12 @@ NO = False
 YES_NO_CHOICES = [
     (YES, "Yes"),
     (NO, "No"),
+]
+STATUS_CHOICES = [
+    ("admitted","Admitted"),
+    ("discharged_home" , "Discharged home"),
+    ("transferred_facility" , "Transferred to different medical facility"),
+    ("died", "Died"),
 ]
 
 
@@ -35,6 +43,8 @@ class Patient(models.Model):
    
     discharged_on = models.DateTimeField(blank=True, null=True)
     is_discharged = models.BooleanField(default=False)
+    status = models.CharField(max_length=45, choices=STATUS_CHOICES, default="admitted")
+    died_on = models.DateTimeField(blank=True, null=True)
     def __str__(self):
        return f"{self.first_name} {self.last_name}"
    
@@ -44,7 +54,7 @@ class PatientObservation(models.Model):
     observation = models.TextField()
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    modified_at = models.DateTimeField(auto_now=True)
+    modified_at = models.DateTimeField(auto_now=True, null=True)
     
     class Meta:
         ordering = ("-created_at",)

@@ -77,7 +77,7 @@ def add_patient_observation(request, pk):
         
     context = {
         "form" : form, 
-        "title" : "Add observation",
+        "title" : "Add Patient Observation",
         "patient_id" : patient.id,
     }
     
@@ -98,7 +98,7 @@ def edit_patient_observation(request, patient_id, observation_id):
         
     context = {
         "form": form,
-        "title" : "Edit observation",
+        "title" : "Edit Patient Observation",
         "patient_id" : patient.id,
     }
     
@@ -109,7 +109,7 @@ def edit_patient_observation(request, patient_id, observation_id):
 
     
 class PatientCreateView(LoginRequiredMixin, CreateView):
-    #login_url = "/login/"
+    login_url = "/login/"
     model = Patient
     form_class = PatientForm
     template_name = "patient_form.html"

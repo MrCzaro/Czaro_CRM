@@ -1,3 +1,4 @@
+from ckeditor.widgets import CKEditorWidget
 from django import forms
 from .models import Patient, PatientObservation
 
@@ -66,3 +67,8 @@ class PatientObservationForm(forms.ModelForm):
     class Meta:
         model = PatientObservation
         fields = ["observation",]
+        labels = {"observation": "Patient observation",}
+        
+        widgets = {
+            "observation" : CKEditorWidget(config_name="default")
+        }

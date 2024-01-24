@@ -3,71 +3,99 @@
 
 {% block content %}
 
-<h1 class="text-3xl font-bold text-center">{{ title }}</h1>
 
-  
-    {{ patient.first_name }}
-
-
-    {{ patient.last_name }}
-
-    {{ patient.date_of_birth }}
-
-
-    {{ patient.contact_number }}
-
-
-    {{ patient.country }}
-
-
-    {{ patient.city }}
-
-
-    {{ patient.street }}
-
-
-    {{ patient.zip_code }}
-
-
-    {{ patient.admitted_on }}
-
-
-    {{ patient.admitted_by }}
-
-    {{ patient.is_insured }}
-
-
-    {{ patient.insurance }}
-
-    {{ patient.consent }}
-
-
-    {{ patient.consent_contact_number }}
-
-    {{ patient.discharged_on }}
-
-    <div class="flex justify-center">
-        <div class="flex items-center mt-8">
-            
-            <a href="{% url 'patient:page' patient.id %}" class="py-4 px-6 bg-zinc-800 rounded-xl text-white mr-3">Back</a>
-            <a href="{% url 'patient:update' patient.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white mr-3">Edit</a>
-            <a href="{% url 'patient:delete' patient.id %}" class="py-4 px-6 bg-red-600 rounded-xl text-white mr-3">Delete</a>
-
-            {% if not patient.is_discharged %}
-                <form method="post" action="{% url 'patient:detail' patient.id %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="discharge">
-                    <button type="submit" class="py-4 px-6 bg-emerald-600 rounded-xl text-white">Discharge Patient</button>
-                </form>
-            {% else %}
-                <form method="post" action="{% url 'patient:detail' patient.id %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="readmit">
-                    <button type="submit" class="py-4 px-6 bg-emerald-600 rounded-xl text-white">Readmit Patient</button>
-                </form>
-            {% endif %}
+    <h1 class="p-8 text-3xl font-bold text-center">{{ title }}</h1>
+ 
+<div>
+    <div class="flex justify-center screen-middle">
+        <table class="table-fixed w-2/3 border">
+            <tbody>
+                <tr>
+                    <td class="border p-2 font-bold">First Name</td>
+                    <td class="border p-2">{{ patient.first_name }}</td>
+                    <td class="border p-2 font-bold">Last Name</td>
+                    <td class="border p-2">{{ patient.last_name }}</td>
+                </tr>
     
-        </div>
+                <tr>
+                    <td class="border p-2 font-bold">Date of birth</td>
+                    <td class="border p-2">{{ patient.date_of_birth|date:"d F Y" }}</td>
+                    <td class="border p-2 font-bold">Contact number: </td>
+                    <td class="border p-2">{{ patient.contact_number }}</td>
+                </tr>
+    
+                <tr>
+                    <td class="border p-2 font-bold">Adress</td>
+                    <td class="border p-2">{{ patient.street }}</td>
+                    <td class="border p-2 font-bold">City</td>
+                    <td class="border p-2">{{ patient.city }}</td>
+                </tr>
+    
+                <tr>
+                    <td class="border p-2 font-bold">Zip code</td>
+                    <td class="border p-2">{{ patient.zip_code }}</td>
+                    <td class="border p-2 font-bold">Country</td>
+                    <td class="border p-2">{{ patient.country }}</td>
+                </tr>
+    
+                <tr>
+                    <td class="border p-2 font-bold">Insurance</td>
+                    <td class="border p-2">{{ patient.is_insured|yesno:"Yes,No"  }}</td>
+                    <td class="border p-2 font-bold">Insurance number</td>
+                    <td class="border p-2">{{ patient.insurance }}</td>
+                </tr>
+    
+                <tr>
+                    <td class="border p-2 font-bold">Authorized Medical Contact</td>
+                    <td class="border p-2">{{ patient.consent }}</td>
+                    <td class="border p-2 font-bold">Authorized Medical Contact phone number</td>
+                    <td class="border p-2">{{ patient.consent_contact_number }}</td>
+                </tr>
+    
+                <tr>
+                    <td class="border p-2 font-bold">Admitted on</td>
+                    <td class="border p-2">{{ patient.admitted_on|date:"F j, Y" }} {{ patient.admitted_on|time:"H:i" }}</td>
+                    <td class="border p-2 font-bold">Admitted by</td>
+                    <td class="border p-2">{{ patient.admitted_by.name }}</td>
+                </tr>
+           
+    
+                <tr>
+                    <td class="border p-2 font-bold">Discharged</td>
+                    <td class="border p-2">{{ patient.is_discharged|yesno:"Yes,No"  }}</td>
+                    <td class="border p-2 font-bold">Discharge on </td>
+                    <td class="border p-2">{% if patient.is_discharged %}{{ patient.discharged_on }}{% endif %}</td>
+                  
+                </tr>
+            </tbody>
+        </table>
 
 </div>
+
+        
+            <div class="flex justify-center">
+                <div class="flex items-center mt-8">
+                    
+                    <a href="{% url 'patient:page' patient.id %}" class="py-4 px-6 bg-zinc-800 rounded-xl text-white mr-3">Back</a>
+                    <a href="{% url 'patient:update' patient.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white mr-3">Edit</a>
+                    <a href="{% url 'patient:delete' patient.id %}" class="py-4 px-6 bg-red-600 rounded-xl text-white mr-3">Delete</a>
+        
+                    {% if not patient.is_discharged %}
+                        <form method="post" action="{% url 'patient:detail' patient.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="discharge">
+                            <button type="submit" class="py-4 px-6 bg-emerald-600 rounded-xl text-white">Discharge Patient</button>
+                        </form>
+                    {% else %}
+                        <form method="post" action="{% url 'patient:detail' patient.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="readmit">
+                            <button type="submit" class="py-4 px-6 bg-emerald-600 rounded-xl text-white">Readmit Patient</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+    
+
+
 {% endblock %}
