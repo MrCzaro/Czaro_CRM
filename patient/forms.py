@@ -3,8 +3,6 @@ from django import forms
 from .models import Patient, PatientObservation
 
 FORM_CLASS = "w-full my-2 py-2 px-2 rounded-xl bg-zinc-100"
-CHOICE_CLASS_SMALL = "w-20, my-2 py-2 px-2 rounded-xl bg-zinc-100"
-CHOICE_CLASS_MEDIUM = "w-80 my-2 py-2 px-2 rounded-xl bg-zinc-100"
 
 
 class PatientForm(forms.ModelForm):
@@ -41,7 +39,7 @@ class PatientForm(forms.ModelForm):
             "zip_code": "Zip-code:",
             "admitted_on": "Admitted on:",
             "admitted_by": "Admitted by:",
-            "consent" : "Person authorized to obtain information about the patient's health",
+            "consent" : "Authorized Medical Contact",
             "consent_contact_number" : "Authorized person's contact number"
             
         }
@@ -51,14 +49,14 @@ class PatientForm(forms.ModelForm):
             "last_name" : forms.TextInput(attrs={"class": FORM_CLASS}),
             "date_of_birth": forms.DateInput(attrs={"type": "date", "class": FORM_CLASS}), # Figure out a widget for picking date usin JS
             "contact_number" : forms.TextInput(attrs={"class": FORM_CLASS}),
-            "is_insured" : forms.Select(attrs={"class": CHOICE_CLASS_SMALL}),
-            "insurance" : forms.NumberInput(attrs={"class": FORM_CLASS, "placeholder" :  "If the patient does not have an insurance number, please type '0'."}),
+            "is_insured" : forms.Select(attrs={"class": FORM_CLASS}),
+            "insurance" : forms.NumberInput(attrs={"class": FORM_CLASS, "placeholder" :  "Please type '0' if no insurance."}),
             "country" : forms.TextInput(attrs={"class": FORM_CLASS}),
             "city" : forms.TextInput(attrs={"class": FORM_CLASS}),
             "street" : forms.TextInput(attrs={"class": FORM_CLASS}),
             "zip_code" : forms.TextInput(attrs={"class": FORM_CLASS}),
             "admitted_on" : forms.DateTimeInput(attrs={"type": "datetime-local","class": FORM_CLASS}), # same as with DOB
-            "admitted_by" : forms.Select(attrs={"class": CHOICE_CLASS_MEDIUM}),
+            "admitted_by" : forms.Select(attrs={"class": FORM_CLASS}),
             "consent" : forms.TextInput(attrs={"class": FORM_CLASS}),
             "consent_contact_number" : forms.TextInput(attrs={"class": FORM_CLASS}),
         }

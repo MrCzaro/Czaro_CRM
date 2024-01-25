@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<h1 class="p-8 text-3xl font-bold text-center">{{ title }}</h1>
+<form method="post">
+    {% csrf_token %}
+
+    <div class="p-8 flex justify-center">
+        <table class="table-fixed w-4/5 border">
+            <tbody>
+                <tr>
+                    <td class="border p-2 font-bold">{{ form.first_name.label_tag }}</td>
+                    <td class="border p-2">{{ form.first_name }}</td>
+                    <td class="border p-2 font-bold">{{ form.last_name.label_tag }}</td>
+                    <td class="border p-2">{{ form.last_name }}</td>
+                </tr>
+    
+    
+                <tr>
+                    <td class="border p-2 font-bold">{{ form.date_of_birth.label_tag }}</td>
+                    <td class="border p-2">{{ form.date_of_birth }}</td>
+                    <td class="border p-2 font-bold">{{ form.contact_number.label_tag }}</td>
+                    <td class="border p-2">{{ form.contact_number }}</td>
+                </tr>
+    
+               
+                <tr>
+                    <td class="border p-2 font-bold">{{ form.street.label_tag }}</td>
+                    <td class="border p-2">{{ form.street }}</td>
+                    <td class="border p-2 font-bold">{{ form.city.label_tag }}</td>
+                    <td class="border p-2">{{ form.city }}</td>
+                </tr>
+    
+                <tr>
+                    <td class="border p-2 font-bold">{{ form.zip_code.label_tag }}</td>
+                    <td class="border p-2">{{ form.zip_code }}</td>
+                    <td class="border p-2 font-bold">{{ form.country.label_tag }}</td>
+                    <td class="border p-2">{{ form.country }}</td>
+                </tr>
+    
+               
+                <tr>
+                    <td class="border p-2 font-bold">{{ form.is_insured.label_tag }}</td>
+                    <td class="border p-2">{{ form.is_insured }}</td>
+                    <td class="border p-2 font-bold">{{ form.insurance.label_tag }}</td>
+                    <td class="border p-2">{{ form.insurance }}</td>
+                </tr>
+    
+                <tr>
+                    <td class="border p-2 font-bold">{{ form.consent.label_tag }}</td>
+                    <td class="border p-2">{{ form.consent }}</td>
+                    <td class="border p-2 font-bold">{{ form.consent_contact_number.label_tag }}</td>
+                    <td class="border p-2">{{ form.consent_contact_number }}</td>
+                </tr>
+                
+                <tr>
+                    <td class="border p-2 font-bold">{{ form.admitted_on.label_tag }}</td>
+                    <td class="border p-2">{{ form.admitted_on }}</td>
+                    <td class="border p-2 font-bold">{{ form.admitted_by.label_tag }}</td>
+                    <td class="border p-2">{{ form.admitted_by }}</td>
+                </tr>
+    
+            </tbody>
+        </table>
+    </div>
+
+    <div class="flex justify-center">
+        <div class="flex items-center mt-8">
+            
+
+            <button class="mt-4 py-4 px-6 bg-zinc-500 rounded-xl text-white">{{ title }}</button>
+
+        </div>
+    </div>
+
+
+</form>
+
+{% endblock %}

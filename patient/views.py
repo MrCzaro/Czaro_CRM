@@ -112,7 +112,7 @@ class PatientCreateView(LoginRequiredMixin, CreateView):
     login_url = "/login/"
     model = Patient
     form_class = PatientForm
-    template_name = "patient_form.html"
+    template_name = "patient_form_add.html"
     success_url = reverse_lazy("patient:index")
     
     def get_context_data(self, **kwargs):
@@ -123,7 +123,7 @@ class PatientCreateView(LoginRequiredMixin, CreateView):
 class PatientUpdateView(LoginRequiredMixin, UpdateView):
     model = Patient 
     form_class = PatientForm
-    template_name = "patient_form.html"
+    template_name = "patient_form_update.html"
     success_url = reverse_lazy("patient:index")
     
     def get_context_data(self, **kwargs):
