@@ -33,14 +33,15 @@ def login_view(request):
 
 def signup_view(request):
     if request.method == "POST":
-        name = request.POST.get("name", "")
+        first_name = request.POST.get("first_name", "")
+        last_name = request.POST.get("last_name", "")
         email = request.POST.get("email", "")
         password1 = request.POST.get("password1", "")
         password2 = request.POST.get("password2", "")
         
-        if name and email and password1 and password2:
+        if first_name and last_name and email and password1 and password2:
             if password1 == password2:
-                user = User.objects.create_user(name, email, password1)
+                user = User.objects.create_user(first_name, last_name, email, password1)
                 messages.success(request, "Your account has been created. You can login.")
                 return redirect("main:login")
             else:

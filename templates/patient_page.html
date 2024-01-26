@@ -1,45 +1,40 @@
 {% extends "base.html" %}
 
-
 {% block content %}
 
-<h1 class="text-3xl font-bold text-center">{{ title }}</h1>
+<div class="text-center mb-12">
+    <p class="text-2xl font-bold">{{ patient.first_name }} {{ patient.last_name }}</p>
+    <p class="text-lg text-gray-600">Date of Birth: {{ patient.date_of_birth|date:"F j, Y" }}</p>
+</div>
 
-    
-    {{ patient.first_name }}
+<div class="flex justify-center space-x-4 mb-12">
+    <a href="{% url 'patient:observation_add' patient.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white">Add Observation</a>
+    <a href="{% url 'patient:detail' patient.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white">Patient Details</a>
+    <a href="{% url 'patient:index' %}" class="py-4 px-6 bg-zinc-800 rounded-xl text-white">Back</a>
+</div>
 
+<p class="text-2xl font-bold text-center mb-5">Patient Observations:</p>
 
-    {{ patient.last_name }}
+<div class="border-b-2 mb-6"></div> 
 
-    {{ patient.date_of_birth }}
-
-    <div class="flex justify-center">
-        <div class="flex items-center mt-8">
-            
-            <a href="{% url 'patient:detail' patient.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white mr-3">Patient Details</a>
-            <a href="{% url 'patient:index' %}" class="py-4 px-6 bg-zinc-800 rounded-xl text-white mr-3">Back</a>
-            
-            
-            
+<div class="flex justify-center">
+    <div class="w-2/3 h-96 overflow-y-auto mx-20">
+        <div class="space-y-4">
+            {% for observation in observations %}
+                <div class="border p-4 rounded-md">
+                    <p class="text-lg">{{ observation.observation }}</p>
+                    <div class="flex justify-between text-sm text-gray-500 mt-2">
+                        {% if observation.created_by == user %}
+                            <a href="{% url 'patient:observation_edit' patient.id observation.id %}" class="font-bold text-black">Edit</a>
+                        {% endif %}
+                        <p>Created by: {{ observation.created_by.first_name }} {{ observation.created_by.last_name }}</p>
+                        <p>Created at: {{ observation.created_at|date:"F j, Y H:i" }}</p>
+                        <p>Modified at: {{ observation.modified_at|date:"F j, Y H:i" }}</p>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-        
     </div>
+</div>
 
-    <p class="text-2xl font-bold text-center mb-5">Patient Observations:</p>
-    <a href="{% url 'patient:observation_add' patient.id %}" class="mb-4 py-4 px-6 bg-zinc-500 rounded-xl text-white mr-3">Add Observation</a>
-    <div class="mt-6">
-        {% for observation in observations %}
-            <div>
-                <p>{{ observation.observation }}</p>
-
-            </div>
-            
-            <div>
-                <p>{% if observation.created_by == user %}<a href="{% url 'patient:observation_edit' patient.id observation.id %}" class="font-bold text-black mr-1">Edit</a>{% endif %}| Created by: {{ observation.created_by }} | Created at: {{ observation.created_at}} | Modified at: {{ observation.modified_at }}</p>
-
-            <div>
-            
-        {% endfor %}
-
-    </div>
 {% endblock %}
