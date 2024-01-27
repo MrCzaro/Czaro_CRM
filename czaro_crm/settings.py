@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "ckeditor",
     "main",
     "patient",
+    "scales",
 ]
 
 MIDDLEWARE = [

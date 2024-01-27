@@ -51,10 +51,12 @@ def patient_detail(request, pk):
 def patient_page(request, pk):
     patient = get_object_or_404(Patient, id=pk)
     observations = patient.observations.all()
+    norton_scales = patient.norton.all()
     context = {
         "patient" : patient,
         "title" : "Patient Page",
         "observations": observations,
+        "norton_scales" : norton_scales,
     }
     
     return render(request, "patient_page.html", context)
