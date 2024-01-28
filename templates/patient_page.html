@@ -10,6 +10,7 @@
 <div class="flex justify-center space-x-4 mb-12">
     <a href="{% url 'patient:observation_add' patient.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white">Add Observation</a>
     <a href="{% url 'scales:norton_add' patient.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white mr-3">Add Norton Scale</a>
+    <a href="{% url 'scales:glasgow_add' patient.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white mr-3">Add Glasgow Coma Scale</a>
     <a href="{% url 'patient:detail' patient.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white">Patient Details</a>
     <a href="{% url 'patient:index' %}" class="py-4 px-6 bg-zinc-800 rounded-xl text-white">Back</a>
 </div>
@@ -51,12 +52,28 @@
       <p>Incontinence: {{ norton_scale.get_incontinence_display }}</p>
       <p>Total Points: {{ norton_scale.total_points }}</p>
       <p>Pressure Risk: {{ norton_scale.pressure_risk }}</p>
-      <p>Created by: {{ norton_scale.created_by }} | Created_at: {{ norton_scale.created_at}} | Modified at: {{ norton_scale.modified_at }}</p>
+      <p>Created by: {{ norton_scale.created_by.first_name }} {{ norton_scale.created_by.last_name }}  | Created at: {{ norton_scale.created_at}} | Modified at: {{ norton_scale.modified_at }}</p>
     {% if norton_scale.created_by == user %}
         <a href="{% url 'scales:norton_edit' patient_id=patient.id norton_id=norton_scale.id %}" class="font-bold text-black mr-3">Edit</a>
     {% endif %}
     </li>
   {% endfor %}
+</ul>
+
+<h2>Glasgow Coma Scales</h2>
+<ul>
+    {% for glasgow_scale in glasgow_scales %}
+        <li>
+            <p>Best eye response: {{ glasgow_scale.get_eye_response_display }}</p>
+            <p>Best verbal response: {{ glasgow_scale.get_verbal_response_display }}</p>
+            <p>Best motor response: {{ glasgow_scale.get_motor_response_display }}</p>
+            <p>Total Points: {{ glasgow_scale.total_points }}</p>
+            <p>Created by: {{ glasgow_scale.created_by.first_name }} {{ glasgow_scale.created_by.last_name }}| Created at: {{ glasgow_scale.created_at}} | Modified at: {{ glasgow_scale.modified_at }}</p>
+            {% if glasgow_scale.created_by == user %}
+                <a href="{% url 'scales:glasgow_edit' patient_id=patient.id glasgow_id=glasgow_scale.id %}" class="font-bold text-black mr-3">Edit</a>
+            {% endif %}
+            </li>
+    {% endfor %}
 </ul>
 
 {% endblock %}

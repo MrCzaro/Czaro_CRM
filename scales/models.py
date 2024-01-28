@@ -3,7 +3,7 @@ from django.db import models
 
 from patient.models import User, Patient
 
-
+# Global variables for NortonScale
 PHYSICAL_CHOICES = [
     ("4","Good"),
     ("3", "Fair"),
@@ -33,6 +33,29 @@ INCONTINENCE_CHOICES = [
     ("3", "Occasional"),
     ("2", "Usually urinary"),
     ("1", "Urinary and fecal"),
+]
+
+# Global variables for GlasgowComaScale
+EYE_RESPONSE_CHOICES =[
+    ("4", "Eyes open spontaneously"),
+    ("3", "Eye opening to sound"),
+    ("2", "Eye opening to pain"),
+    ("1", "No eye opening"),
+]
+VERBAL_RESPONSE_CHOICES = [
+    ("5", "Orientated"),
+    ("4", "Confused"),
+    ("3", "Inappropriate words"),
+    ("2", "Incomprehensible sounds"),
+    ("1", "No verbal response"),
+]
+MOTOR_RESPONSE_CHOICES = [
+    ("6", "Obeys commands"),
+    ("5", "Localizing pain"),
+    ("4", "Withdrawal from pain"),
+    ("3", "Abnormal flexion to pain"),
+    ("2", "Abnormal extension to pain"),
+    ("1", "No motor response"),
 ]
 
 class NortonScale(models.Model):
@@ -91,4 +114,44 @@ class NortonScale(models.Model):
     def save(self, *args, **kwargs):
         self.total_points = self.calculate_total_points()
         self.pressure_risk = self.calculate_risk()
+        super().save(*args, **kwargs)
+        
+class GlasgowComaScale(models.Model):
+    id = id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+    patient = models.ForeignKey(Patient, related_name = "glasgow", on_delete=models.CASCADE)
+    eye_response = models.CharField(max_length=30, choices=EYE_RESPONSE_CHOICES)
+    verbal_response = models.CharField(max_length=30, choices=VERBAL_RESPONSE_CHOICES)
+    motor_response = models.CharField(max_length=30, choices=MOTOR_RESPONSE_CHOICES)
+    total_points = models.IntegerField(blank=True, null=True)
+    
+    class Meta:
+        ordering = ("-created_at",)
+        
+    def __str__(self):
+        return f"{self.patient.first_name}"
+    
+    
+        
+    def calculate_total_points(self):
+        choices_values = {
+            "6" : 6,
+            "5" : 5,
+            "4" : 4,
+            "3" : 3,
+            "2" : 2,
+            "1" : 1,
+        }
+
+        total = 0
+        total += choices_values.get(self.eye_response , 0)
+        total += choices_values.get(self.verbal_response, 0)
+        total += choices_values.get(self.motor_response, 0)
+
+        return total
+    
+    def save(self, *args, **kwargs):
+        self.total_points = self.calculate_total_points()
         super().save(*args, **kwargs)

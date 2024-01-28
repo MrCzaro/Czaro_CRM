@@ -11,7 +11,7 @@ from django.utils import timezone
 from .models import Patient , PatientObservation
 from .forms import PatientForm, PatientObservationForm
 
-@login_required
+@login_required(login_url = "/login/")
 def index(request):
     admitted_patients = Patient.objects.filter(is_discharged=False).order_by("-admitted_on")
     discharged_patients = Patient.objects.filter(is_discharged=True).order_by("-discharged_on")
@@ -23,7 +23,7 @@ def index(request):
     }
     return render(request, "patient_list.html", context)
 
-@login_required
+@login_required(login_url = "/login/")
 def patient_detail(request, pk):
     patient = get_object_or_404(Patient, id=pk)
     context = {
@@ -47,21 +47,23 @@ def patient_detail(request, pk):
     
     return render(request, "patient_detail.html", context)
 
-@login_required   
+@login_required(login_url = "/login/")
 def patient_page(request, pk):
     patient = get_object_or_404(Patient, id=pk)
     observations = patient.observations.all()
     norton_scales = patient.norton.all()
+    glasgow_scales = patient.glasgow.all()
     context = {
         "patient" : patient,
         "title" : "Patient Page",
         "observations": observations,
         "norton_scales" : norton_scales,
+        "glasgow_scales": glasgow_scales,
     }
     
     return render(request, "patient_page.html", context)
 
-@login_required
+@login_required(login_url = "/login/")
 def add_patient_observation(request, pk):
     patient = get_object_or_404(Patient, id=pk)
     
@@ -85,7 +87,7 @@ def add_patient_observation(request, pk):
     
     return render(request,"patient_observation_form.html", context)
 
-@login_required
+@login_required(login_url = "/login/")
 def edit_patient_observation(request, patient_id, observation_id):
     patient = get_object_or_404(Patient, id = patient_id)
     observation = get_object_or_404(PatientObservation, id=observation_id, patient=patient)
