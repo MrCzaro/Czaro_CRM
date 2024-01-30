@@ -1,8 +1,8 @@
 
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from . models import NortonScale, GlasgowComaScale
-from . forms import NortonScaleForm, GlasgowComaScaleForm
+from . models import NortonScale, GlasgowComaScale, NewsScale
+from . forms import NortonScaleForm, GlasgowComaScaleForm, NewsScaleForm
 from patient.models import Patient
 
 @login_required(login_url = "/login/")
@@ -98,7 +98,50 @@ def edit_glasgow_scale(request, patient_id, glasgow_id):
     
     return render(request, "scale_form.html", context)
         
+def add_news_scale(request, pk):
+    patient = get_object_or_404(Patient, id=pk)
     
+    if request.method == "POST":
+        form = NewsScaleForm(request.POST)
+        if form.is_valid():
+            scale = form.save(commit=False)
+            scale.created_by = request.user
+            scale.patient = patient
+            scale.save()
+            return redirect("patient:page", pk=patient.id)
+        else:
+            print(form.errors)
+    else:
+        form = NewsScaleForm()
+        
+    context = {
+        "form" : form,
+        "title" : "Add National Early Warning Score",
+        "patient_id" : patient.id,
+    }
+    
+    return render(request, "glasgow_form.html", context)
+
+def edit_news_scale(request, patient_id, news_id):
+    patient = get_object_or_404(Patient, id=patient_id)
+    news = get_object_or_404(NewsScale, id=news_id, patient=patient)
+    
+    if request.method == "POST":
+        form = NewsScaleForm(request.POST, instance=news)
+        if form.is_valid():
+            form.save()
+            return redirect("patient:page", pk=patient.id)
+    else:
+        form = NewsScaleForm(instance=news)
+        
+         
+    context = {
+        "form" : form,
+        "title" : "Add National Early Warning Score",
+        "patient_id" : patient.id,
+    }
+    
+    return render(request, "glasgow_form.html", context)
             
             
     

@@ -1,4 +1,5 @@
 import uuid
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 from patient.models import User, Patient
@@ -58,6 +59,20 @@ MOTOR_RESPONSE_CHOICES = [
     ("1", "No motor response"),
 ]
 
+# Global variables for NEWS 
+YES = True
+NO = False
+YES_NO_CHOICES = [
+    (YES, "Yes"),
+    (NO, "No"),
+]
+LOC_CHOICES = [
+    ("awake", "Awake"),
+    ("verbal", "Patient responds to a verbal stimulus"),
+    ("pain", "Patient responds to a pain stimulus"),
+    ("unresponsive", "Patient is unresponsive to stimulus")
+]
+
 class NortonScale(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -98,11 +113,11 @@ class NortonScale(models.Model):
     
     
     def calculate_risk(self):
-        if self.total_points > 18 and self.total_points < 21:
+        if self.total_points in [19,20]:
             risk = "Low Risk"
-        elif self.total_points > 13 and self.total_points <= 18:
+        elif  14 <= self.total_points <= 18:
             risk = "Medium Risk"
-        elif self.total_points >9<= 13 and self.total_points <= 13:
+        elif 10 <= self.total_points <= 13:
             risk = "High Risk"
         elif self.total_points < 10:
             risk = "Very High Risk"
@@ -277,17 +292,26 @@ class NewsScale(models.Model):
         total += self.calculate_oxygen_saturation_score()
         print(f"Oxy {total}, {self.calculate_oxygen_saturation_score()}")
         total += self.calculate_is_on_oxygen_score()
-        print(f"Oxysup {total}, {self.calculate_is_on_oxygen_score()}")
+        print(f"OxySup {total}, {self.calculate_is_on_oxygen_score()}")
         total += self.calculate_temperature_score()
-        print(f"temp {total}, {self.calculate_temperature_score()}")
+        print(f"Temp {total}, {self.calculate_temperature_score()}")
         total += self.calculate_systolic_blood_pressure_score()
-        print(f"sbp {total}, {self.calculate_systolic_blood_pressure_score()}")
+        print(f"SBP {total}, {self.calculate_systolic_blood_pressure_score()}")
         total += self.calculate_heart_rate_score()
-        print(f"hr {total}, {self.calculate_heart_rate_score()}")
+        print(f"HR {total}, {self.calculate_heart_rate_score()}")
         total += self.calculate_level_of_consciousness_score()
-        print(f"loc {total}, {self.calculate_level_of_consciousness_score()}")
+        print(f"LOC {total}, {self.calculate_level_of_consciousness_score()}")
         return total
+    
+    def score_interpretation(self):
+        if self.total_score <= 4:
+            return f"National Early Warning Score (NEWS) = {self.total_score}. Interpretation: This is a low score that suggests clinical monitoring should be continued and the medical professional, usually a registered nurse will decide further if clinical care needs to be updated. Note: This tool should NOT be considered as a substitute for any professional medical service, NOR as a substitute for clinical judgement."
+        elif self.total_score in [5,6]:
+            return f"National Early Warning Score (NEWS) = {self.total_score}. Interpretation: This is a medium score that suggests the patient should be reviewed by a medical specialist with competencies in acute illness, even with the possibility of referring the patient to the critical care unit at the end of the assessment. Note: This tool should NOT be considered as a substitute for any professional medical service, NOR as a substitute for clinical judgement."
+        elif 7 <= self.total_score <=20:
+            return f"National Early Warning Score (NEWS) = {self.total_score}. Interpretation: This is a high score (red score) that is indicative of urgent critical care need and the patient should be transferred to the appropriate specialized department for further care. Note: This tool should NOT be considered as a substitute for any professional medical service, NOR as a substitute for clinical judgement." 
     
     def save(self, *args, **kwargs):
         self.total_score = self.calculate_total_score()
+        self.score_interpretation = self.score_interpretation()
         super().save(*args, **kwargs)
