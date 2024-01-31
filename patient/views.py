@@ -53,12 +53,14 @@ def patient_page(request, pk):
     observations = patient.observations.all()
     norton_scales = patient.norton.all()
     glasgow_scales = patient.glasgow.all()
+    news_scales = patient.news.all()
     context = {
         "patient" : patient,
         "title" : "Patient Page",
         "observations": observations,
         "norton_scales" : norton_scales,
         "glasgow_scales": glasgow_scales,
+        "news_scales": news_scales,
     }
     
     return render(request, "patient_page.html", context)

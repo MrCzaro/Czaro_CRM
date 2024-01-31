@@ -188,7 +188,7 @@ class NewsScale(models.Model):
     heart_rate = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(300)])
     level_of_consciousness = models.CharField(max_length=60,choices=LOC_CHOICES, default="awake")
     total_score = models.IntegerField(blank=True, null=True)
-    score_interpretation = models.CharField(max_length=255, blank=True, null=True)
+    score_interpretation = models.TextField()
     
     class Meta:
         ordering = ("-created_at",)

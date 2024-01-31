@@ -120,7 +120,7 @@ def add_news_scale(request, pk):
         "patient_id" : patient.id,
     }
     
-    return render(request, "glasgow_form.html", context)
+    return render(request, "scale_form.html", context)
 
 def edit_news_scale(request, patient_id, news_id):
     patient = get_object_or_404(Patient, id=patient_id)
@@ -141,7 +141,7 @@ def edit_news_scale(request, patient_id, news_id):
         "patient_id" : patient.id,
     }
     
-    return render(request, "glasgow_form.html", context)
+    return render(request, "scale_form.html", context)
             
             
     

@@ -11,6 +11,7 @@
     <a href="{% url 'patient:observation_add' patient.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white">Add Observation</a>
     <a href="{% url 'scales:norton_add' patient.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white mr-3">Add Norton Scale</a>
     <a href="{% url 'scales:glasgow_add' patient.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white mr-3">Add Glasgow Coma Scale</a>
+    <a href="{% url 'scales:news_add' patient.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white mr-3">Add NEWS Scale</a>
     <a href="{% url 'patient:detail' patient.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white">Patient Details</a>
     <a href="{% url 'patient:index' %}" class="py-4 px-6 bg-zinc-800 rounded-xl text-white">Back</a>
 </div>
@@ -75,5 +76,30 @@
             </li>
     {% endfor %}
 </ul>
+
+<h2>National Early Warning Score Scales</h2>
+<ul>
+  {% for news_scale in news_scales %}
+    <li>
+      <p>Respiratory Rate: {{ news_scale.respiratory_rate }}</p>
+      <p>Oxygen Saturation: {{ news_scale.oxygen_saturation }}</p>
+      <p>Oxygen Supplementaion: {{ news_scale.get_is_on_oxygen_display }}</p>
+      <p>Is the patient in Acute exacebrations of chronic obstructive pulmonary disease state: {{ news_scale.get_aecopd_state_display }}</p>
+      <p>Body Temperature: {{ news_scale.temperature }}</p>
+      <p>Systolic Blood Pressure: {{ news_scale.systolic_blood_pressure }}</p>
+      <p>Diastolic Blood Pressure: {{ news_scale.diastolic_blood_pressure }}</p>
+      <p>Heart Rate: {{ news_scale.heart_rate }}</p>
+      <p>Level of consciousness: {{ news_scale.get_level_of_consciousness_display }} </p>
+      <p>Total NEWS score: {{ news_scale.total_score }}</p>
+      <p>Score Interpretation : {{ news_scale.score_interpretation }}
+      <p>Created by: {{ news_scale.created_by }} | Created_at: {{ news_scale.created_at}} | Modified at: {{ news_scale.modified_at }}</p>
+
+    {% if news_scale.created_by == user %}
+        <a href="{% url 'scales:news_edit' patient_id=patient.id news_id=news_scale.id %}" class="font-bold text-black mr-3">Edit</a>
+    {% endif %}
+    </li>
+  {% endfor %}
+</ul>
+
 
 {% endblock %}

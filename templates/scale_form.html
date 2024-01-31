@@ -1,19 +1,32 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="flex items-center justify-center mt-24">
-  <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-96">
-    <h1 class="text-3xl font-bold mb-8 text-center">{{ title }}</h1>
+  <div class="flex items-center justify-center mt-24">
+    <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-96">
+      <h1 class="text-3xl font-bold mb-8 text-center">{{ title }}</h1>
 
-    <form method="post">
-      {% csrf_token %}
-      {{ form.as_p }}
-      
-      <div class="mt-6 flex justify-between">
-        <button class="py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-700">Submit</button>
-        <a href="{% url 'patient:page' patient_id %}" class="text-gray-600 hover:underline">Back</a>
-      </div>
-    </form>
+      <form method="post">
+        {% csrf_token %}
+
+        {% for field in form %}
+          <div class="mb-4">
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.errors %}
+              <p class="text-red-500 text-sm">{{ field.errors|striptags }}</p>
+            {% endif %}
+          </div>
+        {% endfor %}
+
+        {% if form.non_field_errors %}
+        <p class="text-red-500 text-sm">{{ form.non_field_errors|striptags }}</p>
+      {% endif %}
+
+        <div class="mt-6 flex justify-between">
+          <button class="py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-700">Submit</button>
+          <a href="{% url 'patient:page' patient_id %}" class="text-gray-600 hover:underline">Back</a>
+        </div>
+      </form>
+    </div>
   </div>
-</div>
 {% endblock %}
