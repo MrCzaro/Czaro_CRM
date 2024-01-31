@@ -7,6 +7,11 @@ from patient.models import Patient
 
 @login_required(login_url = "/login/")
 def add_norton_scale(request, pk):
+    # Check if the user has the allowed profession
+    if request.user.profession == "secretaries":
+        # Redirect or show an error message
+        return redirect("access_denied")
+    
     patient = get_object_or_404(Patient, id=pk)
     
     if request.method == "POST":
@@ -33,6 +38,11 @@ def add_norton_scale(request, pk):
 
 @login_required(login_url = "/login/")
 def edit_norton_scale(request, patient_id, norton_id):
+    # Check if the user has the allowed profession
+    if request.user.profession == "secretaries":
+        # Redirect or show an error message
+        return redirect("access_denied")
+    
     patient = get_object_or_404(Patient, id= patient_id)
     norton = get_object_or_404(NortonScale, id=norton_id, patient=patient)
     
@@ -54,6 +64,11 @@ def edit_norton_scale(request, patient_id, norton_id):
 
 @login_required(login_url = "/login/")
 def add_glasgow_scale(request, pk):
+    # Check if the user has the allowed profession
+    if request.user.profession == "secretaries":
+        # Redirect or show an error message
+        return redirect("access_denied")
+    
     patient = get_object_or_404(Patient, id=pk)
     
     if request.method == "POST":
@@ -79,6 +94,11 @@ def add_glasgow_scale(request, pk):
 
 @login_required(login_url = "/login/")
 def edit_glasgow_scale(request, patient_id, glasgow_id):
+    # Check if the user has the allowed profession
+    if request.user.profession == "secretaries":
+        # Redirect or show an error message
+        return redirect("access_denied")
+    
     patient = get_object_or_404(Patient, id=patient_id)
     glasgow = get_object_or_404(GlasgowComaScale, id=glasgow_id, patient=patient)
     
@@ -99,6 +119,11 @@ def edit_glasgow_scale(request, patient_id, glasgow_id):
     return render(request, "scale_form.html", context)
         
 def add_news_scale(request, pk):
+    # Check if the user has the allowed profession
+    if request.user.profession == "secretaries":
+        # Redirect or show an error message
+        return redirect("access_denied")
+    
     patient = get_object_or_404(Patient, id=pk)
     
     if request.method == "POST":
@@ -123,8 +148,14 @@ def add_news_scale(request, pk):
     return render(request, "scale_form.html", context)
 
 def edit_news_scale(request, patient_id, news_id):
+    # Check if the user has the allowed profession
+    if request.user.profession == "secretaries":
+        # Redirect or show an error message
+        return redirect("access_denied")
+    
     patient = get_object_or_404(Patient, id=patient_id)
     news = get_object_or_404(NewsScale, id=news_id, patient=patient)
+    
     
     if request.method == "POST":
         form = NewsScaleForm(request.POST, instance=news)
@@ -144,4 +175,5 @@ def edit_news_scale(request, patient_id, news_id):
     return render(request, "scale_form.html", context)
             
             
-    
+def access_denied(request):
+    return render(request, "access_denied.html")

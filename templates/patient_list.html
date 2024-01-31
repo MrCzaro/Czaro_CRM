@@ -10,7 +10,7 @@
         {% for patient in admitted_patients %}
         <a href="{% url 'patient:page' patient.id %}">
             <p class="mb-3 text-lg">
-                <span class="font-bold">{{ patient.first_name }} {{ patient.last_name }}</span> | Addmited on {{ patient.admitted_on|date:"H:i" }}
+                <span class="font-bold">{{ patient.first_name }} {{ patient.last_name }}</span> | Addmited on {{ patient.admitted_on|date:"d F Y, H:i" }}
             </p>
         </a>
         {% endfor %}
@@ -23,7 +23,7 @@
         {% for patient in discharged_patients %}
         <a href="{% url 'patient:page' patient.id %}">
             <p class="mb-3 text-lg">
-                <span class="font-bold">{{ patient.first_name }} {{ patient.last_name }}</span> | Discharged on {{ patient.discharged_on|date:"H:i" }}
+                <span class="font-bold">{{ patient.first_name }} {{ patient.last_name }}</span> | Discharged on {{ patient.discharged_on|date:"d F Y, H:i" }}
             </p>
         </a>
     {% endfor %}

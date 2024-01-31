@@ -15,8 +15,8 @@ YES_NO_CHOICES = [
 STATUS_CHOICES = [
     ("admitted","Admitted"),
     ("discharged_home" , "Discharged home"),
-    ("transferred_facility" , "Transferred to different medical facility"),
-    ("died", "Died"),
+    #("transferred_facility" , "Transferred to different medical facility"),
+    #("died", "Died"),
 ]
 
 
@@ -39,6 +39,9 @@ class Patient(models.Model):
     admitted_on = models.DateTimeField(default=timezone.now)
     consent = models.CharField(max_length = 255, blank=True)
     consent_contact_number = models.CharField(max_length=15, blank=True)
+    
+    main_symptom = models.CharField(max_length=255)
+    additional_symptoms = models.CharField(max_length=255, blank=True, null=True)
     
    
     discharged_on = models.DateTimeField(blank=True, null=True)
