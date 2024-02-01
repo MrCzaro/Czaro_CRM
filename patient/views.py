@@ -49,12 +49,14 @@ def patient_detail(request, pk):
 
 @login_required(login_url = "/login/")
 def patient_page(request, pk):
+    user = request.user
     patient = get_object_or_404(Patient, id=pk)
     observations = patient.observations.all()
     norton_scales = patient.norton.all()
     glasgow_scales = patient.glasgow.all()
     news_scales = patient.news.all()
     context = {
+        "user": user,
         "patient" : patient,
         "title" : "Patient Page",
         "observations": observations,
@@ -67,6 +69,12 @@ def patient_page(request, pk):
 
 @login_required(login_url = "/login/")
 def add_patient_observation(request, pk):
+    # Check if the user has the allowed profession
+    if request.user.profession == "secretaries":
+        # Redirect or show an error message
+        return redirect("access_denied")
+    
+    
     patient = get_object_or_404(Patient, id=pk)
     
     if request.method == "POST":
@@ -91,6 +99,11 @@ def add_patient_observation(request, pk):
 
 @login_required(login_url = "/login/")
 def edit_patient_observation(request, patient_id, observation_id):
+    # Check if the user has the allowed profession
+    if request.user.profession == "secretaries":
+        # Redirect or show an error message
+        return redirect("access_denied")
+    
     patient = get_object_or_404(Patient, id = patient_id)
     observation = get_object_or_404(PatientObservation, id=observation_id, patient=patient)
     
