@@ -55,11 +55,19 @@ def update_visit(request, patient_id, visit_id):
 def visit_detail(request, patient_id, visit_id):
     patient = get_object_or_404(Patient, id=patient_id)
     visit = get_object_or_404(Visit, id=visit_id, patient=patient)
+    observations = patient.visit.observations.all()
+    norton_scales = patient.visit.norton.all()
+    glasgow_scales = patient.visit.glasgow.all()
+    news_scales = patient.visit.news.all()
     
     context = {
         "patient": patient,
         "visit": visit,
-        "title": "Patient visit details"
+        "title": "Patient visit details",
+        "observations": observations,
+        "norton_scales" : norton_scales,
+        "glasgow_scales": glasgow_scales,
+        "news_scales": news_scales,
     }
     
     #Discharge or readmit patient  

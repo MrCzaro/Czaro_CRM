@@ -1,8 +1,8 @@
 import uuid
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-
-from patient.models import User, Patient
+from main.models import User
+from visit.models import Visit
 
 # Global variables for NortonScale
 PHYSICAL_CHOICES = [
@@ -78,7 +78,7 @@ class NortonScale(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-    patient = models.ForeignKey(Patient, related_name = "norton", on_delete=models.CASCADE)
+    visit = models.ForeignKey(Visit, related_name = "norton", on_delete=models.CASCADE)
     physical_condition = models.CharField(max_length=20, choices=PHYSICAL_CHOICES)
     mental_condition = models.CharField(max_length=20, choices=MENTAL_CHOICES)
     activity = models.CharField(max_length=20, choices=ACTIVITY_CHOICES)
@@ -136,7 +136,7 @@ class GlasgowComaScale(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-    patient = models.ForeignKey(Patient, related_name = "glasgow", on_delete=models.CASCADE)
+    visit = models.ForeignKey(Visit, related_name = "glasgow", on_delete=models.CASCADE)
     eye_response = models.CharField(max_length=30, choices=EYE_RESPONSE_CHOICES)
     verbal_response = models.CharField(max_length=30, choices=VERBAL_RESPONSE_CHOICES)
     motor_response = models.CharField(max_length=30, choices=MOTOR_RESPONSE_CHOICES)
@@ -176,7 +176,7 @@ class NewsScale(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-    patient = models.ForeignKey(Patient, related_name = "news", on_delete=models.CASCADE)
+    visit = models.ForeignKey(Visit, related_name = "news", on_delete=models.CASCADE)
     respiratory_rate = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
     oxygen_saturation = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
     is_on_oxygen = models.BooleanField(choices=YES_NO_CHOICES, default=NO)

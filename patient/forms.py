@@ -18,14 +18,7 @@ class PatientForm(forms.ModelForm):
             "country",
             "city",
             "street",
-            "zip_code",
-            "admitted_on",
-            "admitted_by",
-            "main_symptom",
-            "additional_symptoms",
-            "consent",
-            "consent_contact_number",
-            
+            "zip_code",      
         ]
         
         labels = {
@@ -39,13 +32,6 @@ class PatientForm(forms.ModelForm):
             "city": "City:",
             "street": "Street adress:",
             "zip_code": "Zip-code:",
-            "admitted_on": "Admitted on:",
-            "admitted_by": "Admitted by:",
-            "main_symptom": "Main symptom",
-            "additional_symptoms": "Additional symptoms",
-            "consent" : "Authorized Medical Contact",
-            "consent_contact_number" : "Authorized person's contact number"
-            
         }
         
         widgets = {
@@ -59,12 +45,6 @@ class PatientForm(forms.ModelForm):
             "city" : forms.TextInput(attrs={"class": FORM_CLASS}),
             "street" : forms.TextInput(attrs={"class": FORM_CLASS}),
             "zip_code" : forms.TextInput(attrs={"class": FORM_CLASS}),
-            "admitted_on" : forms.DateTimeInput(attrs={"type": "datetime-local","class": FORM_CLASS}), # same as with DOB
-            "admitted_by" : forms.Select(attrs={"class": FORM_CLASS}),
-            "main_symptom": forms.TextInput(attrs={"class": FORM_CLASS}),
-            "additional_symptoms": forms.TextInput(attrs={"class": FORM_CLASS}),
-            "consent" : forms.TextInput(attrs={"class": FORM_CLASS}),
-            "consent_contact_number" : forms.TextInput(attrs={"class": FORM_CLASS}),
         }
         
 class PatientObservationForm(forms.ModelForm):

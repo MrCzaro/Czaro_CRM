@@ -1,6 +1,6 @@
 import uuid
 from django.db import models
-from patient.models import Patient, STATUS_CHOICES
+from patient.models import Patient
 from django.utils import timezone
 from main.models import User
 
@@ -11,7 +11,6 @@ class Visit(models.Model):
     admitted_on = models.DateTimeField(default=timezone.now)
     discharged_on = models.DateTimeField(blank=True, null=True)
     is_discharged = models.BooleanField(default=False)
-    status = models.CharField(max_length=45, choices=STATUS_CHOICES, default="admitted")
     main_symptom = models.CharField(max_length=255)
     additional_symptoms = models.CharField(max_length=255, blank=True, null=True)
     consent = models.CharField(max_length=255, blank=True)
@@ -19,3 +18,6 @@ class Visit(models.Model):
     
     def __str__(self):
         return f"Visit for {self.patient.first_name} {self.patient.last_name}"
+    
+    class Meta:
+        ordering = ("-admitted_on",)
