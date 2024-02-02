@@ -6,6 +6,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("main.urls")),
     path("patient/", include("patient.urls")),
+    path("visit/", include("visit.urls")),
     path("scale/", include("scales.urls")),
     path('access-denied/', access_denied, name='access_denied'),
 ]

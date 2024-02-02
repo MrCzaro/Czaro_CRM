@@ -24,8 +24,8 @@ def index(request):
     return render(request, "patient_list.html", context)
 
 @login_required(login_url = "/login/")
-def patient_detail(request, pk):
-    patient = get_object_or_404(Patient, id=pk)
+def patient_detail(request, patient_id):
+    patient = get_object_or_404(Patient, id=patient_id)
     context = {
         "patient": patient,
         "title": "Patient details"
@@ -48,9 +48,9 @@ def patient_detail(request, pk):
     return render(request, "patient_detail.html", context)
 
 @login_required(login_url = "/login/")
-def patient_page(request, pk):
+def patient_page(request, patient_id):
     user = request.user
-    patient = get_object_or_404(Patient, id=pk)
+    patient = get_object_or_404(Patient, id=patient_id)
     observations = patient.observations.all()
     norton_scales = patient.norton.all()
     glasgow_scales = patient.glasgow.all()

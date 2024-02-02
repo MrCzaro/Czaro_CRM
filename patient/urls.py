@@ -5,8 +5,8 @@ app_name = "patient"
 
 urlpatterns = [
     path("", views.index, name="index"),
-    path("<uuid:pk>/detail/", views.patient_detail, name="detail"),
-    path("<uuid:pk>/patient-page/", views.patient_page, name="page"),
+    path("<uuid:patient_id>/detail/", views.patient_detail, name="detail"),
+    path("<uuid:patient_id>/patient-page/", views.patient_page, name="page"),
     path("<uuid:pk>/patient-observation-add/", views.add_patient_observation, name="observation_add"),
     path("<uuid:patient_id>/patient-observation-edit/<uuid:observation_id>/", views.edit_patient_observation, name="observation_edit"),
     path("add/", views.PatientCreateView.as_view(), name="add"),

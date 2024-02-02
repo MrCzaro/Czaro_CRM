@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "main",
     "patient",
     "scales",
+    "visit",
 ]
 
 MIDDLEWARE = [
