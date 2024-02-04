@@ -17,6 +17,7 @@ def create_visit(request, patient_id):
         if form.is_valid():
             visit = form.save(commit=False)
             visit.patient = patient
+            visit.admitted_by = request.user
             visit.save()
             return redirect("patient:detail", patient_id=patient.id)
     else:

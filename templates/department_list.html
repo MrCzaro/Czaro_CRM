@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1 class="p-8 text-3xl font-bold text-center">{{ title }}</h1>
+
+  <div class="flex justify-center">
+    <table class="table-fixed w-2/3 border">
+      <thead>
+        <tr>
+          <th class="border p-2 font-bold">Department Name</th>
+          <th class="border p-2 font-bold">Description</th>
+          <th class="border p-2 font-bold">Created By</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for department in departments %}
+          <tr>
+            <td class="border p-2">{{ department.name }}</td>
+            <td class="border p-2">{{ department.description }}</td>
+            <td class="border p-2">{{ department.created_by.get_full_name }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="flex justify-center mt-8">
+    {% if request.user.profession == "admins" %}
+        <a href="{% url 'department:create_department' %}" class="py-4 px-6 bg-emerald-600 rounded-xl text-white">Create Department</a>
+    {% endif %}
+    </div>
+{% endblock %}

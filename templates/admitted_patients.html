@@ -1,0 +1,28 @@
+<!-- admitted_patients.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+    <h1 class="p-8 text-3xl font-bold text-center">{{ title }}</h1>
+
+    <div class="flex justify-center">
+        <table class="table-fixed w-2/3 border">
+            <thead>
+                <tr>
+                    <th class="border p-2">Patient Name</th>
+                    <th class="border p-2">Admitted On</th>
+                    <!-- Add more columns as needed -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for patient in admitted_patients %}
+                    <tr>
+                        <td class="border p-2">{{ patient.patient.full_name }}</td>
+                        <td class="border p-2">{{ patient.admitted_on|date:"F j, Y H:i" }}</td>
+                        <!-- Add more columns as needed -->
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from django.utils import timezone
 from main.models import User
+
 from patient.models import Patient
 
 class Visit(models.Model):

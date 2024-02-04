@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1 class="p-8 text-3xl font-bold text-center">{{ title }}</h1>
+
+  <div class="flex justify-center">
+    <form method="post" class="w-1/2">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="py-4 px-6 bg-emerald-600 rounded-xl text-white">{{ title }}</button>
+    </form>
+  </div>
+
+  <div class="flex justify-center mt-8">
+    <a href="{% url 'department:department_list' %}" class="py-4 px-6 bg-zinc-800 rounded-xl text-white">Back to Department List</a>
+  </div>
+{% endblock %}
