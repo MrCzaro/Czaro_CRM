@@ -6,7 +6,8 @@ from django.db import models
 USER_CHOICES = [
     ("nurses", "Nurse"),
     ("physicians", "Physician"),
-    ("secretaries", "Secretary")
+    ("secretaries", "Secretary"),
+    ("admins", "Admin"),
 ]
 
 class CustomUserManager(UserManager):

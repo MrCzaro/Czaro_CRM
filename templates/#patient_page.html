@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="text-center mb-12">
+    <p class="text-2xl font-bold">{{ patient.first_name }} {{ patient.last_name }}</p>
+    <p class="text-lg text-gray-600">Date of Birth: {{ patient.date_of_birth|date:"F j, Y" }}</p>
+</div>
+
+<div class="flex justify-center space-x-4 mb-12">
+    {% if user.profession != "secretaries" %}
+        <a href="{% url 'visit:observation_create' patient.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white">Add Observation</a>
+        <a href="{% url 'scales:norton_add' patient.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white mr-3">Add Norton Scale</a>
+        <a href="{% url 'scales:glasgow_add' patient.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white mr-3">Add Glasgow Coma Scale</a>
+        <a href="{% url 'scales:news_add' patient.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white mr-3">Add NEWS Scale</a>
+
+    {% endif %}
+    <a href="{% url 'patient:detail' patient.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white">Patient Details</a>
+    <a href="{% url 'patient:index' %}" class="py-4 px-6 bg-zinc-800 rounded-xl text-white">Back</a>
+</div>
+
+<p class="text-2xl font-bold text-center mb-5">Patient Observations:</p>
+
+<div class="border-b-2 mb-6"></div> 
+
+<div class="flex justify-center">
+    <div class="w-2/3 h-96 overflow-y-auto mx-20">
+        <div class="space-y-4">
+            {% for observation in observations %}
+                <div class="border p-4 rounded-md">
+                    <p class="text-lg">{{ observation.observation }}</p>
+                    <div class="flex justify-between text-sm text-gray-500 mt-2">
+                        {% if observation.created_by == user %}
+                            <a href="{% url 'patient:observation_edit' patient.id observation.id %}" class="font-bold text-black">Edit</a>
+                        {% endif %}
+                        <p>Created by: {{ observation.created_by.first_name }} {{ observation.created_by.last_name }}</p>
+                        <p>Created at: {{ observation.created_at|date:"F j, Y H:i" }}</p>
+                        <p>Modified at: {{ observation.modified_at|date:"F j, Y H:i" }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="border-b-2 mb-6"></div> 
+
+<h2>Norton Scales</h2>
+<ul>
+  {% for norton_scale in norton_scales %}
+    <li>
+      <p>Physical Condition: {{ norton_scale.get_physical_condition_display }}</p>
+      <p>Mental Condition: {{ norton_scale.get_mental_condition_display }}</p>
+      <p>Activity: {{ norton_scale.get_activity_display }}</p>
+      <p>Mobility: {{ norton_scale.get_mobility_display }}</p>
+      <p>Incontinence: {{ norton_scale.get_incontinence_display }}</p>
+      <p>Total Points: {{ norton_scale.total_points }}</p>
+      <p>Pressure Risk: {{ norton_scale.pressure_risk }}</p>
+      <p>Created by: {{ norton_scale.created_by.first_name }} {{ norton_scale.created_by.last_name }}  | Created at: {{ norton_scale.created_at}} | Modified at: {{ norton_scale.modified_at }}</p>
+    {% if norton_scale.created_by == user %}
+        <a href="{% url 'scales:norton_edit' patient_id=patient.id norton_id=norton_scale.id %}" class="font-bold text-black mr-3">Edit</a>
+    {% endif %}
+    </li>
+  {% endfor %}
+</ul>
+
+<h2>Glasgow Coma Scales</h2>
+<ul>
+    {% for glasgow_scale in glasgow_scales %}
+        <li>
+            <p>Best eye response: {{ glasgow_scale.get_eye_response_display }}</p>
+            <p>Best verbal response: {{ glasgow_scale.get_verbal_response_display }}</p>
+            <p>Best motor response: {{ glasgow_scale.get_motor_response_display }}</p>
+            <p>Total Points: {{ glasgow_scale.total_points }}</p>
+            <p>Created by: {{ glasgow_scale.created_by.first_name }} {{ glasgow_scale.created_by.last_name }}| Created at: {{ glasgow_scale.created_at}} | Modified at: {{ glasgow_scale.modified_at }}</p>
+            {% if glasgow_scale.created_by == user %}
+                <a href="{% url 'scales:glasgow_edit' patient_id=patient.id glasgow_id=glasgow_scale.id %}" class="font-bold text-black mr-3">Edit</a>
+            {% endif %}
+            </li>
+    {% endfor %}
+</ul>
+
+<h2>National Early Warning Score Scales</h2>
+<ul>
+  {% for news_scale in news_scales %}
+    <li>
+      <p>Respiratory Rate: {{ news_scale.respiratory_rate }}</p>
+      <p>Oxygen Saturation: {{ news_scale.oxygen_saturation }}</p>
+      <p>Oxygen Supplementaion: {{ news_scale.get_is_on_oxygen_display }}</p>
+      <p>Is the patient in Acute exacebrations of chronic obstructive pulmonary disease state: {{ news_scale.get_aecopd_state_display }}</p>
+      <p>Body Temperature: {{ news_scale.temperature }}</p>
+      <p>Systolic Blood Pressure: {{ news_scale.systolic_blood_pressure }}</p>
+      <p>Diastolic Blood Pressure: {{ news_scale.diastolic_blood_pressure }}</p>
+      <p>Heart Rate: {{ news_scale.heart_rate }}</p>
+      <p>Level of consciousness: {{ news_scale.get_level_of_consciousness_display }} </p>
+      <p>Total NEWS score: {{ news_scale.total_score }}</p>
+      <p>Score Interpretation : {{ news_scale.score_interpretation }}
+      <p>Created by: {{ news_scale.created_by }} | Created_at: {{ news_scale.created_at}} | Modified at: {{ news_scale.modified_at }}</p>
+
+    {% if news_scale.created_by == user %}
+        <a href="{% url 'scales:news_edit' patient_id=patient.id news_id=news_scale.id %}" class="font-bold text-black mr-3">Edit</a>
+    {% endif %}
+    </li>
+  {% endfor %}
+</ul>
+
+
+{% endblock %}

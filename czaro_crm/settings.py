@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     
     "ckeditor",
+    "department",
     "main",
     "patient",
     "scales",

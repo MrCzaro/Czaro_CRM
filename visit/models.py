@@ -1,8 +1,8 @@
 import uuid
 from django.db import models
-from patient.models import Patient
 from django.utils import timezone
 from main.models import User
+from patient.models import Patient
 
 class Visit(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -21,3 +21,15 @@ class Visit(models.Model):
     
     class Meta:
         ordering = ("-admitted_on",)
+        
+class Observation(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    visit = models.ForeignKey(Visit, related_name="observations", on_delete=models.CASCADE)
+    observation = models.TextField()
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True, null=True)
+    
+    class Meta:
+        ordering = ("-created_at",)
+        

@@ -29,5 +29,14 @@
     {% endfor %}
     </div>
 </div>
-   
+
+<div>
+    <p class="text-2xl text-center mb-5">Patients:</p>
+    {% for patient in patients %}
+    <a href="{% url 'patient:detail' patient.id %}">
+        <p class="mb-3 text-lg">
+            <span class="font-bold">{{ patient.first_name }} {{ patient.last_name }}</span> | Added on {{ patient.created_on|date:"d F Y, H:i"  }}
+        </p>
+    </a>
+{% endfor %}
 {% endblock %}

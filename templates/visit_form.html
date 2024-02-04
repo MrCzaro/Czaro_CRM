@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
-
 {% block content %}
+
 
 <h1 class="p-8 text-3xl font-bold text-center">{{ title }}</h1>
 <form method="post">
     {% csrf_token %}
-
+    
     <div class="p-8 flex justify-center">
         <table class="table-fixed w-4/5 border">
             <tbody>
@@ -16,8 +16,8 @@
                     <td class="border p-2 font-bold">{{ form.admitted_by.label_tag }}</td>
                     <td class="border p-2">{{ form.admitted_by }}</td>
                 </tr>
-    
-    
+                
+                
                 <tr>
                     <td class="border p-2 font-bold">{{ form.main_symptom }}</td>
                     <td class="border p-2">{{ form.main_symptoms }}</td>
@@ -30,12 +30,12 @@
                     <td class="border p-2 font-bold">{{ form.consent_contact_number.label_tag }}</td>
                     <td class="border p-2">{{ form.consent_contact_number }}</td>
                 </tr>
-
-    
+                
+                
             </tbody>
         </table>
     </div>
-
+    
     <div class="flex justify-center">
         <div class="flex items-center mt-8">
             
@@ -45,5 +45,6 @@
         </div>
     </div>
 
-
+    
 </form>
+{% endblock %}

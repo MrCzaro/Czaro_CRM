@@ -1,6 +1,5 @@
-from ckeditor.widgets import CKEditorWidget
 from django import forms
-from .models import Patient, PatientObservation
+from .models import Patient
 
 FORM_CLASS = "w-full my-2 py-2 px-2 rounded-xl bg-zinc-100"
 
@@ -47,12 +46,3 @@ class PatientForm(forms.ModelForm):
             "zip_code" : forms.TextInput(attrs={"class": FORM_CLASS}),
         }
         
-class PatientObservationForm(forms.ModelForm):
-    class Meta:
-        model = PatientObservation
-        fields = ["observation",]
-        labels = {"observation": "Patient observation",}
-        
-        widgets = {
-            "observation" : CKEditorWidget(config_name="default")
-        }
