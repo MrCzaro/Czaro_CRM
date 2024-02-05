@@ -15,7 +15,7 @@
       <tbody>
         {% for department in departments %}
           <tr>
-            <td class="border p-2">{{ department.name }}</td>
+            <td class="border p-2"><a href={% url 'department:department_detail' department.id %}>{{ department.name }}</a></td>
             <td class="border p-2">{{ department.description }}</td>
             <td class="border p-2">{{ department.created_by.get_full_name }}</td>
           </tr>

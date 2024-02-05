@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-
+from department.models import Department
 from patient.models import Patient
 from .models import Visit, Observation
 from .forms import VisitForm, ObservationForm
@@ -56,6 +56,7 @@ def update_visit(request, patient_id, visit_id):
 def visit_detail(request, patient_id, visit_id):
     patient = get_object_or_404(Patient, id=patient_id)
     visit = get_object_or_404(Visit, id=visit_id, patient=patient)
+    departments = Department.objects.all()
    
     observations = visit.observations.all()
     norton_scales = visit.norton.all()
@@ -65,6 +66,7 @@ def visit_detail(request, patient_id, visit_id):
     context = {
         "patient": patient,
         "visit": visit,
+        "departments": departments,
         "title": "Patient visit details",
         "observations": observations,
         "norton_scales": norton_scales,

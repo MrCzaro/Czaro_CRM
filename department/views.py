@@ -10,6 +10,18 @@ from patient.models import Patient
 from visit.models import Visit
 
 
+
+@login_required(login_url="/login/")
+def department_detail(request, department_id):
+    department = get_object_or_404(Department, id=department_id)
+    
+    context = {
+        "title" : "Department Detail",
+        "department" : department,
+    }
+    
+    return render(request, "department_detail.html", context)
+
 @login_required(login_url="/login/")
 def create_department(request):
     if request.method == 'POST':

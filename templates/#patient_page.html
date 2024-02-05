@@ -106,3 +106,45 @@
 
 
 {% endblock %}
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1 class="p-8 text-3xl font-bold text-center">{{ title }}</h1>
+    
+    <!-- Department details -->
+    <div class="flex justify-center">
+        <!-- Display department details here -->
+    </div>
+
+    <!-- Admit Patient -->
+    <div class="flex justify-center mt-4">
+        <form method="post" action="{% url 'admit_patient' patient.id visit.id department.id %}">
+            {% csrf_token %}
+            <button type="submit" class="py-2 px-4 bg-blue-500 text-white rounded-md">Admit Patient</button>
+        </form>
+    </div>
+
+    <!-- Discharge Patient -->
+    <div class="flex justify-center mt-4">
+        <form method="post" action="{% url 'discharge_patient' patient.id visit.id department.id %}">
+            {% csrf_token %}
+            <button type="submit" class="py-2 px-4 bg-red-500 text-white rounded-md">Discharge Patient</button>
+        </form>
+    </div>
+
+    <!-- Transfer Patient -->
+    <div class="flex justify-center mt-4">
+        <form method="post" action="{% url 'transfer_patient' patient.id visit.id department.id to_department.id %}">
+            {% csrf_token %}
+            <select name="to_department" id="to_department">
+                <!-- Populate dropdown with available departments for transfer -->
+                {% for other_department in available_departments %}
+                    <option value="{{ other_department.id }}">{{ other_department.name }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="py-2 px-4 bg-green-500 text-white rounded-md">Transfer Patient</button>
+        </form>
+    </div>
+
+{% endblock %}

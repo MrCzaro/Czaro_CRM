@@ -81,9 +81,40 @@
                     <button type="submit" class="py-4 px-6 bg-emerald-600 rounded-xl text-white">Readmit Patient</button>
                 </form>
                     {% endif %}
-                </div>
             </div>
-    
+    </div>
+
+<!-- Admit Patient -->
+<div class="flex justify-center mt-4">
+    <form method="post" action="{% url 'department:admit' patient_id=patient.id visit_id=visit.id department_id=department.id|default:None %}">
+        {% csrf_token %}
+        <button type="submit" class="py-2 px-4 bg-blue-500 text-white rounded-md">Admit Patient</button>
+    </form>
+</div>
+
+<!-- Discharge Patient -->
+<div class="flex justify-center mt-4">
+    <form method="post" action="{% url 'department:discharge' patient_id=patient.id visit_id=visit.id department_id=department.id %}">
+        {% csrf_token %}
+        <button type="submit" class="py-2 px-4 bg-red-500 text-white rounded-md">Discharge Patient</button>
+    </form>
+</div>
+
+
+
+<!-- Transfer Patient -->
+<div class="flex justify-center mt-4">
+    <form method="post" action="{% url 'department:transfer' patient.id visit.id department.id %}">
+        {% csrf_token %}
+        <select name="to_department" id="to_department">
+            <!-- Populate dropdown with available departments for transfer -->
+            {% for other_department in available_departments %}
+                <option value="{{ other_department.id }}">{{ other_department.name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="py-2 px-4 bg-green-500 text-white rounded-md">Transfer Patient</button>
+    </form>
+</div>
 
 
 {% endblock %}
