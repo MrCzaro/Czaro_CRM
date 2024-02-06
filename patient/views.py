@@ -5,11 +5,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic.edit import UpdateView, DeleteView
 
-
-from django.utils import timezone
 from .models import Patient 
 from .forms import PatientForm
-from visit.models import Visit
+
 
 @login_required(login_url = "/login/")
 def index(request):
@@ -28,10 +26,10 @@ def index(request):
 @login_required(login_url = "/login/")
 def patient_detail(request, patient_id):
     patient = get_object_or_404(Patient, id=patient_id)
-    visits = patient.visits.all()
+    hospitalizations = patient.hospitalizations.all()
     context = {
         "patient": patient,
-        "visits" : visits,
+        "hospitalizations" : hospitalizations,
         "title": "Patient details"
     }
     

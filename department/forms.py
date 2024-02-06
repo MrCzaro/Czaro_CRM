@@ -1,5 +1,6 @@
 from django import forms
-from .models import Department
+from .models import Department, Observation, Hospitalization
+from ckeditor.widgets import CKEditorWidget
 
 class DepartmentForm(forms.ModelForm):
     class Meta:
@@ -15,3 +16,16 @@ class DepartmentForm(forms.ModelForm):
                 raise forms.ValidationError("Only users with the admin profession can create departments.")
             
             return cleaned_data
+        
+
+        
+class ObservationForm(forms.ModelForm):
+    class Meta:
+        model = Observation
+        fields = ["observation",]
+        labels = {"observation": "Patient observation",}
+        
+        widgets = {
+            "observation" : CKEditorWidget(config_name="default")
+        }
+

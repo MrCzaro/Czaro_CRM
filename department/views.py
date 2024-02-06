@@ -4,10 +4,10 @@ from django.contrib.auth.decorators import login_required
 
 
 from django.utils import timezone
-from .models import Department, Hospitalization
-from .forms import DepartmentForm
+from .models import Department, Hospitalization, Observation
+from .forms import DepartmentForm, ObservationForm
 from patient.models import Patient
-from visit.models import Visit
+
 
 
 
@@ -58,9 +58,9 @@ def admitted_patients(request, department_id):
     department = get_object_or_404(Department, id=department_id)
 
     # Filter currently admitted patients in the specified department
-    admitted_patients = Visit.objects.filter(
+    admitted_patients = Hospitalization.objects.filter(
         is_discharged=False,
-        department=department  # Assuming you have a ForeignKey from Visit to Department
+        department=department 
     )
 
     context = {
@@ -72,22 +72,22 @@ def admitted_patients(request, department_id):
     return render(request, "admitted_patients.html", context)
 
 @login_required(login_url="/login/")
-def admit_patient(request, patient_id, visit_id, department_id):
+def admit_patient(request, patient_id, hospitalization_id, department_id):
     patient = get_object_or_404(Patient, id=patient_id)
-    visit = get_object_or_404(Visit, id=visit_id, patient=patient)
+    hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id, patient=patient)
     department = get_object_or_404(Department, id=department_id)
     
     # Check if the patient is already admitted in another department for the same visit:
-    if Hospitalization.objects.filter(patient=patient, visit=visit).exists():
+    if Hospitalization.objects.filter(patient=patient, hospitalization=hospitalization).exists():
         context = {
             "title" : "Admission Error",
             "patient" : patient,
-            "visit" : visit,
+            "hospitalization" : hospitalization,
         }
         
         return render(request, "admit_error.html", context)
     # Admission logic
-    hospitalization = Hospitalization(patient=patient, visit=visit, department=department)
+    hospitalization = Hospitalization(patient=patient, hospitalization=hospitalization, department=department)
     hospitalization.save()
     
     return redirect("department:detail", department_id=department.id)
@@ -95,28 +95,87 @@ def admit_patient(request, patient_id, visit_id, department_id):
     
 
 @login_required(login_url="/login/")
-def discharge_patient(request, patient_id, visit_id, department_id):
+def discharge_patient(request, patient_id, hospitalization_id, department_id):
     patient = get_object_or_404(Patient, id=patient_id)
-    visit = get_object_or_404(Visit, id=visit_id, patient=patient)
+    hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id, patient=patient)
     department = get_object_or_404(Department, id=department_id)
 
     # Discharge logic
-    hospitalization = Hospitalization.objects.get(patient=patient, visit=visit, department=department)
+    hospitalization = Hospitalization.objects.get(patient=patient, hospitalization=hospitalization, department=department)
     hospitalization.discharged_on = timezone.now()
     hospitalization.save()
 
     return redirect("department:detail", department_id=department.id)
 
 @login_required(login_url="/login/")
-def transfer_patient(request, patient_id, visit_id, from_department_id, to_department_id):
+def transfer_patient(request, patient_id, hospitalization_id, from_department_id, to_department_id):
     patient = get_object_or_404(Patient, id=patient_id)
-    visit = get_object_or_404(Visit, id=visit_id, patient=patient)
+    hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id, patient=patient)
     from_department = get_object_or_404(Department, id=from_department_id)
     to_department = get_object_or_404(Department, id=to_department_id)
 
     # Transfer logic
-    hospitalization = Hospitalization.objects.get(patient=patient, visit=visit, department=from_department)
+    hospitalization = Hospitalization.objects.get(patient=patient, hospitalization=hospitalization, department=from_department)
     hospitalization.department = to_department
     hospitalization.save()
 
     return redirect("department:detail", department_id=to_department.id)
+
+
+@login_required(login_url = "/login/")
+def add_patient_observation(request, patient_id, hospitalization_id):
+    # Check if the user has the allowed profession
+    if request.user.profession == "secretaries":
+        # Redirect or show an error message
+        return redirect("access_denied")
+    
+    
+    patient = get_object_or_404(Patient, id=patient_id)
+    hospitalization= get_object_or_404(Hospitalization, id=hospitalization_id, patient=patient)
+    
+    if request.method == "POST":
+        form = ObservationForm(request.POST)
+        if form.is_valid():
+            observation = form.save(commit=False)
+            observation.created_by = request.user
+            observation.hospitalization = hospitalization
+            observation.save()
+            return redirect("patient:page", patient_id=patient.id)
+    else:
+        
+        form = ObservationForm()
+        
+    context = {
+        "form" : form, 
+        "title" : "Add Patient Observation",
+        "patient_id" : patient.id,
+    }
+    
+    return render(request,"patient_observation_form.html", context)
+
+@login_required(login_url = "/login/")
+def edit_patient_observation(request, patient_id, hospitalization_id, observation_id):
+    # Check if the user has the allowed profession
+    if request.user.profession == "secretaries":
+        # Redirect or show an error message
+        return redirect("access_denied")
+    
+    patient = get_object_or_404(Patient, id = patient_id)
+    hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id, patient=patient)
+    observation = get_object_or_404(Observation, id=observation_id, hospitalization=hospitalization)
+    
+    if request.method == "POST":
+        form = ObservationForm(request.POST, instance=observation)
+        if form.is_valid():
+            form.save()
+            return redirect("patient:page", patient_id=patient.id)
+    else:
+        form = ObservationForm(instance=observation)
+        
+    context = {
+        "form": form,
+        "title" : "Edit Patient Observation",
+        "patient_id" : patient.id,
+    }
+    
+    return render(request, "patient_observation_form.html", context)

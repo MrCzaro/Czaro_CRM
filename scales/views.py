@@ -4,17 +4,17 @@ from django.contrib.auth.decorators import login_required
 from . models import NortonScale, GlasgowComaScale, NewsScale
 from . forms import NortonScaleForm, GlasgowComaScaleForm, NewsScaleForm
 from patient.models import Patient
-from visit.models import Visit
+from department.models import Hospitalization
 
 @login_required(login_url = "/login/")
-def add_norton_scale(request, patient_id, visit_id):
+def add_norton_scale(request, patient_id, hospitalization_id):
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
         # Redirect or show an error message
         return redirect("access_denied")
     
     patient = get_object_or_404(Patient, id=patient_id)
-    visit = get_object_or_404(Visit, id=visit_id, patient=patient)
+    hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id, patient=patient)
     
     if request.method == "POST":
         form = NortonScaleForm(request.POST)
@@ -22,7 +22,7 @@ def add_norton_scale(request, patient_id, visit_id):
             print(form.cleaned_data)
             scale = form.save(commit=False)
             scale.created_by = request.user
-            scale.visit = visit
+            scale.hospitalization = hospitalization
             scale.save()
             return redirect("patient:page", patient_id=patient.id)
         else:
@@ -39,15 +39,15 @@ def add_norton_scale(request, patient_id, visit_id):
     return render(request,"scale_form.html", context)
 
 @login_required(login_url = "/login/")
-def edit_norton_scale(request, patient_id, visit_id, norton_id):
+def edit_norton_scale(request, patient_id, hospitalization_id, norton_id):
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
         # Redirect or show an error message
         return redirect("access_denied")
     
     patient = get_object_or_404(Patient, id= patient_id)
-    visit = get_object_or_404(Visit, id=visit_id, patient=patient)
-    norton = get_object_or_404(NortonScale, id=norton_id, visit=visit)
+    hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id, patient=patient)
+    norton = get_object_or_404(NortonScale, id=norton_id, hospitalization=hospitalization)
     
     if request.method == "POST":
         form = NortonScaleForm(request.POST, instance=norton)
@@ -66,21 +66,21 @@ def edit_norton_scale(request, patient_id, visit_id, norton_id):
     return render(request,"scale_form.html", context)
 
 @login_required(login_url = "/login/")
-def add_glasgow_scale(request, patient_id, visit_id):
+def add_glasgow_scale(request, patient_id, hospitalization_id):
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
         # Redirect or show an error message
         return redirect("access_denied")
     
     patient = get_object_or_404(Patient, id=patient_id)
-    visit = get_object_or_404(Visit, id=visit_id, patient=patient)
+    hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id, patient=patient)
     
     if request.method == "POST":
         form = GlasgowComaScaleForm(request.POST)
         if form.is_valid():
             scale = form.save(commit=False)
             scale.created_by = request.user
-            scale.visit = visit
+            scale.hospitalization = hospitalization
             scale.save()
             return redirect("patient:page", pk=patient.id)
         else:
@@ -97,15 +97,15 @@ def add_glasgow_scale(request, patient_id, visit_id):
     return render(request, "scale_form.html", context)
 
 @login_required(login_url = "/login/")
-def edit_glasgow_scale(request, patient_id, visit_id, glasgow_id):
+def edit_glasgow_scale(request, patient_id, hospitalization_id, glasgow_id):
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
         # Redirect or show an error message
         return redirect("access_denied")
     
     patient = get_object_or_404(Patient, id=patient_id)
-    visit = get_object_or_404(Visit, id=visit_id, patient=patient)
-    glasgow = get_object_or_404(GlasgowComaScale, id=glasgow_id, visit=visit)
+    hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id, patient=patient)
+    glasgow = get_object_or_404(GlasgowComaScale, id=glasgow_id, hospitalization=hospitalization)
     
     if request.method == "POST":
         form = GlasgowComaScaleForm(request.POST, instance=glasgow)
@@ -123,14 +123,14 @@ def edit_glasgow_scale(request, patient_id, visit_id, glasgow_id):
     
     return render(request, "scale_form.html", context)
         
-def add_news_scale(request, patient_id, visit_id):
+def add_news_scale(request, patient_id, hospitalization_id):
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
         # Redirect or show an error message
         return redirect("access_denied")
     
     patient = get_object_or_404(Patient, id=patient_id)
-    visit = get_object_or_404(Visit, id=visit_id, patient=patient)
+    hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id, patient=patient)
     
     
     if request.method == "POST":
@@ -138,7 +138,7 @@ def add_news_scale(request, patient_id, visit_id):
         if form.is_valid():
             scale = form.save(commit=False)
             scale.created_by = request.user
-            scale.visit = visit
+            scale.hospitalization = hospitalization
             scale.save()
             return redirect("patient:page", patient_id=patient.id)
         else:
@@ -154,15 +154,15 @@ def add_news_scale(request, patient_id, visit_id):
     
     return render(request, "scale_form.html", context)
 
-def edit_news_scale(request, patient_id, visit_id, news_id):
+def edit_news_scale(request, patient_id, hospitalization_id, news_id):
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
         # Redirect or show an error message
         return redirect("access_denied")
     
     patient = get_object_or_404(Patient, id=patient_id)
-    visit = get_object_or_404(Visit, id=visit_id, patient=patient)
-    news = get_object_or_404(NewsScale, id=news_id, visit=visit)
+    hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id, patient=patient)
+    news = get_object_or_404(NewsScale, id=news_id, hospitalization=hospitalization)
     
     
     if request.method == "POST":
