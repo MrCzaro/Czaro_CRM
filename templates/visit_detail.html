@@ -84,37 +84,15 @@
             </div>
     </div>
 
-<!-- Admit Patient -->
+  <!-- Inside your HTML form or where you want the form/link to appear -->
 <div class="flex justify-center mt-4">
-    <form method="post" action="{% url 'department:admit' patient_id=patient.id visit_id=visit.id department_id=department.id|default:None %}">
+    <form method="post" action="{% url 'visit:detail' patient.id visit.id %}">
         {% csrf_token %}
-        <button type="submit" class="py-2 px-4 bg-blue-500 text-white rounded-md">Admit Patient</button>
+        {{ form.as_p }}
+        <button type="submit" class="py-2 px-4 bg-blue-500 text-white rounded-md">Admit Patient to Department</button>
     </form>
 </div>
 
-<!-- Discharge Patient -->
-<div class="flex justify-center mt-4">
-    <form method="post" action="{% url 'department:discharge' patient_id=patient.id visit_id=visit.id department_id=department.id %}">
-        {% csrf_token %}
-        <button type="submit" class="py-2 px-4 bg-red-500 text-white rounded-md">Discharge Patient</button>
-    </form>
-</div>
-
-
-
-<!-- Transfer Patient -->
-<div class="flex justify-center mt-4">
-    <form method="post" action="{% url 'department:transfer' patient.id visit.id department.id %}">
-        {% csrf_token %}
-        <select name="to_department" id="to_department">
-            <!-- Populate dropdown with available departments for transfer -->
-            {% for other_department in available_departments %}
-                <option value="{{ other_department.id }}">{{ other_department.name }}</option>
-            {% endfor %}
-        </select>
-        <button type="submit" class="py-2 px-4 bg-green-500 text-white rounded-md">Transfer Patient</button>
-    </form>
-</div>
 
 
 {% endblock %}

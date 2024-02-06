@@ -3,10 +3,21 @@ from django.urls import reverse
 from django.utils import timezone
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from department.models import Department
+from department.models import Department, Hospitalization
 from patient.models import Patient
 from .models import Visit, Observation
-from .forms import VisitForm, ObservationForm
+from .forms import VisitForm, ObservationForm, AdmitPatientForm
+
+def admit_patient_to_department(patient, visit, department):
+    # Check if the patient is already admitted in another department for the same visit:
+    if Hospitalization.objects.filter(patient=patient, visit=visit).exists():
+        # Handle admission error
+        # You can render an error page or redirect to a specific URL
+        pass
+
+    # Admission logic
+    hospitalization = Hospitalization(patient=patient, visit=visit, department=department)
+    hospitalization.save()
 
 @login_required(login_url = "/login/")
 def create_visit(request, patient_id):
@@ -63,9 +74,24 @@ def visit_detail(request, patient_id, visit_id):
     glasgow_scales = visit.glasgow.all()
     news_scales = visit.news.all()
     
+    
+    # Discharge or readmit patient  
+    if request.method == "POST":
+        form = AdmitPatientForm(request.POST)
+        if form.is_valid():
+            selected_department = form.cleaned_data['department']
+            admit_patient_to_department(patient, visit, selected_department)
+            return HttpResponseRedirect(reverse("visit:detail", args=[patient.id, visit.id]))
+# ...
+
+    
+    else:
+        form = AdmitPatientForm()
+    
     context = {
         "patient": patient,
         "visit": visit,
+        "form" : form,
         "departments": departments,
         "title": "Patient visit details",
         "observations": observations,
@@ -73,20 +99,6 @@ def visit_detail(request, patient_id, visit_id):
         "glasgow_scales": glasgow_scales,
         "news_scales": news_scales,
     }
-    # Discharge or readmit patient  
-    if request.method == "POST":
-        if request.POST.get("action") == "discharge":
-            visit.is_discharged = True
-            visit.discharged_on = timezone.now()
-            visit.save()
-        elif request.POST.get("action") == "readmit":
-            visit.is_discharged = False
-            visit.discharged_on = None
-            visit.save()
-            
-        # Redirect to the same detail page after processing discharge/readmission
-        return HttpResponseRedirect(reverse("visit:detail", args=[patient.id, visit.id]))
-    
     return render(request, "visit_detail.html", context)
 
 @login_required(login_url = "/login/")

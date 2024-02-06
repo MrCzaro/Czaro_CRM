@@ -4,6 +4,7 @@ from ckeditor.widgets import CKEditorWidget
 FORM_CLASS = "w-full my-2 py-2 px-2 rounded-xl bg-zinc-100"
 
 from .models import Visit, Observation
+from department.models import Department
 
 class VisitForm(forms.ModelForm):
     class Meta:
@@ -46,3 +47,6 @@ class ObservationForm(forms.ModelForm):
         widgets = {
             "observation" : CKEditorWidget(config_name="default")
         }
+
+class AdmitPatientForm(forms.Form):
+    department = forms.ModelChoiceField(queryset=Department.objects.all(), empty_label=None, widget=forms.Select(attrs={'class': 'your-custom-class'}))
