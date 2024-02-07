@@ -29,3 +29,9 @@ class ObservationForm(forms.ModelForm):
             "observation" : CKEditorWidget(config_name="default")
         }
 
+class HospitalizationForm(forms.ModelForm):
+    department_id = forms.UUIDField(widget=forms.HiddenInput())  # Add a hidden field for department_id
+
+    class Meta:
+        model = Hospitalization
+        fields = ['patient', 'department_id', 'main_symptom', 'additional_symptoms']

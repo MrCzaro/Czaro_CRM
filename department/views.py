@@ -5,18 +5,48 @@ from django.contrib.auth.decorators import login_required
 
 from django.utils import timezone
 from .models import Department, Hospitalization, Observation
-from .forms import DepartmentForm, ObservationForm
+from .forms import DepartmentForm, ObservationForm, HospitalizationForm
 from patient.models import Patient
 
+
+@login_required(login_url="/login/")
+def admit_patient(request, patient_id):
+    patient = get_object_or_404(Patient, id=patient_id)
+
+    if request.method == 'POST':
+        form = HospitalizationForm(request.POST)
+        if form.is_valid():
+            hospitalization = form.save(commit=False)
+            department_id = request.POST.get('department_id')  # Assuming you have a hidden field in your form with the department_id
+            department = get_object_or_404(Department, id=department_id)
+            hospitalization.patient = patient
+            hospitalization.department = department  # Associate the patient with the selected department
+            hospitalization.save()
+            return redirect('department:department_detail', department_id)
+    else:
+        form = HospitalizationForm()
+
+    departments = Department.objects.all()  # Fetch all departments to display in the form
+
+    context = {
+        'form': form,
+        'departments': departments,
+        'title': f'Admit {patient.first_name} {patient.last_name}',
+        'patient': patient,
+    }
+
+    return render(request, 'admit_patient.html', context)
 
 
 
 @login_required(login_url="/login/")
 def department_detail(request, department_id):
     department = get_object_or_404(Department, id=department_id)
+    hospitalizations = Hospitalization.objects.filter(department__id=department_id, is_discharged=False)
     
     context = {
         "title" : "Department Detail",
+        'hospitalizations': hospitalizations,
         "department" : department,
     }
     
@@ -52,74 +82,6 @@ def department_list(request):
     return render(request, 'department_list.html', context)
 
 
-@login_required(login_url="/login/")
-def admitted_patients(request, department_id):
-    # Assuming you have a Department model with an appropriate relationship to Visit
-    department = get_object_or_404(Department, id=department_id)
-
-    # Filter currently admitted patients in the specified department
-    admitted_patients = Hospitalization.objects.filter(
-        is_discharged=False,
-        department=department 
-    )
-
-    context = {
-        "department": department,
-        "admitted_patients": admitted_patients,
-        "title": "Admitted Patients",
-    }
-
-    return render(request, "admitted_patients.html", context)
-
-@login_required(login_url="/login/")
-def admit_patient(request, patient_id, hospitalization_id, department_id):
-    patient = get_object_or_404(Patient, id=patient_id)
-    hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id, patient=patient)
-    department = get_object_or_404(Department, id=department_id)
-    
-    # Check if the patient is already admitted in another department for the same visit:
-    if Hospitalization.objects.filter(patient=patient, hospitalization=hospitalization).exists():
-        context = {
-            "title" : "Admission Error",
-            "patient" : patient,
-            "hospitalization" : hospitalization,
-        }
-        
-        return render(request, "admit_error.html", context)
-    # Admission logic
-    hospitalization = Hospitalization(patient=patient, hospitalization=hospitalization, department=department)
-    hospitalization.save()
-    
-    return redirect("department:detail", department_id=department.id)
-
-    
-
-@login_required(login_url="/login/")
-def discharge_patient(request, patient_id, hospitalization_id, department_id):
-    patient = get_object_or_404(Patient, id=patient_id)
-    hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id, patient=patient)
-    department = get_object_or_404(Department, id=department_id)
-
-    # Discharge logic
-    hospitalization = Hospitalization.objects.get(patient=patient, hospitalization=hospitalization, department=department)
-    hospitalization.discharged_on = timezone.now()
-    hospitalization.save()
-
-    return redirect("department:detail", department_id=department.id)
-
-@login_required(login_url="/login/")
-def transfer_patient(request, patient_id, hospitalization_id, from_department_id, to_department_id):
-    patient = get_object_or_404(Patient, id=patient_id)
-    hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id, patient=patient)
-    from_department = get_object_or_404(Department, id=from_department_id)
-    to_department = get_object_or_404(Department, id=to_department_id)
-
-    # Transfer logic
-    hospitalization = Hospitalization.objects.get(patient=patient, hospitalization=hospitalization, department=from_department)
-    hospitalization.department = to_department
-    hospitalization.save()
-
-    return redirect("department:detail", department_id=to_department.id)
 
 
 @login_required(login_url = "/login/")

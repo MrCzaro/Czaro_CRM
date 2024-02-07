@@ -50,13 +50,11 @@
 
     </div>
 
-            {% for visit in visits %}
-                {% if not visit.is_discharged %}
-                    <p>Currently admiited: <a href="{% url 'visit:detail' patient.id visit.id %}">{{ visit.admitted_on }}</a></p>
-                {% else %}    
-                    <p>End of care: <a href="#">{{ visit.discharged_on }}</a></p>
-                {% endif %}
-            {% endfor %}
+    <div>
+        <a href="{% url 'department:admit_patient' patient.id %}">Admit Patient</a>
+    </div>
+
+      
         
             <div class="flex justify-center">
                 <div class="flex items-center mt-8">
@@ -70,3 +68,4 @@
 
 
 {% endblock %}
+

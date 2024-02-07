@@ -35,7 +35,7 @@
     {% for patient in patients %}
     <a href="{% url 'patient:detail' patient.id %}">
         <p class="mb-3 text-lg">
-            <span class="font-bold">{{ patient.first_name }} {{ patient.last_name }}</span> | Added on {{ patient.created_on|date:"d F Y, H:i"  }}
+            <span class="font-bold">{{ patient.first_name }} {{ patient.last_name }}</span>
         </p>
     </a>
 {% endfor %}
