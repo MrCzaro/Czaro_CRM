@@ -14,4 +14,34 @@
     <a href="{% url 'department:department_list' %}" class="py-4 px-6 bg-zinc-800 rounded-xl text-white mr-3">Back</a>
 
 </div>
+
+<h1 class="p-8 text-3xl font-bold text-center">Admitted Patients:</h1>
+<div class="flex justify-center">
+    
+    {% if hospitalizations %}
+        <table class="table-fixed w-2/3 border">
+            <thead>
+                <tr>
+                    <th class="border p-2 font-bold">Patient Name</th>
+                    <th class="border p-2 font-bold">Main Symptom</th>
+                    <th class="border p-2 font-bold">Additional Symptoms</th>
+                    <th class="border p-2 font-bold">Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for hospitalization in hospitalizations %}
+                    <tr>
+                        <td class="border p-2">{{ hospitalization.patient }}</td>
+                        <td class="border p-2">{{ hospitalization.main_symptom }}</td>
+                        <td class="border p-2">{{ hospitalization.additional_symptoms }}</td>
+                        <td class="border p-2 font-bold"><a href="{% url 'department:hospitalization' hospitalization.id %}">Details</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No admitted patients in this department.</p>
+    {% endif %}
+ </div>
+
 {% endblock %}

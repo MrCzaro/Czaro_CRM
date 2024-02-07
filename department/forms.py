@@ -34,4 +34,4 @@ class HospitalizationForm(forms.ModelForm):
 
     class Meta:
         model = Hospitalization
-        fields = ['patient', 'department_id', 'main_symptom', 'additional_symptoms']
+        fields = ['main_symptom', 'additional_symptoms']

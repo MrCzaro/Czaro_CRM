@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+
+    <h1 class="p-8 text-3xl font-bold text-center">{{ title }}</h1>
+ 
+
+    <div class="flex justify-center">
+        <table class="table-fixed w-2/3 border">
+            <tbody>
+                <tr>
+                    <td class="border p-2 font-bold">First Name</td>
+                    <td class="border p-2">{{ hospitalization.patient.first_name }}</td>
+                    <td class="border p-2 font-bold">Last Name</td>
+                    <td class="border p-2">{{ hospitalization.patient.last_name }}</td>
+                </tr>
+    
+                <tr>
+                    <td class="border p-2 font-bold">Date of birth</td>
+                    <td class="border p-2">{{ patient.date_of_birth|date:"d F Y" }}</td>
+                    <td class="border p-2 font-bold">Contact number: </td>
+                    <td class="border p-2">{{ patient.contact_number }}</td>
+                </tr>
+    
+                <tr>
+                    <td class="border p-2 font-bold">Adress</td>
+                    <td class="border p-2">{{ patient.street }}</td>
+                    <td class="border p-2 font-bold">City</td>
+                    <td class="border p-2">{{ patient.city }}</td>
+                </tr>
+    
+                <tr>
+                    <td class="border p-2 font-bold">Zip code</td>
+                    <td class="border p-2">{{ patient.zip_code }}</td>
+                    <td class="border p-2 font-bold">Country</td>
+                    <td class="border p-2">{{ patient.country }}</td>
+                </tr>
+    
+                <tr>
+                    <td class="border p-2 font-bold">Insurance</td>
+                    <td class="border p-2">{{ patient.is_insured|yesno:"Yes,No"  }}</td>
+                    <td class="border p-2 font-bold">Insurance number</td>
+                    <td class="border p-2">{{ patient.insurance }}</td>
+                </tr>
+                
+            </tbody>
+        </table>
+
+    </div>
+
+ 
+
+
+{% endblock %}

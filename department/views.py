@@ -8,6 +8,17 @@ from .models import Department, Hospitalization, Observation
 from .forms import DepartmentForm, ObservationForm, HospitalizationForm
 from patient.models import Patient
 
+@login_required(login_url="/login/")
+def hospitalization_detail(request, hospitalization_id):
+    hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id)
+    
+    context = {
+        "title" : "Hospitalization Detail",
+        "hospitalization" : hospitalization
+    }
+    
+    return render(request, "hospitalization_detail.html", context)
+
 
 @login_required(login_url="/login/")
 def admit_patient(request, patient_id):

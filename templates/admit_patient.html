@@ -3,6 +3,7 @@
 {% block content %}
 <body>
     <h1>{% block title %}Admit Patient{% endblock %}</h1>
+    <p>Patient: {{ patient.first_name }} {{ patient.last_name }}
     <form method="post" action="{% url 'department:admit_patient' patient.id %}">
         {% csrf_token %}
         {{ form.as_p }}
@@ -16,3 +17,5 @@
     </form>
 
 {% endblock %}
+
+
