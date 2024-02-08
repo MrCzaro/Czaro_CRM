@@ -43,13 +43,73 @@
             </div>
             {% endfor %}
             
-
         </ul>
-    {% else %}
+        {% else %}
         <p>No observations for this hospitalization.</p>
+        {% endif %}
+        
+    <a href="{% url 'scales:norton_create'  hospitalization.patient.id hospitalization.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white">Add Norton Scale</a>
+    <h2>Norton Scales</h2>
+<ul>
+  {% for norton_scale in norton_scales %}
+    <li>
+      <p>Physical Condition: {{ norton_scale.get_physical_condition_display }}</p>
+      <p>Mental Condition: {{ norton_scale.get_mental_condition_display }}</p>
+      <p>Activity: {{ norton_scale.get_activity_display }}</p>
+      <p>Mobility: {{ norton_scale.get_mobility_display }}</p>
+      <p>Incontinence: {{ norton_scale.get_incontinence_display }}</p>
+      <p>Total Points: {{ norton_scale.total_points }}</p>
+      <p>Pressure Risk: {{ norton_scale.pressure_risk }}</p>
+      <p>Created by: {{ norton_scale.created_by.first_name }} {{ norton_scale.created_by.last_name }}  | Created at: {{ norton_scale.created_at}} | Modified at: {{ norton_scale.modified_at }}</p>
+    {% if norton_scale.created_by == user %}
+        <a href="{% url 'scales:norton_update' hospitalization.patient.id hospitalization.id norton_scale.id %}" class="font-bold text-black mr-3">Edit</a>
     {% endif %}
+    </li>
+  {% endfor %}
+</ul>
 
- 
+<a href="{% url 'scales:glasgow_create' hospitalization.patient.id hospitalization.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white mr-3">Add Glasgow Coma Scale</a>
 
+<h2>Glasgow Coma Scales</h2>
+<ul>
+    {% for glasgow_scale in glasgow_scales %}
+        <li>
+            <p>Best eye response: {{ glasgow_scale.get_eye_response_display }}</p>
+            <p>Best verbal response: {{ glasgow_scale.get_verbal_response_display }}</p>
+            <p>Best motor response: {{ glasgow_scale.get_motor_response_display }}</p>
+            <p>Total Points: {{ glasgow_scale.total_points }}</p>
+            <p>Created by: {{ glasgow_scale.created_by.first_name }} {{ glasgow_scale.created_by.last_name }}| Created at: {{ glasgow_scale.created_at}} | Modified at: {{ glasgow_scale.modified_at }}</p>
+            {% if glasgow_scale.created_by == user %}
+                <a href="{% url 'scales:glasgow_update' hospitalization.patient.id hospitalization.id glasgow_scale.id %}" class="font-bold text-black mr-3">Edit</a>
+            {% endif %}
+            </li>
+    {% endfor %}
+</ul>
+
+<a href="{% url 'scales:news_create' hospitalization.patient.id hospitalization.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white mr-3">Add NEWS Scale</a>
+
+h2>National Early Warning Score Scales</h2>
+<ul>
+  {% for news_scale in news_scales %}
+    <li>
+      <p>Respiratory Rate: {{ news_scale.respiratory_rate }}</p>
+      <p>Oxygen Saturation: {{ news_scale.oxygen_saturation }}</p>
+      <p>Oxygen Supplementaion: {{ news_scale.get_is_on_oxygen_display }}</p>
+      <p>Is the patient in Acute exacebrations of chronic obstructive pulmonary disease state: {{ news_scale.get_aecopd_state_display }}</p>
+      <p>Body Temperature: {{ news_scale.temperature }}</p>
+      <p>Systolic Blood Pressure: {{ news_scale.systolic_blood_pressure }}</p>
+      <p>Diastolic Blood Pressure: {{ news_scale.diastolic_blood_pressure }}</p>
+      <p>Heart Rate: {{ news_scale.heart_rate }}</p>
+      <p>Level of consciousness: {{ news_scale.get_level_of_consciousness_display }} </p>
+      <p>Total NEWS score: {{ news_scale.total_score }}</p>
+      <p>Score Interpretation : {{ news_scale.score_interpretation }}
+      <p>Created by: {{ news_scale.created_by }} | Created_at: {{ news_scale.created_at}} | Modified at: {{ news_scale.modified_at }}</p>
+
+    {% if news_scale.created_by == user %}
+        <a href="{% url 'scales:news_update' hospitalization.patient.id hospitalization.id news_scale.id %}" class="font-bold text-black mr-3">Edit</a>
+    {% endif %}
+    </li>
+  {% endfor %}
+</ul>
 
 {% endblock %}

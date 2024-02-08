@@ -1,6 +1,9 @@
 from django import forms
-from .models import Department, Observation, Hospitalization
+
 from ckeditor.widgets import CKEditorWidget
+
+from .models import Department, Observation, Hospitalization
+
 
 class DepartmentForm(forms.ModelForm):
     class Meta:
@@ -43,8 +46,12 @@ class TransferPatientForm(forms.Form):
         label = "Transfer to Department"
     )
     
-class DischargeFrom(forms.Form):
-    discharge_date = forms.DateTimeField(
+class DischargeForm(forms.Form):
+    discharge_date = forms.DateField(
         label="Discharge Date",
-        widget=forms.TextInput(attrs={"type": "datetime-local"})
+        widget=forms.DateInput(attrs={"type": "date"})
+    )
+    discharge_time = forms.TimeField(
+        label="Discharge Time",
+        widget=forms.TimeInput(attrs={"type": "time"})
     )

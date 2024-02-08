@@ -58,7 +58,7 @@
       <p>Pressure Risk: {{ norton_scale.pressure_risk }}</p>
       <p>Created by: {{ norton_scale.created_by.first_name }} {{ norton_scale.created_by.last_name }}  | Created at: {{ norton_scale.created_at}} | Modified at: {{ norton_scale.modified_at }}</p>
     {% if norton_scale.created_by == user %}
-        <a href="{% url 'scales:norton_edit' patient_id=patient.id norton_id=norton_scale.id %}" class="font-bold text-black mr-3">Edit</a>
+        <a href="{% url 'scales:norton_update' hospitalization.patient.id norton_scale.id %}" class="font-bold text-black mr-3">Edit</a>
     {% endif %}
     </li>
   {% endfor %}

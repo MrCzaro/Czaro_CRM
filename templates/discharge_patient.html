@@ -9,13 +9,15 @@
 
     <form method="post" action="{% url 'department:discharge' hospitalization.id %}">
         {% csrf_token %}
-
+    
         <label for="id_discharge_date">Discharge Date:</label>
-        <input type="datetime-local" name="discharge_date" id="id_discharge_date" required>
-
+        <input type="date" name="discharge_date" id="id_discharge_date" required value="{{ default_discharge_date|default:'' }}">
+    
+        <label for="id_discharge_time">Discharge Time:</label>
+        <input type="time" name="discharge_time" id="id_discharge_time" required value="{{ default_discharge_time|default:'' }}">
+    
         <button type="submit">Discharge</button>
     </form>
-
     <p><a href="{% url 'department:department_detail' hospitalization.department.id %}">Back to Department</a></p>
 
 </body>

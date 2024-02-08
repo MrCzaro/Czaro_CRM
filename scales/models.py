@@ -90,7 +90,7 @@ class NortonScale(models.Model):
         ordering = ("-created_at",)
         
     def __str__(self):
-        return f"{self.patient.first_name}"
+        return f"{self.hospitalization.patient.first_name} points {self.total_points}"
     
     
         
@@ -182,7 +182,7 @@ class NewsScale(models.Model):
     is_on_oxygen = models.BooleanField(choices=YES_NO_CHOICES, default=NO)
     #AECOPD state - Acute exacebrations of chronic obstructive pulmonary disease
     aecopd_state = models.BooleanField(choices=YES_NO_CHOICES, default=NO)
-    temperature = models.DecimalField(max_digits=4, decimal_places=2,validators=[MinValueValidator(0), MaxValueValidator(50)])
+    temperature = models.DecimalField(max_digits=3, decimal_places=1,validators=[MinValueValidator(0), MaxValueValidator(50)])
     systolic_blood_pressure = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(300)])
     diastolic_blood_pressure = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(200)])
     heart_rate = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(300)])

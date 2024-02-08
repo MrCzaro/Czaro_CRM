@@ -1,21 +1,29 @@
 from django.shortcuts import redirect,render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
-
+from datetime import datetime, time
 
 from django.utils import timezone
 from .models import Department, Hospitalization, Observation
-from .forms import DepartmentForm, ObservationForm, HospitalizationForm, TransferPatientForm, DischargeFrom
+from .forms import DepartmentForm, ObservationForm, HospitalizationForm, TransferPatientForm, DischargeForm
 from patient.models import Patient
+from scales.models import NortonScale, GlasgowComaScale, NewsScale
 
 @login_required(login_url="/login/")
 def hospitalization_detail(request, hospitalization_id):
     hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id)
     observations = Observation.objects.filter(hospitalization=hospitalization)
+    norton_scales = NortonScale.objects.filter(hospitalization=hospitalization)
+    glasgow_scales = GlasgowComaScale.objects.filter(hospitalization=hospitalization)
+    news_scales = NewsScale.objects.filter(hospitalization=hospitalization)
     context = {
-        "title" : "Hospitalization Detail",
+        "glasgow_scales" : glasgow_scales,
         "hospitalization" : hospitalization,
-        "observations" : observations
+        "observations" : observations,
+        "news_scales" : news_scales,
+        "norton_scales" : norton_scales,
+        "title" : "Hospitalization Detail",
+        
     }
     
     return render(request, "hospitalization_detail.html", context)
@@ -79,21 +87,30 @@ def discharge_patient(request, hospitalization_id):
     hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id)
     
     if request.method == "POST":
-        form = DischargeFrom(request.POST)
+        form = DischargeForm(request.POST)
         if form.is_valid():
-            dicharge_date = form.cleaned_data['dicharge_date']
-            hospitalization.dicharged_on = dicharge_date
+            discharge_date = form.cleaned_data['discharge_date']
+            discharge_time = form.cleaned_data['discharge_time']
+            discharge_datetime = datetime.combine(discharge_date, discharge_time)
+            # dicharge_date = form.cleaned_data['dicharge_date']
+            hospitalization.dicharged_on = discharge_datetime
             hospitalization.is_discharged = True
             hospitalization.save()
             return redirect("department:department_detail", hospitalization.department.id)
     else:
-        form = DischargeFrom()
-        
-    context = {
-        "form" : form,
-        "title" : "Discharge Patient",
-        "hospitalization" : hospitalization
-    }
+
+    # Set default values for date and time
+        default_discharge_date = timezone.now().strftime('%Y-%m-%d')
+        default_discharge_time = timezone.now().strftime('%H:%M')
+        form = DischargeForm()
+        context = {
+            'form': form,
+            'title': 'Discharge Patient',
+            'hospitalization': hospitalization,
+            'default_discharge_date': default_discharge_date,
+            'default_discharge_time': default_discharge_time,
+        }
+
     
     return render(request, "discharge_patient.html", context)
         

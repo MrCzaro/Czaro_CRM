@@ -7,7 +7,7 @@ from patient.models import Patient
 from department.models import Hospitalization
 
 @login_required(login_url = "/login/")
-def add_norton_scale(request, patient_id, hospitalization_id):
+def create_norton_scale(request, patient_id, hospitalization_id):
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
         # Redirect or show an error message
@@ -24,7 +24,7 @@ def add_norton_scale(request, patient_id, hospitalization_id):
             scale.created_by = request.user
             scale.hospitalization = hospitalization
             scale.save()
-            return redirect("patient:page", patient_id=patient.id)
+            return redirect("department:hospitalization", hospitalization_id)
         else:
             print(form.errors)
     else:
@@ -33,13 +33,13 @@ def add_norton_scale(request, patient_id, hospitalization_id):
     context = {
         "form" : form, 
         "title" : "Add Norton Scale",
-        "patient_id" : patient.id,
+        "hospitalization_id" : hospitalization_id
     }
     
     return render(request,"scale_form.html", context)
 
 @login_required(login_url = "/login/")
-def edit_norton_scale(request, patient_id, hospitalization_id, norton_id):
+def update_norton_scale(request, patient_id, hospitalization_id, norton_id):
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
         # Redirect or show an error message
@@ -53,20 +53,20 @@ def edit_norton_scale(request, patient_id, hospitalization_id, norton_id):
         form = NortonScaleForm(request.POST, instance=norton)
         if form.is_valid():
             form.save()
-            return redirect("patient:page", patient_id=patient.id)
+            return redirect("department:hospitalization", hospitalization_id)
     else:
         form = NortonScaleForm(instance=norton)
         
     context = {
         "form": form,
         "title" : "Edit Norton Scale",
-        "patient_id" : patient.id,
+        "hospitalization_id" : hospitalization_id
     }
     
     return render(request,"scale_form.html", context)
 
 @login_required(login_url = "/login/")
-def add_glasgow_scale(request, patient_id, hospitalization_id):
+def create_glasgow_scale(request, patient_id, hospitalization_id):
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
         # Redirect or show an error message
@@ -82,7 +82,7 @@ def add_glasgow_scale(request, patient_id, hospitalization_id):
             scale.created_by = request.user
             scale.hospitalization = hospitalization
             scale.save()
-            return redirect("patient:page", pk=patient.id)
+            return redirect("department:hospitalization", hospitalization_id)
         else:
             print(form.errors)
     else:
@@ -91,13 +91,13 @@ def add_glasgow_scale(request, patient_id, hospitalization_id):
     context = {
         "form" : form,
         "title" : "Add Glasgow Coma Scale",
-        "patient_id" : patient.id,
+        "hospitalization_id" : hospitalization_id
     }
     
     return render(request, "scale_form.html", context)
 
 @login_required(login_url = "/login/")
-def edit_glasgow_scale(request, patient_id, hospitalization_id, glasgow_id):
+def update_glasgow_scale(request, patient_id, hospitalization_id, glasgow_id):
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
         # Redirect or show an error message
@@ -111,19 +111,19 @@ def edit_glasgow_scale(request, patient_id, hospitalization_id, glasgow_id):
         form = GlasgowComaScaleForm(request.POST, instance=glasgow)
         if form.is_valid():
             form.save()
-            return redirect("patient:page", patient_id=patient.id)
+            return redirect("department:hospitalization", hospitalization_id)
     else:
         form = GlasgowComaScaleForm(instance=glasgow)
         
     context = {
         "form" : form,
         "title" : "Edit Glasgow Coma Scale",
-        "patient_id" : patient.id,
+        "hospitalization_id" : hospitalization_id
     }
     
     return render(request, "scale_form.html", context)
         
-def add_news_scale(request, patient_id, hospitalization_id):
+def create_news_scale(request, patient_id, hospitalization_id):
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
         # Redirect or show an error message
@@ -140,7 +140,7 @@ def add_news_scale(request, patient_id, hospitalization_id):
             scale.created_by = request.user
             scale.hospitalization = hospitalization
             scale.save()
-            return redirect("patient:page", patient_id=patient.id)
+            return redirect("department:hospitalization", hospitalization_id)
         else:
             print(form.errors)
     else:
@@ -149,12 +149,12 @@ def add_news_scale(request, patient_id, hospitalization_id):
     context = {
         "form" : form,
         "title" : "Add National Early Warning Score",
-        "patient_id" : patient.id,
+        "hospitalization_id" : hospitalization_id
     }
     
     return render(request, "scale_form.html", context)
 
-def edit_news_scale(request, patient_id, hospitalization_id, news_id):
+def update_news_scale(request, patient_id, hospitalization_id, news_id):
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
         # Redirect or show an error message
@@ -169,7 +169,7 @@ def edit_news_scale(request, patient_id, hospitalization_id, news_id):
         form = NewsScaleForm(request.POST, instance=news)
         if form.is_valid():
             form.save()
-            return redirect("patient:page", patient_id=patient.id)
+            return redirect("department:hospitalization", hospitalization_id)
     else:
         form = NewsScaleForm(instance=news)
         
@@ -177,7 +177,7 @@ def edit_news_scale(request, patient_id, hospitalization_id, news_id):
     context = {
         "form" : form,
         "title" : "Add National Early Warning Score",
-        "patient_id" : patient.id,
+        "hospitalization_id" : hospitalization_id
     }
     
     return render(request, "scale_form.html", context)
