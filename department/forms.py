@@ -35,3 +35,16 @@ class HospitalizationForm(forms.ModelForm):
     class Meta:
         model = Hospitalization
         fields = ['main_symptom', 'additional_symptoms']
+        
+class TransferPatientForm(forms.Form):
+    department = forms.ModelChoiceField(
+        queryset=Department.objects.all(),
+        empty_label="Select Department",
+        label = "Transfer to Department"
+    )
+    
+class DischargeFrom(forms.Form):
+    discharge_date = forms.DateTimeField(
+        label="Discharge Date",
+        widget=forms.TextInput(attrs={"type": "datetime-local"})
+    )

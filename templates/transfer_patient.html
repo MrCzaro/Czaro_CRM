@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>{% block title %}{{ title }}{% endblock %}</h1>
+    
+    <p>Patient: {{ patient.first_name }} {{ patient.last_name }}</p>
+
+    <form method="post" action="{% url 'department:transfer' patient_id=patient.id hospitalization_id=hospitalization.id %}">
+        {% csrf_token %}
+        
+        <label for="id_department">Select Department:</label>
+        <select name="department" id="id_department">
+            {% for department in departments %}
+                <option value="{{ department.id }}">{{ department.name }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">{{ title }}</button>
+    </form>
+
+
+{% endblock %}

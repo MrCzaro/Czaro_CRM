@@ -9,9 +9,9 @@ urlpatterns = [
     path("<uuid:department_id>/", views.department_detail, name="department_detail"),
     path('<uuid:patient_id>/admit-patient/', views.admit_patient, name='admit_patient'),
     path("<uuid:hospitalization_id>/hospitalization/", views.hospitalization_detail, name="hospitalization"),
-    # path("<uuid:patient_id>/<uuid:department_id>/transfer/", views.transfer_patient, name="transfer"),
-    # path("<uuid:patient_id>/<uuid:department_id>/discharge/", views.discharge_patient, name="discharge"),
-    path("<uuid:patient_id>/<uuid:department_id>/patient-observation-add/", views.add_patient_observation, name="observation_create"),
-    path("<uuid:patient_id>/<uuid:department_id>/patient-observation-edit/<uuid:observation_id>/", views.edit_patient_observation, name="observation_update"),
+    path("<uuid:patient_id>/<uuid:hospitalization_id>/transfer/", views.transfer_patient, name="transfer"),
+    path("<uuid:hospitalization_id>/discharge/", views.discharge_patient, name="discharge"),
+    path("<uuid:patient_id>/<uuid:hospitalization_id>/patient-observation-add/", views.add_patient_observation, name="observation_create"),
+    path("<uuid:patient_id>/<uuid:hospitalization_id>/patient-observation-edit/<uuid:observation_id>/", views.edit_patient_observation, name="observation_update"),
 ]
 

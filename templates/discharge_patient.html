@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<body>
+    <h1>{% block title %}Discharge Patient{% endblock %}</h1>
+
+    <p>Patient: {{ hospitalization.patient.first_name }} {{ hospitalization.patient.last_name }}</p>
+    <p>Admitted On: {{ hospitalization.admitted_on }}</p>
+
+    <form method="post" action="{% url 'department:discharge' hospitalization.id %}">
+        {% csrf_token %}
+
+        <label for="id_discharge_date">Discharge Date:</label>
+        <input type="datetime-local" name="discharge_date" id="id_discharge_date" required>
+
+        <button type="submit">Discharge</button>
+    </form>
+
+    <p><a href="{% url 'department:department_detail' hospitalization.department.id %}">Back to Department</a></p>
+
+</body>
+{% endblock %}

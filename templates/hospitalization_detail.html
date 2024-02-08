@@ -17,38 +17,37 @@
                     <td class="border p-2">{{ hospitalization.patient.last_name }}</td>
                 </tr>
     
-                <tr>
-                    <td class="border p-2 font-bold">Date of birth</td>
-                    <td class="border p-2">{{ patient.date_of_birth|date:"d F Y" }}</td>
-                    <td class="border p-2 font-bold">Contact number: </td>
-                    <td class="border p-2">{{ patient.contact_number }}</td>
-                </tr>
-    
-                <tr>
-                    <td class="border p-2 font-bold">Adress</td>
-                    <td class="border p-2">{{ patient.street }}</td>
-                    <td class="border p-2 font-bold">City</td>
-                    <td class="border p-2">{{ patient.city }}</td>
-                </tr>
-    
-                <tr>
-                    <td class="border p-2 font-bold">Zip code</td>
-                    <td class="border p-2">{{ patient.zip_code }}</td>
-                    <td class="border p-2 font-bold">Country</td>
-                    <td class="border p-2">{{ patient.country }}</td>
-                </tr>
-    
-                <tr>
-                    <td class="border p-2 font-bold">Insurance</td>
-                    <td class="border p-2">{{ patient.is_insured|yesno:"Yes,No"  }}</td>
-                    <td class="border p-2 font-bold">Insurance number</td>
-                    <td class="border p-2">{{ patient.insurance }}</td>
-                </tr>
                 
             </tbody>
         </table>
 
     </div>
+    <a href="{% url 'department:transfer' hospitalization.patient.id hospitalization.id %}">Transfer Patient</a>
+    <a href="{% url 'department:discharge' hospitalization.id %}">Discharge Patient</a>
+
+   
+    <a href="{% url 'department:observation_create'  hospitalization.patient.id hospitalization.id%}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white">Add Observation</a>
+    {% if observations %}
+        <h2>Patient observations:</h2>
+        <ul>
+            {% for observation in observations %}
+            <div class="border p-4 rounded-md">
+                <p class="text-lg">{{ observation.observation }}</p>
+                <div class="flex justify-between text-sm text-gray-500 mt-2">
+                    {% if observation.created_by == user %}
+                    <a href="{% url 'department:observation_update' hospitalization.patient.id hospitalization.id observation.id %}" class="font-bold text-black">Edit</a>                    {% endif %}
+                    <p>Created by: {{ observation.created_by.first_name }} {{ observation.created_by.last_name }}</p>
+                    <p>Created at: {{ observation.created_at|date:"F j, Y H:i" }}</p>
+                    <p>Modified at: {{ observation.modified_at|date:"F j, Y H:i" }}</p>
+                </div>
+            </div>
+            {% endfor %}
+            
+
+        </ul>
+    {% else %}
+        <p>No observations for this hospitalization.</p>
+    {% endif %}
 
  
 
