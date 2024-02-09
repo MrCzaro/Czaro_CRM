@@ -7,7 +7,7 @@ from django.utils import timezone
 from .models import Department, Hospitalization, Observation
 from .forms import DepartmentForm, ObservationForm, HospitalizationForm, TransferPatientForm, DischargeForm
 from patient.models import Patient
-from scales.models import NortonScale, GlasgowComaScale, NewsScale
+from scales.models import NortonScale, GlasgowComaScale, NewsScale, PainScale
 
 @login_required(login_url="/login/")
 def hospitalization_detail(request, hospitalization_id):
@@ -16,12 +16,14 @@ def hospitalization_detail(request, hospitalization_id):
     norton_scales = NortonScale.objects.filter(hospitalization=hospitalization)
     glasgow_scales = GlasgowComaScale.objects.filter(hospitalization=hospitalization)
     news_scales = NewsScale.objects.filter(hospitalization=hospitalization)
+    pain_scales = PainScale.objects.filter(hospitalization=hospitalization)
     context = {
         "glasgow_scales" : glasgow_scales,
         "hospitalization" : hospitalization,
         "observations" : observations,
         "news_scales" : news_scales,
         "norton_scales" : norton_scales,
+        "pain_scales" : pain_scales,
         "title" : "Hospitalization Detail",
         
     }

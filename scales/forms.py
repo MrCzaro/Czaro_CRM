@@ -2,8 +2,9 @@ from django import forms
 from django.core.exceptions import ValidationError
 from .models import (
     GlasgowComaScale,
-    NortonScale,
     NewsScale,
+    NortonScale,
+    PainScale,
     PHYSICAL_CHOICES,
     MENTAL_CHOICES,
     ACTIVITY_CHOICES,
@@ -16,29 +17,6 @@ from .models import (
     YES_NO_CHOICES,
 )
 
-
-class NortonScaleForm(forms.ModelForm):
-    physical_condition = forms.ChoiceField(
-        widget=forms.RadioSelect, choices=PHYSICAL_CHOICES
-    )
-    mental_condition = forms.ChoiceField(
-        widget=forms.RadioSelect, choices=MENTAL_CHOICES
-    )
-    activity = forms.ChoiceField(widget=forms.RadioSelect, choices=ACTIVITY_CHOICES)
-    mobility = forms.ChoiceField(widget=forms.RadioSelect, choices=MOBILITY_CHOICES)
-    incontinence = forms.ChoiceField(
-        widget=forms.RadioSelect, choices=INCONTINENCE_CHOICES
-    )
-
-    class Meta:
-        model = NortonScale
-        fields = [
-            "physical_condition",
-            "mental_condition",
-            "activity",
-            "mobility",
-            "incontinence",
-        ]
 
 class GlasgowComaScaleForm(forms.ModelForm):
     eye_response = forms.ChoiceField(
@@ -110,3 +88,34 @@ class NewsScaleForm(forms.ModelForm):
             "heart_rate" : "Heart Rate",
             "level_of_consciousness " : "Level of consciousness",
         }
+        
+class NortonScaleForm(forms.ModelForm):
+    physical_condition = forms.ChoiceField(
+        widget=forms.RadioSelect, choices=PHYSICAL_CHOICES
+    )
+    mental_condition = forms.ChoiceField(
+        widget=forms.RadioSelect, choices=MENTAL_CHOICES
+    )
+    activity = forms.ChoiceField(widget=forms.RadioSelect, choices=ACTIVITY_CHOICES)
+    mobility = forms.ChoiceField(widget=forms.RadioSelect, choices=MOBILITY_CHOICES)
+    incontinence = forms.ChoiceField(
+        widget=forms.RadioSelect, choices=INCONTINENCE_CHOICES
+    )
+
+    class Meta:
+        model = NortonScale
+        fields = [
+            "physical_condition",
+            "mental_condition",
+            "activity",
+            "mobility",
+            "incontinence",
+        ]
+
+class PainScaleForm(forms.ModelForm):
+    class Meta:
+        model = PainScale
+        fields = [
+            "pain_level",
+            "pain_comment",
+        ]

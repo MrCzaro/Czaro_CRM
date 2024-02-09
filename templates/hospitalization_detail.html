@@ -88,7 +88,7 @@
 
 <a href="{% url 'scales:news_create' hospitalization.patient.id hospitalization.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white mr-3">Add NEWS Scale</a>
 
-h2>National Early Warning Score Scales</h2>
+<h2>National Early Warning Score Scales</h2>
 <ul>
   {% for news_scale in news_scales %}
     <li>
@@ -112,4 +112,20 @@ h2>National Early Warning Score Scales</h2>
   {% endfor %}
 </ul>
 
+<a href="{% url 'scales:pain_create' hospitalization.patient.id hospitalization.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white mr-3">Add Pain Scale</a>
+<h2>Pain Scales</h2>
+<ul>
+  {% for pain_scale in pain_scales %}
+    <li>
+      <p>Pain Level {{ pain_scale.pain_level }}</p>
+      <p>Pain Interpretation: {{ pain_scale.pain_intepretation }}</p>
+      <p>Pain Comment: {{ pain_scale.pain_comment }}</p>
+      <p>Created by: {{ pain_scale.created_by }} | Created_at: {{ pain_scale.created_at}} | Modified at: {{ pain_scale.modified_at }}</p>
+
+    {% if pain_scale.created_by == user %}
+        <a href="{% url 'scales:pain_update' hospitalization.patient.id hospitalization.id pain_scale.id %}" class="font-bold text-black mr-3">Edit</a>
+    {% endif %}
+    </li>
+  {% endfor %}
+</ul>
 {% endblock %}

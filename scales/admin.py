@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from .models import NortonScale, GlasgowComaScale, NewsScale
-admin.site.register(NortonScale)
+from .models import NortonScale, GlasgowComaScale, NewsScale, PainScale
 admin.site.register(GlasgowComaScale)
 admin.site.register(NewsScale)
+admin.site.register(NortonScale)
+admin.site.register(PainScale)

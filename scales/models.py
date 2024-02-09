@@ -78,7 +78,7 @@ class NortonScale(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-    hospitalization = models.ForeignKey(Hospitalization, related_name = "norton", on_delete=models.CASCADE)
+    hospitalization = models.ForeignKey(Hospitalization, on_delete=models.CASCADE)
     physical_condition = models.CharField(max_length=20, choices=PHYSICAL_CHOICES)
     mental_condition = models.CharField(max_length=20, choices=MENTAL_CHOICES)
     activity = models.CharField(max_length=20, choices=ACTIVITY_CHOICES)
@@ -136,7 +136,7 @@ class GlasgowComaScale(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-    hospitalization = models.ForeignKey(Hospitalization, related_name = "glasgow", on_delete=models.CASCADE)
+    hospitalization = models.ForeignKey(Hospitalization, on_delete=models.CASCADE)
     eye_response = models.CharField(max_length=30, choices=EYE_RESPONSE_CHOICES)
     verbal_response = models.CharField(max_length=30, choices=VERBAL_RESPONSE_CHOICES)
     motor_response = models.CharField(max_length=30, choices=MOTOR_RESPONSE_CHOICES)
@@ -171,12 +171,39 @@ class GlasgowComaScale(models.Model):
         self.total_points = self.calculate_total_points()
         super().save(*args, **kwargs)
 
+class PainScale(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+    hospitalization = models.ForeignKey(Hospitalization, on_delete=models.CASCADE)
+    pain_comment = models.CharField(max_length=255, blank=True, null=True)
+    pain_level = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(10)])
+    pain_intepretation = models.CharField()
+    class Meta:
+        ordering = ("-created_at",)
+        
+    def pain_intepretation(self):
+        if self.pain_level == 0:
+            interpretation = "No Pain"
+        elif self.pain_level in [1,2,3]:
+            interpretation = "Mild Pain"
+        elif self.pain_level in [4,5,6]:
+            interpretation = "Moderate Pain"
+        else:
+            interpretation = "Severe Pain"
+        return interpretation
+            
+    def save(self, *args, **kwargs):
+        self.pain_intepretation = self.pain_intepretation()
+        super().save(*args, **kwargs)
+        
 class NewsScale(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-    hospitalization = models.ForeignKey(Hospitalization, related_name = "news", on_delete=models.CASCADE)
+    hospitalization = models.ForeignKey(Hospitalization, on_delete=models.CASCADE)
     respiratory_rate = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
     oxygen_saturation = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
     is_on_oxygen = models.BooleanField(choices=YES_NO_CHOICES, default=NO)

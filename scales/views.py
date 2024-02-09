@@ -1,69 +1,13 @@
 
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from . models import NortonScale, GlasgowComaScale, NewsScale
-from . forms import NortonScaleForm, GlasgowComaScaleForm, NewsScaleForm
+from . models import NortonScale, GlasgowComaScale, NewsScale, PainScale
+from . forms import NortonScaleForm, GlasgowComaScaleForm, NewsScaleForm, PainScaleForm
 from patient.models import Patient
 from department.models import Hospitalization
-
-@login_required(login_url = "/login/")
-def create_norton_scale(request, patient_id, hospitalization_id):
-    # Check if the user has the allowed profession
-    if request.user.profession == "secretaries":
-        # Redirect or show an error message
-        return redirect("access_denied")
-    
-    patient = get_object_or_404(Patient, id=patient_id)
-    hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id, patient=patient)
-    
-    if request.method == "POST":
-        form = NortonScaleForm(request.POST)
-        if form.is_valid():
-            print(form.cleaned_data)
-            scale = form.save(commit=False)
-            scale.created_by = request.user
-            scale.hospitalization = hospitalization
-            scale.save()
-            return redirect("department:hospitalization", hospitalization_id)
-        else:
-            print(form.errors)
-    else:
-        form = NortonScaleForm()
-        
-    context = {
-        "form" : form, 
-        "title" : "Add Norton Scale",
-        "hospitalization_id" : hospitalization_id
-    }
-    
-    return render(request,"scale_form.html", context)
-
-@login_required(login_url = "/login/")
-def update_norton_scale(request, patient_id, hospitalization_id, norton_id):
-    # Check if the user has the allowed profession
-    if request.user.profession == "secretaries":
-        # Redirect or show an error message
-        return redirect("access_denied")
-    
-    patient = get_object_or_404(Patient, id= patient_id)
-    hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id, patient=patient)
-    norton = get_object_or_404(NortonScale, id=norton_id, hospitalization=hospitalization)
-    
-    if request.method == "POST":
-        form = NortonScaleForm(request.POST, instance=norton)
-        if form.is_valid():
-            form.save()
-            return redirect("department:hospitalization", hospitalization_id)
-    else:
-        form = NortonScaleForm(instance=norton)
-        
-    context = {
-        "form": form,
-        "title" : "Edit Norton Scale",
-        "hospitalization_id" : hospitalization_id
-    }
-    
-    return render(request,"scale_form.html", context)
+            
+def access_denied(request):
+    return render(request, "access_denied.html")
 
 @login_required(login_url = "/login/")
 def create_glasgow_scale(request, patient_id, hospitalization_id):
@@ -122,7 +66,8 @@ def update_glasgow_scale(request, patient_id, hospitalization_id, glasgow_id):
     }
     
     return render(request, "scale_form.html", context)
-        
+
+@login_required(login_url = "/login/")       
 def create_news_scale(request, patient_id, hospitalization_id):
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
@@ -154,6 +99,7 @@ def create_news_scale(request, patient_id, hospitalization_id):
     
     return render(request, "scale_form.html", context)
 
+@login_required(login_url = "/login/")
 def update_news_scale(request, patient_id, hospitalization_id, news_id):
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
@@ -182,6 +128,119 @@ def update_news_scale(request, patient_id, hospitalization_id, news_id):
     
     return render(request, "scale_form.html", context)
             
-            
-def access_denied(request):
-    return render(request, "access_denied.html")
+@login_required(login_url = "/login/")
+def create_norton_scale(request, patient_id, hospitalization_id):
+    # Check if the user has the allowed profession
+    if request.user.profession == "secretaries":
+        # Redirect or show an error message
+        return redirect("access_denied")
+    
+    patient = get_object_or_404(Patient, id=patient_id)
+    hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id, patient=patient)
+    
+    if request.method == "POST":
+        form = NortonScaleForm(request.POST)
+        if form.is_valid():
+            scale = form.save(commit=False)
+            scale.created_by = request.user
+            scale.hospitalization = hospitalization
+            scale.save()
+            return redirect("department:hospitalization", hospitalization_id)
+    else:
+        form = NortonScaleForm()
+        
+    context = {
+        "form" : form, 
+        "title" : "Add Norton Scale",
+        "hospitalization_id" : hospitalization_id
+    }
+    
+    return render(request,"scale_form.html", context)
+
+@login_required(login_url = "/login/")
+def update_norton_scale(request, patient_id, hospitalization_id, norton_id):
+    # Check if the user has the allowed profession
+    if request.user.profession == "secretaries":
+        # Redirect or show an error message
+        return redirect("access_denied")
+    
+    patient = get_object_or_404(Patient, id= patient_id)
+    hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id, patient=patient)
+    norton = get_object_or_404(NortonScale, id=norton_id, hospitalization=hospitalization)
+    
+    if request.method == "POST":
+        form = NortonScaleForm(request.POST, instance=norton)
+        if form.is_valid():
+            form.save()
+            return redirect("department:hospitalization", hospitalization_id)
+    else:
+        form = NortonScaleForm(instance=norton)
+        
+    context = {
+        "form": form,
+        "title" : "Edit Norton Scale",
+        "hospitalization_id" : hospitalization_id
+    }
+    
+    return render(request,"scale_form.html", context)
+
+@login_required(login_url = "/login/")
+def create_pain_scale(request, patient_id, hospitalization_id):
+    # Check if the user has the allowed profession
+    if request.user.profession == "secretaries":
+        # Redirect or show an error message
+        return redirect("access_denied")
+    
+    patient = get_object_or_404(Patient, id=patient_id)
+    hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id, patient=patient)
+    
+    if request.method == "POST":
+        form = PainScaleForm(request.POST)
+        if form.is_valid():
+            scale = form.save(commit=False)
+            scale.created_by = request.user
+            scale.hospitalization = hospitalization
+            scale.save()
+            return redirect("department:hospitalization", hospitalization_id)
+    else:
+        form = PainScaleForm()
+    
+    context = {
+        "form" : form,
+        "title" : "Add Pain Scale",
+        "hospitalization_id" : hospitalization_id
+    }
+    
+    return render(request, "scale_form.html", context)
+
+@login_required(login_url = "/login/")
+def update_pain_scale(request, patient_id, hospitalization_id, pain_id):
+    # Check if the user has the allowed profession
+    if request.user.profession == "secretaries":
+        # Redirect or show an error message
+        return redirect("access_denied")
+    
+    patient = get_object_or_404(Patient, id= patient_id)
+    hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id, patient=patient)
+    pain = get_object_or_404(PainScale, id=pain_id, hospitalization=hospitalization)
+    
+    if request.method == "POST":
+        form = PainScaleForm(request.POST, instance=pain)
+        if form.is_valid():
+            form.save()
+            return redirect("department:hospitalization", hospitalization_id)
+        
+    else:
+        form = PainScaleForm(instance=pain)
+        
+    context = {
+        "form" : form,
+        "title" : "Edit Pain Scale",
+        "hospitalization_id" : hospitalization_id
+    }
+    
+    return render(request, "scale_form.html", context)
+    
+    
+
+
