@@ -59,6 +59,20 @@ MOTOR_RESPONSE_CHOICES = [
     ("1", "No motor response"),
 ]
 
+PAIN_CHOICES = [
+    ("0", 0),
+    ("1", 1),
+    ("2", 2),
+    ("3", 3),
+    ("4", 4),
+    ("5", 5),
+    ("6", 6),
+    ("7", 7),
+    ("8", 8),
+    ("9", 9),
+    ("10", 10),
+]
+
 # Global variables for NEWS 
 YES = True
 NO = False
@@ -75,10 +89,10 @@ LOC_CHOICES = [
 
 class NortonScale(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    hospitalization = models.ForeignKey(Hospitalization, on_delete=models.CASCADE)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-    hospitalization = models.ForeignKey(Hospitalization, on_delete=models.CASCADE)
     physical_condition = models.CharField(max_length=20, choices=PHYSICAL_CHOICES)
     mental_condition = models.CharField(max_length=20, choices=MENTAL_CHOICES)
     activity = models.CharField(max_length=20, choices=ACTIVITY_CHOICES)
@@ -133,10 +147,10 @@ class NortonScale(models.Model):
         
 class GlasgowComaScale(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    hospitalization = models.ForeignKey(Hospitalization, on_delete=models.CASCADE)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-    hospitalization = models.ForeignKey(Hospitalization, on_delete=models.CASCADE)
     eye_response = models.CharField(max_length=30, choices=EYE_RESPONSE_CHOICES)
     verbal_response = models.CharField(max_length=30, choices=VERBAL_RESPONSE_CHOICES)
     motor_response = models.CharField(max_length=30, choices=MOTOR_RESPONSE_CHOICES)
@@ -173,13 +187,13 @@ class GlasgowComaScale(models.Model):
 
 class PainScale(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    hospitalization = models.ForeignKey(Hospitalization, on_delete=models.CASCADE)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-    hospitalization = models.ForeignKey(Hospitalization, on_delete=models.CASCADE)
     pain_comment = models.CharField(max_length=255, blank=True, null=True)
-    pain_level = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(10)])
-    pain_intepretation = models.CharField()
+    pain_level = models.CharField(max_length=2, choices=PAIN_CHOICES)
+    pain_intepretation = models.TextField()
     class Meta:
         ordering = ("-created_at",)
         
@@ -200,10 +214,10 @@ class PainScale(models.Model):
         
 class NewsScale(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    hospitalization = models.ForeignKey(Hospitalization, on_delete=models.CASCADE)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-    hospitalization = models.ForeignKey(Hospitalization, on_delete=models.CASCADE)
     respiratory_rate = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
     oxygen_saturation = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
     is_on_oxygen = models.BooleanField(choices=YES_NO_CHOICES, default=NO)
@@ -342,3 +356,4 @@ class NewsScale(models.Model):
         self.total_score = self.calculate_total_score()
         self.score_interpretation = self.score_interpretation()
         super().save(*args, **kwargs)
+

@@ -27,7 +27,7 @@
 
    
     <a href="{% url 'department:observation_create'  hospitalization.patient.id hospitalization.id%}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white">Add Observation</a>
-    {% if observations %}
+        {% if observations %}
         <h2>Patient observations:</h2>
         <ul>
             {% for observation in observations %}
@@ -49,6 +49,27 @@
         {% endif %}
         
     <a href="{% url 'scales:norton_create'  hospitalization.patient.id hospitalization.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white">Add Norton Scale</a>
+
+    <a href="{% url 'department:vitals_create'  hospitalization.patient.id hospitalization.id%}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white">Add Vital Signs</a>
+    <h2>Vital Signs</h2>
+<ul>
+  {% for vital in vitals %}
+    <li>
+      <p>Respiratory Rate: {{ vital.respiratory_rate }} BPM</p>
+      <p>Oxygen Saturation: {{ vital.oxygen_saturation }}%</p>
+      <p>Body Temperature: {{ vital.temperature }} °C </p>
+      <p>Blood Pressure: {{ vital.systolic_blood_pressure }}/{{ vital.diastolic_blood_pressure }} mmHg</p>
+      <p>Heart Rate: {{ vital.heart_rate }} BPM</p>
+      <p>Created by: {{ vital.created_by }} | Created_at: {{ vital.created_at}} | Modified at: {{ vital.modified_at }}</p>
+
+    {% if vital.created_by == user %}
+        <a href="{% url 'department:vitals_update' hospitalization.patient.id hospitalization.id vital.id %}" class="font-bold text-black mr-3">Edit</a>
+    {% endif %}
+    </li>
+  {% endfor %}
+</ul>
+
+
     <h2>Norton Scales</h2>
 <ul>
   {% for norton_scale in norton_scales %}
@@ -92,14 +113,13 @@
 <ul>
   {% for news_scale in news_scales %}
     <li>
-      <p>Respiratory Rate: {{ news_scale.respiratory_rate }}</p>
-      <p>Oxygen Saturation: {{ news_scale.oxygen_saturation }}</p>
+      <p>Respiratory Rate: {{ news_scale.respiratory_rate }} BPM</p>
+      <p>Oxygen Saturation: {{ news_scale.oxygen_saturation }}%</p>
       <p>Oxygen Supplementaion: {{ news_scale.get_is_on_oxygen_display }}</p>
       <p>Is the patient in Acute exacebrations of chronic obstructive pulmonary disease state: {{ news_scale.get_aecopd_state_display }}</p>
-      <p>Body Temperature: {{ news_scale.temperature }}</p>
-      <p>Systolic Blood Pressure: {{ news_scale.systolic_blood_pressure }}</p>
-      <p>Diastolic Blood Pressure: {{ news_scale.diastolic_blood_pressure }}</p>
-      <p>Heart Rate: {{ news_scale.heart_rate }}</p>
+      <p>Body Temperature: {{ news_scale.temperature }} °C </p>
+      <p>Blood Pressure: {{ news_scale.systolic_blood_pressure }}/{{ news_scale.diastolic_blood_pressure }} mmHg</p>
+      <p>Heart Rate: {{ news_scale.heart_rate }} BPM</p>
       <p>Level of consciousness: {{ news_scale.get_level_of_consciousness_display }} </p>
       <p>Total NEWS score: {{ news_scale.total_score }}</p>
       <p>Score Interpretation : {{ news_scale.score_interpretation }}
@@ -117,7 +137,7 @@
 <ul>
   {% for pain_scale in pain_scales %}
     <li>
-      <p>Pain Level {{ pain_scale.pain_level }}</p>
+      <p>Pain Level: {{ pain_scale.pain_level }}</p>
       <p>Pain Interpretation: {{ pain_scale.pain_intepretation }}</p>
       <p>Pain Comment: {{ pain_scale.pain_comment }}</p>
       <p>Created by: {{ pain_scale.created_by }} | Created_at: {{ pain_scale.created_at}} | Modified at: {{ pain_scale.modified_at }}</p>

@@ -1,8 +1,8 @@
 from django import forms
-
+from django.core.exceptions import ValidationError
 from ckeditor.widgets import CKEditorWidget
 
-from .models import Department, Observation, Hospitalization
+from .models import Department, Observation, Hospitalization, VitalSigns
 
 
 class DepartmentForm(forms.ModelForm):
@@ -55,3 +55,35 @@ class DischargeForm(forms.Form):
         label="Discharge Time",
         widget=forms.TimeInput(attrs={"type": "time"})
     )
+
+class VitalSignsForm(forms.ModelForm):
+    def clean(self):
+        cleaned_data = super().clean()
+        systolic_bp = cleaned_data.get("systolic_blood_pressure")
+        diastolic_bp = cleaned_data.get("diastolic_blood_pressure")
+        
+        if systolic_bp is not None and diastolic_bp is not None:
+            if systolic_bp < diastolic_bp:
+                raise ValidationError(
+                    "Systolic blood pressure must be equal or higher than diastolic blood pressure.",
+                    code='invalid_blood_pressure'
+                )
+    
+    class Meta:
+        model = VitalSigns
+        fields = [
+            "respiratory_rate",
+            "oxygen_saturation",
+            "temperature",
+            "systolic_blood_pressure",
+            "diastolic_blood_pressure",
+            "heart_rate",
+        ]
+        labels = {
+            "respiratory_rate" : "Respiratory rate",
+            "oxygen_saturation" : "Oxygen saturation level",
+            "temperature" : "Body temperature",
+            "systolic_blood_pressure" : "Systolic blood presurre",
+            "diastolic_blood_pressure" : "Diastolic blood pressure",
+            "heart_rate" : "Heart Rate",
+        }

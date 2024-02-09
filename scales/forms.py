@@ -15,6 +15,7 @@ from .models import (
     MOTOR_RESPONSE_CHOICES,
     LOC_CHOICES,
     YES_NO_CHOICES,
+    PAIN_CHOICES,
 )
 
 
@@ -113,6 +114,12 @@ class NortonScaleForm(forms.ModelForm):
         ]
 
 class PainScaleForm(forms.ModelForm):
+    pain_level = forms.ChoiceField(
+        widget = forms.RadioSelect, choices=PAIN_CHOICES
+    )
+    pain_comment = forms.CharField(
+        widget=forms.Textarea(attrs={"class": "w-80 h-20 bg-stone-100 border border-gray-400 p-4"}),
+    )
     class Meta:
         model = PainScale
         fields = [

@@ -1,11 +1,11 @@
 from django.shortcuts import redirect,render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
-from datetime import datetime, time
+from datetime import datetime
 
 from django.utils import timezone
-from .models import Department, Hospitalization, Observation
-from .forms import DepartmentForm, ObservationForm, HospitalizationForm, TransferPatientForm, DischargeForm
+from .models import Department, Hospitalization, Observation, VitalSigns
+from .forms import DepartmentForm, ObservationForm, HospitalizationForm, TransferPatientForm, DischargeForm, VitalSignsForm
 from patient.models import Patient
 from scales.models import NortonScale, GlasgowComaScale, NewsScale, PainScale
 
@@ -17,6 +17,7 @@ def hospitalization_detail(request, hospitalization_id):
     glasgow_scales = GlasgowComaScale.objects.filter(hospitalization=hospitalization)
     news_scales = NewsScale.objects.filter(hospitalization=hospitalization)
     pain_scales = PainScale.objects.filter(hospitalization=hospitalization)
+    vitals = VitalSigns.objects.filter(hospitalization=hospitalization)
     context = {
         "glasgow_scales" : glasgow_scales,
         "hospitalization" : hospitalization,
@@ -24,6 +25,7 @@ def hospitalization_detail(request, hospitalization_id):
         "news_scales" : news_scales,
         "norton_scales" : norton_scales,
         "pain_scales" : pain_scales,
+        "vitals" : vitals,
         "title" : "Hospitalization Detail",
         
     }
@@ -162,7 +164,7 @@ def department_list(request):
 
 
 @login_required(login_url = "/login/")
-def add_patient_observation(request, patient_id, hospitalization_id):
+def create_patient_observation(request, patient_id, hospitalization_id):
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
         # Redirect or show an error message
@@ -187,13 +189,13 @@ def add_patient_observation(request, patient_id, hospitalization_id):
     context = {
         "form" : form, 
         "title" : "Add Patient Observation",
-        "patient_id" : patient.id,
+        "hospitalization_id" : hospitalization_id,
     }
     
     return render(request,"patient_observation_form.html", context)
 
 @login_required(login_url = "/login/")
-def edit_patient_observation(request, patient_id, hospitalization_id, observation_id):
+def update_patient_observation(request, patient_id, hospitalization_id, observation_id):
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
         # Redirect or show an error message
@@ -214,7 +216,64 @@ def edit_patient_observation(request, patient_id, hospitalization_id, observatio
     context = {
         "form": form,
         "title" : "Edit Patient Observation",
-        "patient_id" : patient.id,
+        "hospitalization_id" : hospitalization_id,
     }
     
     return render(request, "patient_observation_form.html", context)
+
+@login_required(login_url = "/login/")
+def create_vital_signs(request, patient_id, hospitalization_id):
+    # Check if the user has the allowed profession
+    if request.user.profession == "secretaries":
+        # Redirect or show an error message
+        return redirect("access_denied")
+    
+    patient = get_object_or_404(Patient, id = patient_id)
+    hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id, patient=patient)
+    
+    if request.method == "POST":
+        form = VitalSignsForm(request.POST)
+        if form.is_valid():
+            vital = form.save(commit=False)
+            vital.created_by = request.user
+            vital.hospitalization = hospitalization
+            vital.save()
+            return redirect("department:hospitalization", hospitalization.id)
+    else:
+        
+        form = VitalSignsForm()
+        
+    context = {
+        "form" : form, 
+        "title" : "Add Vital Signs",
+        "hospitalization_id" : hospitalization_id,
+    }
+    
+    return render(request,"scale_form.html", context)
+
+@login_required(login_url = "/login/")
+def update_vital_signs(request, patient_id, hospitalization_id, vital_id):
+    # Check if the user has the allowed profession
+    if request.user.profession == "secretaries":
+        # Redirect or show an error message
+        return redirect("access_denied")
+    
+    patient = get_object_or_404(Patient, id = patient_id)
+    hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id, patient=patient)
+    vital = get_object_or_404(VitalSigns, id=vital_id, hospitalization=hospitalization)
+    
+    if request.method == "POST":
+        form = VitalSignsForm(request.POST, instance=vital)
+        if form.is_valid():
+            form.save()
+            return redirect("department:hospitalization", hospitalization.id)
+    else:
+        form = VitalSignsForm(instance=vital)
+        
+    context = {
+        "form": form,
+        "title" : "Edit Vital Signs",
+        "hospitalization_id" : hospitalization_id,
+    }
+    
+    return render(request, "scale_form.html", context)
