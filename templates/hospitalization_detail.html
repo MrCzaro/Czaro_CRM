@@ -68,14 +68,12 @@
                     
                 </div>
             </div>
-            {% endfor %}
-            
+            {% endfor %}    
         </ul>
         {% else %}
-        <p>No observations for this hospitalization.</p>
+        <p>No consultation for this hospitalization.</p>
         {% endif %}
         
-    <a href="{% url 'scales:norton_create'  hospitalization.patient.id hospitalization.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white">Add Norton Scale</a>
 
     <a href="{% url 'department:vitals_create'  hospitalization.patient.id hospitalization.id%}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white">Add Vital Signs</a>
     <h2>Vital Signs</h2>
@@ -95,7 +93,23 @@
     </li>
   {% endfor %}
 </ul>
-
+<a href="{% url 'scales:bmi_create'  hospitalization.patient.id hospitalization.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white">Add Body Mass Index</a>
+  <h2>Body Mass Index</h2>
+  <ul>
+    {% for bmi in bmis %}
+      <li>
+        <p>Body height: {{ bmi.body_height }} cm.</p>
+        <p>Body weight: {{ bmi.body_weight }} kg.</p>
+        <p>Score: {{ bmi.bmi }}</p>
+        <p>Interpretation: {{ bmi.interpretation }}</p>
+        <p>Created by: {{ bmi.created_by.first_name }} {{ bmi.created_by.last_name }}  | Created at: {{ bmi.created_at}} | Modified at: {{ bmi.modified_at }}</p>
+      {% if bmi.created_by == user %}
+          <a href="{% url 'scales:bmi_update' hospitalization.patient.id hospitalization.id bmi.id %}" class="font-bold text-black mr-3">Edit</a>
+      {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+<a href="{% url 'scales:norton_create'  hospitalization.patient.id hospitalization.id %}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white">Add Norton Scale</a>
 
     <h2>Norton Scales</h2>
 <ul>

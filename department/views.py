@@ -7,12 +7,13 @@ from django.utils import timezone
 from .models import Department, Hospitalization, Observation, VitalSigns, Consultation
 from .forms import DepartmentForm, ObservationForm, HospitalizationForm, TransferPatientForm, DischargeForm, VitalSignsForm, ConsultationForm
 from patient.models import Patient
-from scales.models import NortonScale, GlasgowComaScale, NewsScale, PainScale
+from scales.models import BodyMassIndex, NortonScale, GlasgowComaScale, NewsScale, PainScale
 
 @login_required(login_url="/login/")
 def hospitalization_detail(request, hospitalization_id):
     hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id)
     consultations = Consultation.objects.filter(hospitalization=hospitalization)
+    bmis = BodyMassIndex.objects.filter(hospitalization=hospitalization)
     observations = Observation.objects.filter(hospitalization=hospitalization)
     norton_scales = NortonScale.objects.filter(hospitalization=hospitalization)
     glasgow_scales = GlasgowComaScale.objects.filter(hospitalization=hospitalization)
@@ -20,6 +21,7 @@ def hospitalization_detail(request, hospitalization_id):
     pain_scales = PainScale.objects.filter(hospitalization=hospitalization)
     vitals = VitalSigns.objects.filter(hospitalization=hospitalization)
     context = {
+        "bmis" : bmis,
         "consultations" : consultations,
         "glasgow_scales" : glasgow_scales,
         "hospitalization" : hospitalization,

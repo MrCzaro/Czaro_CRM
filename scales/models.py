@@ -87,6 +87,51 @@ LOC_CHOICES = [
     ("unresponsive", "Patient is unresponsive to stimulus")
 ]
 
+class BodyMassIndex(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    hospitalization = models.ForeignKey(Hospitalization, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+    body_height = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(300)])
+    body_weight = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(400)])
+    bmi = models.DecimalField(max_digits=4, decimal_places=1, validators=[MinValueValidator(0)])
+    interpretation = models.CharField(max_length=50)
+    
+    class Meta:
+        ordering = ("-created_at",)
+        
+    def __str__(self):
+        return f"{self.hospitalization.patient.first_name} {self.bmi}-points: {self.intepretation}"
+    
+    def calculate_bmi(self):
+        body_height = self.body_height / 100
+        bmi = round((self.body_weight / (body_height **2)),1)
+        return bmi
+    
+    def interpretation(self):
+        if self.bmi < 18.5:
+            return "Underweight"
+        elif 18.5 <= self.bmi <= 24.9:
+            return "Normal weight"
+        elif 25 <= self.bmi <= 29.9:
+            return "Overweight"
+        elif 30 <= self.bmi <= 34.9:
+            return "Obesity class I"
+        elif 35 <= self.bmi <= 39.9:
+            return "Obesity class II"
+        elif self.bmi <= 40:
+            return "Obesity class III"
+        else:
+            return "Error"
+        
+    def save(self, *args, **kwargs):
+        self.bmi = self.calculate_bmi()
+        self.interpretation = self.interpretation()
+        super().save(*args, **kwargs)
+        
+        
+    
 class NortonScale(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     hospitalization = models.ForeignKey(Hospitalization, on_delete=models.CASCADE)

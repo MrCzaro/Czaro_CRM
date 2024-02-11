@@ -1,6 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from .models import (
+    BodyMassIndex,
     GlasgowComaScale,
     NewsScale,
     NortonScale,
@@ -18,7 +19,17 @@ from .models import (
     PAIN_CHOICES,
 )
 
-
+class BodyMassIndexForm(forms.ModelForm):
+    class Meta:
+        model = BodyMassIndex
+        fields = [
+            "body_height",
+            "body_weight",
+        ]
+        labels = {
+            "body_height" : "Body height in cenimeters",
+            "body_weight" : "Body weight in kilograms",
+        }
 class GlasgowComaScaleForm(forms.ModelForm):
     eye_response = forms.ChoiceField(
         widget=forms.RadioSelect, choices=EYE_RESPONSE_CHOICES
