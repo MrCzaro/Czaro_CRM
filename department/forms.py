@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from ckeditor.widgets import CKEditorWidget
 
-from .models import Department, Observation, Hospitalization, VitalSigns
+from .models import Consultation, Department, Hospitalization, Observation, VitalSigns
 
 
 class DepartmentForm(forms.ModelForm):
@@ -20,7 +20,17 @@ class DepartmentForm(forms.ModelForm):
             
             return cleaned_data
         
-
+class ConsultationForm(forms.ModelForm):
+    class Meta:
+        model = Consultation
+        fields = ["consultation_name","consultation"]
+        labels = {
+            "consultation_name" : "Name of Consultation",
+            "consultation" : "Description",
+        }
+        widgets = {
+            "consultation" : CKEditorWidget(config_name="default")
+        }
         
 class ObservationForm(forms.ModelForm):
     class Meta:

@@ -4,14 +4,15 @@ from django.contrib.auth.decorators import login_required
 from datetime import datetime
 
 from django.utils import timezone
-from .models import Department, Hospitalization, Observation, VitalSigns
-from .forms import DepartmentForm, ObservationForm, HospitalizationForm, TransferPatientForm, DischargeForm, VitalSignsForm
+from .models import Department, Hospitalization, Observation, VitalSigns, Consultation
+from .forms import DepartmentForm, ObservationForm, HospitalizationForm, TransferPatientForm, DischargeForm, VitalSignsForm, ConsultationForm
 from patient.models import Patient
 from scales.models import NortonScale, GlasgowComaScale, NewsScale, PainScale
 
 @login_required(login_url="/login/")
 def hospitalization_detail(request, hospitalization_id):
     hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id)
+    consultations = Consultation.objects.filter(hospitalization=hospitalization)
     observations = Observation.objects.filter(hospitalization=hospitalization)
     norton_scales = NortonScale.objects.filter(hospitalization=hospitalization)
     glasgow_scales = GlasgowComaScale.objects.filter(hospitalization=hospitalization)
@@ -19,6 +20,7 @@ def hospitalization_detail(request, hospitalization_id):
     pain_scales = PainScale.objects.filter(hospitalization=hospitalization)
     vitals = VitalSigns.objects.filter(hospitalization=hospitalization)
     context = {
+        "consultations" : consultations,
         "glasgow_scales" : glasgow_scales,
         "hospitalization" : hospitalization,
         "observations" : observations,
@@ -161,7 +163,61 @@ def department_list(request):
     return render(request, 'department_list.html', context)
 
 
+@login_required(login_url = "/login/")
+def create_patient_consultation(request, patient_id, hospitalization_id):
+    # Check if the user has the allowed profession
+    if request.user.profession in ["secretaries", "nurses"]:
+        # Redirect or show an error message
+        return redirect("access_denied")
+    
+    patient = get_object_or_404(Patient, id=patient_id)
+    hospitalization= get_object_or_404(Hospitalization, id=hospitalization_id, patient=patient)
+    
+    if request.method == "POST":
+        form = ConsultationForm(request.POST)
+        if form.is_valid():
+            consultation = form.save(commit=False)
+            consultation.created_by = request.user
+            consultation.hospitalization = hospitalization
+            consultation.save()
+            return redirect("department:hospitalization", hospitalization_id)
+    else:
+        form = ConsultationForm()
+        
+    context = {
+        "form": form,
+        "title" : "Add Patient Consultation",
+        "hospitalization_id": hospitalization_id,
+    }    
+    
+    return render(request, "patient_consultation_form.html", context)
 
+@login_required(login_url = "/login/")
+def update_patient_consultation(request, patient_id, hospitalization_id, consultation_id):
+    # Check if the user has the allowed profession
+    if request.user.profession in ["secretaries", "nurses"]:
+        # Redirect or show an error message
+        return redirect("access_denied")
+    
+    patient = get_object_or_404(Patient, id = patient_id)
+    hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id, patient=patient)
+    consultation = get_object_or_404(Consultation, id=consultation_id, hospitalization=hospitalization)
+    
+    if request.method == "POST":
+        form = ConsultationForm(request.POST, instance=consultation)
+        if form.is_valid():
+            form.save()
+            return redirect("department:hospitalization", hospitalization_id)
+    else:
+        form = ConsultationForm(instance=consultation)
+        
+    context = {
+        "form" : form,
+        "title" : "Edit Patient Consultation",
+        "hospitalization_id" : hospitalization_id,
+    }
+    
+    return render(request, "patient_consultation_form.html", context)
 
 @login_required(login_url = "/login/")
 def create_patient_observation(request, patient_id, hospitalization_id):

@@ -32,7 +32,21 @@ class Hospitalization(models.Model):
     
     class Meta:
         ordering = ("-admitted_on",)
+
+class Consultation(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    hospitalization = models.ForeignKey(Hospitalization, on_delete=models.CASCADE)
+    consultation_name = models.CharField(max_length=255)
+    consultation = models.TextField()
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True, null=True)
     
+    def __str__(self):
+        return f"{self.created_by} - {self.created_at}"
+    
+    class Meta:
+        ordering = ("-created_at",)
 
 class Observation(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

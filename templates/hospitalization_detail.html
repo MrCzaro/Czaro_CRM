@@ -35,10 +35,37 @@
                 <p class="text-lg">{{ observation.observation }}</p>
                 <div class="flex justify-between text-sm text-gray-500 mt-2">
                     {% if observation.created_by == user %}
-                    <a href="{% url 'department:observation_update' hospitalization.patient.id hospitalization.id observation.id %}" class="font-bold text-black">Edit</a>                    {% endif %}
-                    <p>Created by: {{ observation.created_by.first_name }} {{ observation.created_by.last_name }}</p>
-                    <p>Created at: {{ observation.created_at|date:"F j, Y H:i" }}</p>
-                    <p>Modified at: {{ observation.modified_at|date:"F j, Y H:i" }}</p>
+                      <a href="{% url 'department:observation_update' hospitalization.patient.id hospitalization.id observation.id %}" class="font-bold text-black">Edit</a>
+                      {% endif %}                 
+                      <p>Created by: {{ observation.created_by.first_name }} {{ observation.created_by.last_name }}</p>
+                      <p>Created at: {{ observation.created_at|date:"F j, Y H:i" }}</p>
+                      <p>Modified at: {{ observation.modified_at|date:"F j, Y H:i" }}</p>
+                    
+                </div>
+            </div>
+            {% endfor %}
+            
+        </ul>
+        {% else %}
+        <p>No observations for this hospitalization.</p>
+        {% endif %}
+
+        <a href="{% url 'department:consultation_create'  hospitalization.patient.id hospitalization.id%}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white">Add Consultation</a>
+        {% if consultations %}
+        <h2>Patient consultations:</h2>
+        <ul>
+            {% for consultation in consultations %}
+            <div class="border p-4 rounded-md">
+                <p class="text-xl">{{ consultation.consulation_name }}</p>
+                <p class="text-lg">{{ consultation.consultation }}</p>
+                <div class="flex justify-between text-sm text-gray-500 mt-2">
+                    {% if consultation.created_by == user %}
+                      <a href="{% url 'department:consultation_update' hospitalization.patient.id hospitalization.id consultation.id %}" class="font-bold text-black">Edit</a>
+                    {% endif %}                
+                      <p>Created by: {{ consultation.created_by.first_name }} {{ consultation.created_by.last_name }}</p>
+                      <p>Created at: {{ consultation.created_at|date:"F j, Y H:i" }}</p>
+                      <p>Modified at: {{ consultation.modified_at|date:"F j, Y H:i" }}</p>
+                    
                 </div>
             </div>
             {% endfor %}
