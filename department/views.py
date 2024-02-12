@@ -1,9 +1,10 @@
-from django.shortcuts import redirect,render, get_object_or_404
+from django.db.models import Count
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect,render, get_object_or_404
+from django.utils import timezone
 
 from datetime import datetime
 
-from django.utils import timezone
 from .models import Department, Hospitalization, Observation, VitalSigns, Consultation
 from .forms import DepartmentForm, ObservationForm, HospitalizationForm, TransferPatientForm, DischargeForm, VitalSignsForm, ConsultationForm
 from patient.models import Patient
@@ -126,11 +127,14 @@ def discharge_patient(request, hospitalization_id):
 def department_detail(request, department_id):
     department = get_object_or_404(Department, id=department_id)
     hospitalizations = Hospitalization.objects.filter(department__id=department_id, is_discharged=False)
+    num_admitted_patients = hospitalizations.count()
     
     context = {
-        "title" : "Department Detail",
-        'hospitalizations': hospitalizations,
         "department" : department,
+        'hospitalizations': hospitalizations,
+        "num_admitted_patients" : num_admitted_patients,
+        "title" : "Department Detail",
+        
     }
     
     return render(request, "department_detail.html", context)
@@ -158,11 +162,26 @@ def create_department(request):
 @login_required(login_url="/login/")
 def department_list(request):
     departments = Department.objects.all()
+    # Count the total number of admitted patients
+    total_admitted_patients = Hospitalization.objects.all().count()
+    # Count the number of patients admitted in each department
+    department_counts = {}  # Assuming you have a dictionary with department UUIDs as keys and counts as values
+
+    for department in departments:
+        department_count = Hospitalization.objects.filter(department=department).count()
+        setattr(department, 'count', department_count)   
+        
+        department_counts[department.id] = department_count
+
     context = {
         'title': 'Department List',
         'departments': departments,
+        "department_counts" : department_counts,
+        "total_admitted_patients" : total_admitted_patients,
     }
     return render(request, 'department_list.html', context)
+    
+    
 
 
 @login_required(login_url = "/login/")
