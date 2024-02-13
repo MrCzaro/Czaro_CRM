@@ -1,24 +1,29 @@
 {% extends "base.html" %}
 
 {% block content %}
-<body>
-    <h1>{% block title %}Discharge Patient{% endblock %}</h1>
+<div class="mt-60 flex items-center justify-center">
+    <div class="max-w-xl py-8 bg-white text-center shadow-md rounded-md">
+        <h1 class="text-3xl font-bold mb-4">Discharge Patient</h1>
 
-    <p>Patient: {{ hospitalization.patient.first_name }} {{ hospitalization.patient.last_name }}</p>
-    <p>Admitted On: {{ hospitalization.admitted_on }}</p>
+        <p class="mb-4 font-bold">Patient: {{ hospitalization.patient.first_name }} {{ hospitalization.patient.last_name }}</p>
 
-    <form method="post" action="{% url 'department:discharge' hospitalization.id %}">
-        {% csrf_token %}
-    
-        <label for="id_discharge_date">Discharge Date:</label>
-        <input type="date" name="discharge_date" id="id_discharge_date" required value="{{ default_discharge_date|default:'' }}">
-    
-        <label for="id_discharge_time">Discharge Time:</label>
-        <input type="time" name="discharge_time" id="id_discharge_time" required value="{{ default_discharge_time|default:'' }}">
-    
-        <button type="submit">Discharge</button>
-    </form>
-    <p><a href="{% url 'department:department_detail' hospitalization.department.id %}">Back to Department</a></p>
+        <form method="post" action="{% url 'department:discharge' hospitalization.id %}" class="mb-8">
+            {% csrf_token %}
 
-</body>
+            <div class="flex items-center m-4">
+                <label for="id_discharge_date">Discharge Date:</label>
+                <input type="date" name="discharge_date" id="id_discharge_date" required value="{{ default_discharge_date|default:'' }}">
+                <label for="id_discharge_time" class="ml-2">Discharge Time:</label>
+                <input type="time" name="discharge_time" id="id_discharge_time" required value="{{ default_discharge_time|default:'' }}">
+            </div>
+
+            <div class="flex items-center justify-center">
+                <button type="submit" class="py-3 px-6 bg-blue-500 text-white rounded-md m-3">Discharge</button>
+                <a href="{% url 'department:hospitalization' hospitalization.id %}" class="py-3 px-6 bg-indigo-500 rounded-md text-white mr-3">Back</a>
+            </div>
+
+        </form>
+
+    </div>
+</div>
 {% endblock %}

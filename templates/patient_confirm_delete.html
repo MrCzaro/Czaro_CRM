@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="flex items-center justify-center h-screen">
+<div class="mt-60 flex items-center justify-center">
     <div class="max-w-xl py-8 bg-white text-center shadow-md rounded-md">
         <h1 class="mb-6 text-3xl">{{ title }}</h2>
         <div>
@@ -10,11 +10,11 @@
         <form class="mt-5 px-8 space-y-4" method="post">
             {% csrf_token %}
             <div>
-                <button class="mb-9 py-4 px-8 bg-red-600 text-white rounded-xl" type="submit">Confirm Delete</button>
+                <button class="mb-9 py-3 px-6 bg-red-600 text-white rounded-md" type="submit">Confirm Delete</button>
             </div>
         </form>
         <div>
-            <a class="py-4 px-8 bg-blue-700 text-white rounded-xl" href="{% url 'patient:index' %}">Cancel</a>
+            <a class="py-3 px-6 bg-blue-700 text-white rounded-md" href="{% url 'patient:index' %}">Cancel</a>
         </div>
     </div>
 </div>

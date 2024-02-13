@@ -36,7 +36,7 @@ class PatientForm(forms.ModelForm):
         widgets = {
             "first_name" : forms.TextInput(attrs={"class": FORM_CLASS}),
             "last_name" : forms.TextInput(attrs={"class": FORM_CLASS}),
-            "date_of_birth": forms.DateInput(attrs={"type": "date", "class": FORM_CLASS}), # Figure out a widget for picking date usin JS
+            "date_of_birth": forms.DateInput(attrs={"type": "date", "class": FORM_CLASS}),
             "contact_number" : forms.TextInput(attrs={"class": FORM_CLASS}),
             "is_insured" : forms.Select(attrs={"class": FORM_CLASS}),
             "insurance" : forms.NumberInput(attrs={"class": FORM_CLASS, "placeholder" :  "Please type '0' if no insurance."}),

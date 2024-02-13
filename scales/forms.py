@@ -19,6 +19,9 @@ from .models import (
     PAIN_CHOICES,
 )
 
+NUMERIC_CLASS = "w-1/4 py-1 px-1 bg-stone-200 rounded-md text-black"
+
+
 class BodyMassIndexForm(forms.ModelForm):
     class Meta:
         model = BodyMassIndex
@@ -29,6 +32,10 @@ class BodyMassIndexForm(forms.ModelForm):
         labels = {
             "body_height" : "Body height in cenimeters",
             "body_weight" : "Body weight in kilograms",
+        }
+        widgets = {
+            "body_height" : forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
+            "body_weight" : forms.NumberInput(attrs={"class": NUMERIC_CLASS})
         }
 class GlasgowComaScaleForm(forms.ModelForm):
     eye_response = forms.ChoiceField(
@@ -74,7 +81,7 @@ class NewsScaleForm(forms.ModelForm):
             if systolic_bp < diastolic_bp:
                 raise ValidationError(
                     "Systolic blood pressure must be equal or higher than diastolic blood pressure.",
-                    code='invalid_blood_pressure'
+                    code="invalid_blood_pressure"
                 )
     class Meta:
         model = NewsScale
@@ -100,7 +107,14 @@ class NewsScaleForm(forms.ModelForm):
             "heart_rate" : "Heart Rate",
             "level_of_consciousness " : "Level of consciousness",
         }
-        
+        widgets = {
+            "respiratory_rate" : forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
+            "oxygen_saturation" : forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
+            "temperature" : forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
+            "systolic_blood_pressure" : forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
+            "diastolic_blood_pressure" : forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
+            "heart_rate" : forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
+        }
 class NortonScaleForm(forms.ModelForm):
     physical_condition = forms.ChoiceField(
         widget=forms.RadioSelect, choices=PHYSICAL_CHOICES
