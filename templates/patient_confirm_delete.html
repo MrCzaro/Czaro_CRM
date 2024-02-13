@@ -2,24 +2,20 @@
 
 {% block content %}
 <div class="flex items-center justify-center h-screen">
-    <div class="max-w-xl py-8 bg-stone-400 text-center">
+    <div class="max-w-xl py-8 bg-white text-center shadow-md rounded-md">
         <h1 class="mb-6 text-3xl">{{ title }}</h2>
+        <div>
+            <p class="mx-5 text-2xl">Are you sure you want to <strong>delete</strong> {{ patient }}?</p>
+        </div>
+        <form class="mt-5 px-8 space-y-4" method="post">
+            {% csrf_token %}
             <div>
-                <p class="mx-5 text-2xl">Are you sure you want to <strong>delete</strong>{{ patient }}?</p>
-                
+                <button class="mb-9 py-4 px-8 bg-red-600 text-white rounded-xl" type="submit">Confirm Delete</button>
             </div>
-            <form class="mt-5 px-8 space-y-4" method="post">
-                {% csrf_token %}
-                <div>
-        
-                    <button class="mb-9 py-4 px-8 bg-zinc-600 text-white rounded-xl" type="submit">Confirm Delete</button>
-                </div>
         </form>
         <div>
-
-            <a class="py-4 px-8 bg-rose-800 text-white rounded-xl" href="{% url 'patient:index' %}">Cancel</a>
+            <a class="py-4 px-8 bg-blue-700 text-white rounded-xl" href="{% url 'patient:index' %}">Cancel</a>
         </div>
-
     </div>
 </div>
 {% endblock %}

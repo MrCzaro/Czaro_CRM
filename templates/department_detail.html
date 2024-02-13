@@ -1,46 +1,49 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1 class="p-8 text-3xl font-bold text-center">{{ title }}</h1>
+<div class="container mx-auto mt-16">
+    <h1 class="mb-8 text-3xl font-bold text-center">{{ title }}</h1>
 
-  <div class="flex justify-center">
-    <div class="w-2/3">
-      <p class="font-bold">Department Name: {{ department.name }}</p>
-      <p class="font-bold">Description: {{ department.description }}</p>
+    <div class="flex justify-center">
+        <div class="w-2/3">
+            <p class="font-bold">Department Name: {{ department.name }}</p>
+            <p class="font-bold">Description: {{ department.description }}</p>
+        </div>
     </div>
-  </div>
-  <div class="flex items-center mt-8">
-    <a href="{% url 'department:department_list' %}" class="py-4 px-6 bg-zinc-800 rounded-xl text-white mr-3">Back</a>
 
-</div>
-
-<h1 class="p-8 text-3xl font-bold text-center">Admitted Patients:</h1>
-<div class="flex justify-center">
+    <h1 class="mb-8 text-3xl font-bold text-center">Admitted Patients: {{ num_admitted_patients }}</h1>
     
-    {% if hospitalizations %}
-        <table class="table-fixed w-2/3 border">
-            <thead>
-                <tr>
-                    <th class="border p-2 font-bold">Patient Name</th>
-                    <th class="border p-2 font-bold">Main Symptom</th>
-                    <th class="border p-2 font-bold">Additional Symptoms</th>
-                    <th class="border p-2 font-bold">Details</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for hospitalization in hospitalizations %}
-                    <tr>
-                        <td class="border p-2">{{ hospitalization.patient }}</td>
-                        <td class="border p-2">{{ hospitalization.main_symptom }}</td>
-                        <td class="border p-2">{{ hospitalization.additional_symptoms }}</td>
-                        <td class="border p-2 font-bold"><a href="{% url 'department:hospitalization' hospitalization.id %}">Details</a></td>
+    <div class="flex justify-center">
+        {% if hospitalizations %}
+            <table class="min-w-max w-2/3 bg-white border border-gray-300 rounded-lg overflow-hidden">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                        <th class="py-3 px-6 text-left">Patient Name</th>
+                        <th class="py-3 px-6 text-left">Main Symptom</th>
+                        <th class="py-3 px-6 text-left">Additional Symptoms</th>
+                        <th class="py-3 px-6 text-left">Admitted on</th>
+                        <th class="py-3 px-6 text-left">Details</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No admitted patients in this department.</p>
-    {% endif %}
- </div>
+                </thead>
+                <tbody class="text-gray-600 text-sm font-light">
+                    {% for hospitalization in hospitalizations %}
+                        <tr class="border-b border-gray-300 hover:bg-gray-100">
+                            <td class="py-3 px-6 text-left">{{ hospitalization.patient }}</td>
+                            <td class="py-3 px-6 text-left">{{ hospitalization.main_symptom }}</td>
+                            <td class="py-3 px-6 text-left">{{ hospitalization.additional_symptoms }}</td>
+                            <td class="py-3 px-6 text-left">{{ hospitalization.admitted_on }}</td>
+                            <td class="py-3 px-6 text-left font-bold"><a href="{% url 'department:hospitalization' hospitalization.id %}" class="text-blue-500">Details</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="text-center">No admitted patients in this department.</p>
+        {% endif %}
+    </div>
 
+    <div class="flex justify-center mt-8">
+        <a href="{% url 'department:department_list' %}" class="py-4 px-6 bg-blue-700 text-white rounded-md mr-3">Back</a>
+    </div>
+</div>
 {% endblock %}

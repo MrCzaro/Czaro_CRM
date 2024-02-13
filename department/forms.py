@@ -5,20 +5,27 @@ from ckeditor.widgets import CKEditorWidget
 from .models import Consultation, Department, Hospitalization, Observation, VitalSigns
 
 
+
+
 class DepartmentForm(forms.ModelForm):
     class Meta:
         model = Department
         fields = ["name", "description"]
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'w-full py-3 px-4 bg-stone-200 rounded-md text-black focus:outline-none focus:ring focus:border-blue-300'}),
+            'description': forms.Textarea(attrs={'class': 'w-full py-3 px-4 bg-stone-200 rounded-md text-black focus:outline-none focus:ring focus:border-blue-300'}),
+        }
         
-        def clean(self):
-            cleaned_data = super().clean()
-            created_by = self.initial.get('created_by')
-            
-            # Check if the user has the admin profession
-            if created_by and created_by.profession != 'admins':
-                raise forms.ValidationError("Only users with the admin profession can create departments.")
-            
-            return cleaned_data
+    def clean(self):
+        cleaned_data = super().clean()
+        created_by = self.initial.get('created_by')
+        
+        # Check if the user has the admin profession
+        if created_by and created_by.profession != 'admins':
+            raise forms.ValidationError("Only users with the admin profession can create departments.")
+        
+        return cleaned_data
+
         
 class ConsultationForm(forms.ModelForm):
     class Meta:
