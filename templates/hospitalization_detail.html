@@ -4,29 +4,48 @@
 {% block content %}
 
 
-    <h1 class="p-8 text-3xl font-bold text-center">{{ title }}</h1>
- 
+<h1 class="p-8 text-3xl font-bold text-center mt-16">{{ title }}</h1>
 
-    <div class="flex justify-center">
-        <table class="table-fixed w-2/3 border">
-            <tbody>
-                <tr>
-                    <td class="border p-2 font-bold">First Name</td>
-                    <td class="border p-2">{{ hospitalization.patient.first_name }}</td>
-                    <td class="border p-2 font-bold">Last Name</td>
-                    <td class="border p-2">{{ hospitalization.patient.last_name }}</td>
+<div class="flex justify-center">
+    <table class="min-w-max w-2/3 bg-white border border-gray-300 rounded-lg overflow-hidden">
+        <tbody class="text-gray-600 text-sm font-light">
+                <tr class="border-b border-gray-300 hover:bg-gray-100">
+                    <td class="py-3 px-6 text-left font-bold">First Name</td>
+                    <td class="py-3 px-6 text-left">{{ hospitalization.patient.first_name }}</td>
+                    <td class="py-3 px-6 text-left font-bold">Last Name</td>
+                    <td class="py-3 px-6 text-left">{{ hospitalization.patient.last_name }}</td>
                 </tr>
     
-                
-            </tbody>
-        </table>
+                <tr class="border-b border-gray-300 hover:bg-gray-100">
+                    <td class="py-3 px-6 text-left font-bold">Main Symptom</td>
+                    <td class="py-3 px-6 text-left">{{ hospitalization.main_symptom }}</td>
+                    <td class="py-3 px-6 text-left font-bold">Additional Symptoms</td>
+                    <td class="py-3 px-6 text-left">{{ hospitalization.additional_symptoms }}</td>
+                </tr>
+    
+                <tr class="border-b border-gray-300 hover:bg-gray-100">
+                    <td class="py-3 px-6 text-left font-bold">
+                        <a href="{% url 'department:transfer' hospitalization.patient.id hospitalization.id %}" class="inline-block px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Transfer Patient</a>
+                    </td>
+                    <td class="py-3 px-6 text-left font-bold">
+                        <a href="{% url 'department:discharge' hospitalization.id %}" class="inline-block px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">Discharge Patient</a>
+                    </td>
+                    <td class="py-3 px-6 text-left font-bold">
+                        <a href="#" class="inline-block px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600">Patient Details</a>
+                    </td>
+                    <td class="py-3 px-6 text-left font-bold">
+                        <a href="#" class="inline-block px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600">Edit Hospitalization</a>
+                    </td>
+                </tr>
+              </tbody>
+            </table>
+        </div>
 
-    </div>
-    <a href="{% url 'department:transfer' hospitalization.patient.id hospitalization.id %}">Transfer Patient</a>
-    <a href="{% url 'department:discharge' hospitalization.id %}">Discharge Patient</a>
+        
+
 
    
-    <a href="{% url 'department:observation_create'  hospitalization.patient.id hospitalization.id%}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white">Add Observation</a>
+<a href="{% url 'department:observation_create'  hospitalization.patient.id hospitalization.id%}" class="py-4 px-6 bg-zinc-500 rounded-xl text-white">Add Observation</a>
         {% if observations %}
         <h2>Patient observations:</h2>
         <ul>
