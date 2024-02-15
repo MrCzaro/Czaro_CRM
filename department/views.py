@@ -1,7 +1,8 @@
-from django.db.models import Count
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect,render, get_object_or_404
 from django.utils import timezone
+from django.urls import reverse
 
 from datetime import datetime
 
@@ -32,6 +33,7 @@ def hospitalization_detail(request, hospitalization_id):
         "pain_scales" : pain_scales,
         "vitals" : vitals,
         "title" : "Hospitalization Detail",
+        "back_url": reverse("patient:detail", args=[hospitalization.patient.id]),
         
     }
     
@@ -46,7 +48,7 @@ def admit_patient(request, patient_id):
         form = HospitalizationForm(request.POST)
         if form.is_valid():
             hospitalization = form.save(commit=False)
-            department_id = request.POST.get('department_id')  # Assuming you have a hidden field in your form with the department_id
+            department_id = request.POST.get('department_id')
             department = get_object_or_404(Department, id=department_id)
             hospitalization.patient = patient
             hospitalization.department = department  # Associate the patient with the selected department
@@ -58,13 +60,48 @@ def admit_patient(request, patient_id):
     departments = Department.objects.all()  # Fetch all departments to display in the form
 
     context = {
-        'form': form,
         'departments': departments,
+        'form': form,
         'title': f'Admit {patient.first_name} {patient.last_name}',
         'patient': patient,
     }
 
     return render(request, 'admit_patient.html', context)
+
+@login_required(login_url="/login/")
+def edit_patient_admission(request, hospitalization_id, patient_id):
+    hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id, patient_id=patient_id)
+    patient = hospitalization.patient
+
+
+    department_id = hospitalization.department.id if hospitalization.department else None
+    
+    if request.method == 'POST':
+        print(request.method)
+        form = HospitalizationForm(request.POST, instance=hospitalization)
+        if form.is_valid():
+            hospitalization = form.save(commit=False)
+            hospitalization.department = hospitalization.department
+
+            hospitalization.save()
+            return redirect('department:department_detail', hospitalization.department.id)
+        else:
+            print(form.errors)
+    else:
+        form = HospitalizationForm(instance=hospitalization, initial={'department_id': department_id})
+
+
+    context = {
+        'department_id': department_id,
+        'form': form,
+        'title': f'Edit Admission for {patient.first_name} {patient.last_name}',
+        'patient': patient,
+        'hospitalization_id': hospitalization.id,
+    }
+
+    return render(request, 'edit_patient_admission.html', context)
+
+    
 
 @login_required(login_url="/login/")
 def transfer_patient(request, patient_id, hospitalization_id):
@@ -163,12 +200,12 @@ def create_department(request):
 def department_list(request):
     departments = Department.objects.all()
     # Count the total number of admitted patients
-    total_admitted_patients = Hospitalization.objects.all().count()
+    total_admitted_patients = Hospitalization.objects.filter(is_discharged=False).count()
     # Count the number of patients admitted in each department
     department_counts = {}  # Assuming you have a dictionary with department UUIDs as keys and counts as values
 
     for department in departments:
-        department_count = Hospitalization.objects.filter(department=department).count()
+        department_count = Hospitalization.objects.filter(department=department, is_discharged=False).count()
         setattr(department, 'count', department_count)   
         
         department_counts[department.id] = department_count

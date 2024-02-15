@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="mt-40 flex items-center justify-center">
+    <div class="max-w-xl py-8 bg-white text-center shadow-md rounded-md">
+        <h1 class="text-3xl font-bold mb-4">{{ title }}</h1>
+
+        <p class="mb-4 font-bold">Patient: {{ patient.first_name }} {{ patient.last_name }}</p>
+
+        <form method="post" action="{% url 'department:hospitalization_update' patient.id hospitalization_id %}" class="mb-8">
+            {% csrf_token %}
+            <div class="m-4">
+                <p>{{ form.main_symptom.label_tag }}</p>
+                <p>{{ form.main_symptom }}</p>
+                <p>{{ form.additional_symptoms.label_tag }}</p>
+                <p>{{ form.additional_symptoms }}</p>
+            </div>
+
+            {{ form.department_id }}
+
+            <div class="flex items-center justify-center">
+                <button type="submit" class="py-3 px-6 bg-blue-500 text-white rounded-md m-3">Edit</button>
+                <a href="{% url 'department:hospitalization' hospitalization_id %}" class="py-3 px-6 bg-indigo-500 rounded-md text-white mr-3">Back</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

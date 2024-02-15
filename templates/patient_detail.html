@@ -47,7 +47,7 @@
     <div class="flex justify-center mt-8">
         <div class="flex items-center">
             <a href="{% url 'department:admit_patient' patient.id %}" class="py-3 px-6 bg-teal-500 rounded-md text-white mr-3">Admit Patient</a>
-            <a href="{% url 'patient:index' %}" class="py-3 px-6 bg-indigo-800 rounded-md text-white mr-3">Back</a>
+            <a href="{{ back_url }}" class="py-3 px-6 bg-indigo-800 rounded-md text-white mr-3">Back</a>
             <a href="{% url 'patient:update' patient.id %}" class="py-3 px-6 bg-indigo-500 rounded-md text-white mr-3">Edit</a>
             <a href="{% url 'patient:delete' patient.id %}" class="py-3 px-6 bg-red-500 rounded-md text-white">Delete</a>
         </div>

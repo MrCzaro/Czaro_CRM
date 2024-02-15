@@ -391,11 +391,11 @@ class NewsScale(models.Model):
     
     def score_interpretation(self):
         if self.total_score <= 4:
-            return f"National Early Warning Score (NEWS) = {self.total_score}. Interpretation: This is a low score that suggests clinical monitoring should be continued and the medical professional, usually a registered nurse will decide further if clinical care needs to be updated. Note: This tool should NOT be considered as a substitute for any professional medical service, NOR as a substitute for clinical judgement."
+            return f"National Early Warning Score (NEWS) = {self.total_score}. Interpretation: This is a low score that suggests clinical monitoring should be continued and the medical professional, usually a registered nurse will decide further if clinical care needs to be updated."
         elif self.total_score in [5,6]:
-            return f"National Early Warning Score (NEWS) = {self.total_score}. Interpretation: This is a medium score that suggests the patient should be reviewed by a medical specialist with competencies in acute illness, even with the possibility of referring the patient to the critical care unit at the end of the assessment. Note: This tool should NOT be considered as a substitute for any professional medical service, NOR as a substitute for clinical judgement."
+            return f"National Early Warning Score (NEWS) = {self.total_score}. Interpretation: This is a medium score that suggests the patient should be reviewed by a medical specialist with competencies in acute illness, even with the possibility of referring the patient to the critical care unit at the end of the assessment."
         elif 7 <= self.total_score <=20:
-            return f"National Early Warning Score (NEWS) = {self.total_score}. Interpretation: This is a high score (red score) that is indicative of urgent critical care need and the patient should be transferred to the appropriate specialized department for further care. Note: This tool should NOT be considered as a substitute for any professional medical service, NOR as a substitute for clinical judgement." 
+            return f"National Early Warning Score (NEWS) = {self.total_score}. Interpretation: This is a high score (red score) that is indicative of urgent critical care need and the patient should be transferred to the appropriate specialized department for further care." 
     
     def save(self, *args, **kwargs):
         self.total_score = self.calculate_total_score()

@@ -1,9 +1,11 @@
 
+
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic.edit import UpdateView, DeleteView
+from django.urls import reverse
 
 from .models import Patient 
 from .forms import PatientForm
@@ -27,10 +29,12 @@ def index(request):
 def patient_detail(request, patient_id):
     patient = get_object_or_404(Patient, id=patient_id)
     hospitalizations = patient.hospitalizations.all()
+    back_url = request.META.get('HTTP_REFERER', reverse("patient:index"))
     context = {
         "patient": patient,
         "hospitalizations" : hospitalizations,
-        "title": "Patient details"
+        "title": "Patient details",
+        "back_url" : back_url,
     }
     
     return render(request, "patient_detail.html", context)

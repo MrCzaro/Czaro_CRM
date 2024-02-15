@@ -58,7 +58,7 @@ class HospitalizationForm(forms.ModelForm):
 
     class Meta:
         model = Hospitalization
-        fields = ["main_symptom", "additional_symptoms"]
+        fields = ["main_symptom", "additional_symptoms", "department_id"]
         labels = {
             "main_symptom" : "Main symptom",
             "additional_symptoms" : "Additional symptoms"
@@ -67,7 +67,7 @@ class HospitalizationForm(forms.ModelForm):
             "main_symptom" : forms.TextInput(attrs={"class": HOSPITALIZATION_CLASS}),
             "additional_symptoms" : forms.TextInput(attrs={"class" : HOSPITALIZATION_CLASS})
         }
-        
+
 class TransferPatientForm(forms.Form):
     department = forms.ModelChoiceField(
         queryset=Department.objects.all(),
