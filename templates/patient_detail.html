@@ -40,13 +40,36 @@
                     <td class="py-3 px-6 text-left font-bold">Insurance number</td>
                     <td class="py-3 px-6 text-left">{{ patient.insurance }}</td>
                 </tr>
+
+                <tr class="border-b border-gray-300 hover:bg-gray-100">
+                    <td class="py-3 px-6 text-left font-bold">Hospitalizations</td>
+                    <td colspan="3">
+                        <ul>
+                            {% for admission in hospitalizations %}
+                                <li>
+                                    {% if admission.is_discharged %}
+                                        {{ admission.admitted_on|date:"d F Y" }} - {{ admission.dicharged_on|date:"d F Y" }} (Admitted to the {{ admission.department }} Department)<a href="{% url 'department:hospitalization' admission.id %}" class="text-blue-500">Details</a>
+                                    {% else %}
+                                        Ongoing Admission (Admitted on {{ admission.admitted_on|date:"d F Y" }} Admitted to the {{ admission.department }} Department)<a href="{% url 'department:hospitalization' admission.id %}" class="text-blue-500">Details</a>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                            {% if not hospitalizations %}
+                                <li>No hospitalization yet.</li>
+                            {% endif %}
+                        </ul>
+                    </td>
+                </tr>
+
             </tbody>
         </table>
     </div>
 
     <div class="flex justify-center mt-8">
         <div class="flex items-center">
-            <a href="{% url 'department:admit_patient' patient.id %}" class="py-3 px-6 bg-teal-500 rounded-md text-white mr-3">Admit Patient</a>
+            {% if not ongoing_admission %}
+                <a href="{% url 'department:admit_patient' patient.id %}" class="py-3 px-6 bg-teal-500 rounded-md text-white mr-3">Admit Patient</a>
+            {% endif %}
             <a href="{{ back_url }}" class="py-3 px-6 bg-indigo-800 rounded-md text-white mr-3">Back</a>
             <a href="{% url 'patient:update' patient.id %}" class="py-3 px-6 bg-indigo-500 rounded-md text-white mr-3">Edit</a>
             <a href="{% url 'patient:delete' patient.id %}" class="py-3 px-6 bg-red-500 rounded-md text-white">Delete</a>

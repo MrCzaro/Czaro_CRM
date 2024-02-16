@@ -24,17 +24,25 @@
                 </tr>
     
                 <tr class="border-b border-gray-300 hover:bg-gray-100">
-                    <td class="py-3 px-6 text-left font-bold">
-                        <a href="{% url 'department:transfer' hospitalization.patient.id hospitalization.id %}" class="inline-block px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Transfer Patient</a>
+                    <td class="py-3 px-6 text-left ">
+                        {% if hospitalization.is_discharged %}
+                            <strong class="font-bold">Admitted on:</strong> {{ hospitalization.admitted_on }}
+                        {% else %}
+                            <a href="{% url 'department:transfer' hospitalization.patient.id hospitalization.id %}" class="inline-block px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Transfer Patient</a>
+                        {% endif %}
                     </td>
-                    <td class="py-3 px-6 text-left font-bold">
-                        <a href="{% url 'department:discharge' hospitalization.id %}" class="inline-block px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">Discharge Patient</a>
+                    <td class="py-3 px-6 text-left">
+                        {% if hospitalization.is_discharged %}
+                            <strong class="font-bold">Dicharged on:</strong> {{ hospitalization.dicharged_on}}
+                        {% else %}
+                            <a href="{% url 'department:discharge' hospitalization.id %}" class="inline-block px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">Discharge Patient</a>
+                        {% endif %}
                     </td>
                     <td class="py-3 px-6 text-left font-bold">
                         <a href="{% url 'patient:detail' hospitalization.patient.id %}" class="inline-block px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600">Patient Details</a>
                     </td>
                     <td class="py-3 px-6 text-left font-bold">
-                        <a href="{% url 'department:hospitalization_update' hospitalization.patient.id hospitalization.id %}" class="inline-block px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600">Edit Hospitalization</a>
+                        <a href="{% url 'department:hospitalization_update' hospitalization.patient.id hospitalization.id %}" class="inline-block px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600">Edit Symptoms</a>
                     </td>
                 </tr>
               </tbody>
@@ -42,8 +50,9 @@
         </div>
 
         
+        {% if not hospitalization.is_discharged %}
 
-
+        {% endif %}
         <div class="flex justify-center mt-3">
           <div class="w-2/3">
               <h2 class="text-3xl font-bold mb-4">Observations:</h2>
@@ -67,7 +76,7 @@
                       {% endfor %}
                   </ul>
               {% else %}
-                  <p class="mt-4">No observations for this hospitalization.</p>
+                  <p class="mt-4">No observation for this hospitalization.</p>
               {% endif %}
           </div>
       </div>
@@ -104,81 +113,100 @@
       <div class="flex justify-center mt-3">
         <div class="w-2/3">
           <h2 class="text-3xl font-bold mb-4">Vital Signs:</h2>
-          <div class="mb-5">
-            <a href="{% url 'department:vitals_create' hospitalization.patient.id hospitalization.id %}" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add Vital Signs</a>
-          </div>
-            <ul>
-                {% for vital in vitals %}
-                    <li class="border p-4 rounded-md mb-4">
-                        <p class="text-lg">Respiratory Rate: {{ vital.respiratory_rate }} BPM</p>
-                        <p class="text-lg">Oxygen Saturation: {{ vital.oxygen_saturation }}%</p>
-                        <p class="text-lg">Body Temperature: {{ vital.temperature }} °C </p>
-                        <p class="text-lg">Blood Pressure: {{ vital.systolic_blood_pressure }}/{{ vital.diastolic_blood_pressure }} mmHg</p>
-                        <p class="text-lg">Heart Rate: {{ vital.heart_rate }} BPM</p>
-                        <p class="text-sm text-gray-500 mt-2">
-                            Created by: {{ vital.created_by }} |
-                            Created at: {{ vital.created_at|date:"F j, Y H:i" }} |
-                            Modified at: {{ vital.modified_at|date:"F j, Y H:i" }}
-                        </p>
-                        {% if vital.created_by == user %}
-                            <a href="{% url 'department:vitals_update' hospitalization.patient.id hospitalization.id vital.id %}" class="font-bold text-blue-500 hover:underline">Edit</a>
-                        {% endif %}
-                    </li>
-                {% endfor %}
-            </ul>
+            {% if not hospitalization.is_discharged %}
+                <div class="mb-5">
+                    <a href="{% url 'department:vitals_create' hospitalization.patient.id hospitalization.id %}" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add Vital Signs</a>
+                </div>
+            {% endif %}
+            {% if vital %}
+                <ul>
+                    {% for vital in vitals %}
+                        <li class="border p-4 rounded-md mb-4">
+                            <p class="text-lg">Respiratory Rate: {{ vital.respiratory_rate }} BPM</p>
+                            <p class="text-lg">Oxygen Saturation: {{ vital.oxygen_saturation }}%</p>
+                            <p class="text-lg">Body Temperature: {{ vital.temperature }} °C </p>
+                            <p class="text-lg">Blood Pressure: {{ vital.systolic_blood_pressure }}/{{ vital.diastolic_blood_pressure }} mmHg</p>
+                            <p class="text-lg">Heart Rate: {{ vital.heart_rate }} BPM</p>
+                            <p class="text-sm text-gray-500 mt-2">
+                                Created by: {{ vital.created_by }} |
+                                Created at: {{ vital.created_at|date:"F j, Y H:i" }} |
+                                Modified at: {{ vital.modified_at|date:"F j, Y H:i" }}
+                            </p>
+                            {% if vital.created_by == user %}
+                                <a href="{% url 'department:vitals_update' hospitalization.patient.id hospitalization.id vital.id %}" class="font-bold text-blue-500 hover:underline">Edit</a>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="mt-4">No Vital Signs for this hospitalization.</p>
+            {% endif %}
         </div>
     </div>
 
     <div class="flex justify-center mt-3">
       <div class="w-2/3">
         <h2 class="text-3xl font-bold mb-4">Pain Scales</h2>
-        <div class="mb-5">
-          <a href="{% url 'scales:pain_create' hospitalization.patient.id hospitalization.id %}" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add Pain Scale</a>
-        </div>
-          <ul>
-              {% for pain_scale in pain_scales %}
-                  <li class="border p-4 rounded-md mb-4">
-                      <p class="text-lg">Pain Level: {{ pain_scale.pain_level }}</p>
-                      <p class="text-lg">Pain Interpretation: {{ pain_scale.pain_intepretation }}</p>
-                      <p class="text-lg">Pain Comment: {{ pain_scale.pain_comment }}</p>
-                      <p class="text-sm text-gray-500 mt-2">
-                          Created by: {{ pain_scale.created_by }} |
-                          Created at: {{ pain_scale.created_at|date:"F j, Y H:i" }} |
-                          Modified at: {{ pain_scale.modified_at|date:"F j, Y H:i" }}
-                      </p>
-                      {% if pain_scale.created_by == user %}
-                          <a href="{% url 'scales:pain_update' hospitalization.patient.id hospitalization.id pain_scale.id %}" class="font-bold text-blue-500 hover:underline">Edit</a>
-                      {% endif %}
-                  </li>
-              {% endfor %}
-          </ul>
+        
+        {% if not hospitalization.is_discharged %}
+            <div class="mb-5">
+            <a href="{% url 'scales:pain_create' hospitalization.patient.id hospitalization.id %}" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add Pain Scale</a>
+            </div>
+        {% endif %}
+        {% if pain_scale %}
+            <ul>
+                {% for pain_scale in pain_scales %}
+                    <li class="border p-4 rounded-md mb-4">
+                        <p class="text-lg">Pain Level: {{ pain_scale.pain_level }}</p>
+                        <p class="text-lg">Pain Interpretation: {{ pain_scale.pain_intepretation }}</p>
+                        <p class="text-lg">Pain Comment: {{ pain_scale.pain_comment }}</p>
+                        <p class="text-sm text-gray-500 mt-2">
+                            Created by: {{ pain_scale.created_by }} |
+                            Created at: {{ pain_scale.created_at|date:"F j, Y H:i" }} |
+                            Modified at: {{ pain_scale.modified_at|date:"F j, Y H:i" }}
+                        </p>
+                        {% if pain_scale.created_by == user %}
+                            <a href="{% url 'scales:pain_update' hospitalization.patient.id hospitalization.id pain_scale.id %}" class="font-bold text-blue-500 hover:underline">Edit</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="mt-4">No Pain Scale for this hospitalization.</p>
+        {% endif %}
       </div>
   </div>
   
-  <div class="flex justify-center mt-6">
+  <div class="flex justify-center mt-3">
     <div class="w-2/3">
-      <h2 class="text-3xl font-bold mb-4">Body Mass Index:</h2>
-      <div mb="5">
-        <a href="{% url 'scales:bmi_create' hospitalization.patient.id hospitalization.id %}" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add Body Mass Index</a>
-      </div>  
-      <ul>
-            {% for bmi in bmis %}
-                <li class="border p-4 rounded-md mb-4">
-                    <p class="text-lg">Body height: {{ bmi.body_height }} cm.</p>
-                    <p class="text-lg">Body weight: {{ bmi.body_weight }} kg.</p>
-                    <p class="text-lg">Score: {{ bmi.bmi }}</p>
-                    <p class="text-lg">Interpretation: {{ bmi.interpretation }}</p>
-                    <p class="text-sm text-gray-500 mt-2">
-                        Created by: {{ bmi.created_by.first_name }} {{ bmi.created_by.last_name }} |
-                        Created at: {{ bmi.created_at|date:"F j, Y H:i" }} |
-                        Modified at: {{ bmi.modified_at|date:"F j, Y H:i" }}
-                    </p>
-                    {% if bmi.created_by == user %}
-                        <a href="{% url 'scales:bmi_update' hospitalization.patient.id hospitalization.id bmi.id %}" class="font-bold text-blue-500 hover:underline">Edit</a>
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
+        <h2 class="text-3xl font-bold mb-4">Body Mass Index:</h2>
+        {% if not hospitalization.is_discharged %}
+            <div class="mb-5">
+                <a href="{% url 'scales:bmi_create' hospitalization.patient.id hospitalization.id %}" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add Body Mass Index</a>
+            </div>  
+        {% endif %}
+        {% if bmi %}
+            <ul>
+                {% for bmi in bmis %}
+                    <li class="border p-4 rounded-md mb-4">
+                        <p class="text-lg">Body height: {{ bmi.body_height }} cm.</p>
+                        <p class="text-lg">Body weight: {{ bmi.body_weight }} kg.</p>
+                        <p class="text-lg">Score: {{ bmi.bmi }}</p>
+                        <p class="text-lg">Interpretation: {{ bmi.interpretation }}</p>
+                        <p class="text-sm text-gray-500 mt-2">
+                            Created by: {{ bmi.created_by.first_name }} {{ bmi.created_by.last_name }} |
+                            Created at: {{ bmi.created_at|date:"F j, Y H:i" }} |
+                            Modified at: {{ bmi.modified_at|date:"F j, Y H:i" }}
+                        </p>
+                        {% if bmi.created_by == user %}
+                            <a href="{% url 'scales:bmi_update' hospitalization.patient.id hospitalization.id bmi.id %}" class="font-bold text-blue-500 hover:underline">Edit</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="mt-4">No Body Mass Index for this hospitalization.</p>
+        {% endif %}
       </div>
     </div>
     
@@ -186,30 +214,36 @@
     <div class="flex justify-center mt-3">
       <div class="w-2/3">
         <h2 class="text-3xl font-bold mb-4">Norton Scales:</h2>
-        <div mb="5">
-          <a href="{% url 'scales:norton_create' hospitalization.patient.id hospitalization.id %}" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add Norton Scale</a>
-        </div>
-        <ul>
-            {% for norton_scale in norton_scales %}
-                <li class="border p-4 rounded-md mb-4">
-                    <p class="text-lg">Physical Condition: {{ norton_scale.get_physical_condition_display }}</p>
-                    <p class="text-lg">Mental Condition: {{ norton_scale.get_mental_condition_display }}</p>
-                    <p class="text-lg">Activity: {{ norton_scale.get_activity_display }}</p>
-                    <p class="text-lg">Mobility: {{ norton_scale.get_mobility_display }}</p>
-                    <p class="text-lg">Incontinence: {{ norton_scale.get_incontinence_display }}</p>
-                    <p class="text-lg">Total Points: {{ norton_scale.total_points }}</p>
-                    <p class="text-lg">Pressure Risk: {{ norton_scale.pressure_risk }}</p>
-                    <p class="text-sm text-gray-500 mt-2">
-                        Created by: {{ norton_scale.created_by.first_name }} {{ norton_scale.created_by.last_name }} |
-                        Created at: {{ norton_scale.created_at|date:"F j, Y H:i" }} |
-                        Modified at: {{ norton_scale.modified_at|date:"F j, Y H:i" }}
-                    </p>
-                    {% if norton_scale.created_by == user %}
-                        <a href="{% url 'scales:norton_update' hospitalization.patient.id hospitalization.id norton_scale.id %}" class="font-bold text-blue-500 hover:underline">Edit</a>
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
+        {% if not hospitalization.is_discharged %}
+            <div class="mb-5">
+            <a href="{% url 'scales:norton_create' hospitalization.patient.id hospitalization.id %}" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add Norton Scale</a>
+            </div>
+        {% endif %}
+        {% if norton_scale %}
+            <ul>
+                {% for norton_scale in norton_scales %}
+                    <li class="border p-4 rounded-md mb-4">
+                        <p class="text-lg">Physical Condition: {{ norton_scale.get_physical_condition_display }}</p>
+                        <p class="text-lg">Mental Condition: {{ norton_scale.get_mental_condition_display }}</p>
+                        <p class="text-lg">Activity: {{ norton_scale.get_activity_display }}</p>
+                        <p class="text-lg">Mobility: {{ norton_scale.get_mobility_display }}</p>
+                        <p class="text-lg">Incontinence: {{ norton_scale.get_incontinence_display }}</p>
+                        <p class="text-lg">Total Points: {{ norton_scale.total_points }}</p>
+                        <p class="text-lg">Pressure Risk: {{ norton_scale.pressure_risk }}</p>
+                        <p class="text-sm text-gray-500 mt-2">
+                            Created by: {{ norton_scale.created_by.first_name }} {{ norton_scale.created_by.last_name }} |
+                            Created at: {{ norton_scale.created_at|date:"F j, Y H:i" }} |
+                            Modified at: {{ norton_scale.modified_at|date:"F j, Y H:i" }}
+                        </p>
+                        {% if norton_scale.created_by == user %}
+                            <a href="{% url 'scales:norton_update' hospitalization.patient.id hospitalization.id norton_scale.id %}" class="font-bold text-blue-500 hover:underline">Edit</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="mt-4">No Norton Scale for this hospitalization.</p>
+        {% endif %}
     </div>
 </div>
     
@@ -217,60 +251,72 @@
 <div class="flex justify-center mt-3">
   <div class="w-2/3">
     <h2 class="text-3xl font-bold mb-4">Glasgow Coma Scales:</h2>
-    <div class="mb-5">
-      <a href="{% url 'scales:glasgow_create' hospitalization.patient.id hospitalization.id %}" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add Glasgow Coma Scale</a>
-    </div>  
-      <ul>
-          {% for glasgow_scale in glasgow_scales %}
-              <li class="border p-4 rounded-md mb-4">
-                  <p class="text-lg">Best eye response: {{ glasgow_scale.get_eye_response_display }}</p>
-                  <p class="text-lg">Best verbal response: {{ glasgow_scale.get_verbal_response_display }}</p>
-                  <p class="text-lg">Best motor response: {{ glasgow_scale.get_motor_response_display }}</p>
-                  <p class="text-lg">Total Points: {{ glasgow_scale.total_points }}</p>
-                  <p class="text-sm text-gray-500 mt-2">
-                      Created by: {{ glasgow_scale.created_by.first_name }} {{ glasgow_scale.created_by.last_name }} |
-                      Created at: {{ glasgow_scale.created_at|date:"F j, Y H:i" }} |
-                      Modified at: {{ glasgow_scale.modified_at|date:"F j, Y H:i" }}
-                  </p>
-                  {% if glasgow_scale.created_by == user %}
-                      <a href="{% url 'scales:glasgow_update' hospitalization.patient.id hospitalization.id glasgow_scale.id %}" class="font-bold text-blue-500 hover:underline">Edit</a>
-                  {% endif %}
-              </li>
-          {% endfor %}
-      </ul>
+    {% if not hospitalization.is_discharged %}
+        <div class="mb-5">
+        <a href="{% url 'scales:glasgow_create' hospitalization.patient.id hospitalization.id %}" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add Glasgow Coma Scale</a>
+        </div>  
+    {% endif %}
+    {% if glasgow_scale %}
+        <ul>
+            {% for glasgow_scale in glasgow_scales %}
+                <li class="border p-4 rounded-md mb-4">
+                    <p class="text-lg">Best eye response: {{ glasgow_scale.get_eye_response_display }}</p>
+                    <p class="text-lg">Best verbal response: {{ glasgow_scale.get_verbal_response_display }}</p>
+                    <p class="text-lg">Best motor response: {{ glasgow_scale.get_motor_response_display }}</p>
+                    <p class="text-lg">Total Points: {{ glasgow_scale.total_points }}</p>
+                    <p class="text-sm text-gray-500 mt-2">
+                        Created by: {{ glasgow_scale.created_by.first_name }} {{ glasgow_scale.created_by.last_name }} |
+                        Created at: {{ glasgow_scale.created_at|date:"F j, Y H:i" }} |
+                        Modified at: {{ glasgow_scale.modified_at|date:"F j, Y H:i" }}
+                    </p>
+                    {% if glasgow_scale.created_by == user %}
+                        <a href="{% url 'scales:glasgow_update' hospitalization.patient.id hospitalization.id glasgow_scale.id %}" class="font-bold text-blue-500 hover:underline">Edit</a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="mt-4">No Glasgow Coma Scale for this hospitalization.</p>
+    {% endif %}
   </div>
 </div>
 
-<div class="flex justify-center mt-3">
+<div class="flex justify-center mt-3 mb-10">
   <div class="w-2/3">
     <h2 class="text-3xl font-bold mb-4">National Early Warning Score Scales:</h2>
-    <div class="mb-5">
-      <a href="{% url 'scales:news_create' hospitalization.patient.id hospitalization.id %}" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add NEWS Scale</a>
-    </div>
-      <ul>
-          {% for news_scale in news_scales %}
-              <li class="border p-4 rounded-md mb-4">
-                  <p class="text-lg">Respiratory Rate: {{ news_scale.respiratory_rate }} BPM</p>
-                  <p class="text-lg">Oxygen Saturation: {{ news_scale.oxygen_saturation }}%</p>
-                  <p class="text-lg">Oxygen Supplementaion: {{ news_scale.get_is_on_oxygen_display }}</p>
-                  <p class="text-lg">Is the patient in Acute exacebrations of chronic obstructive pulmonary disease state: {{ news_scale.get_aecopd_state_display }}</p>
-                  <p class="text-lg">Body Temperature: {{ news_scale.temperature }} °C </p>
-                  <p class="text-lg">Blood Pressure: {{ news_scale.systolic_blood_pressure }}/{{ news_scale.diastolic_blood_pressure }} mmHg</p>
-                  <p class="text-lg">Heart Rate: {{ news_scale.heart_rate }} BPM</p>
-                  <p class="text-lg">Level of consciousness: {{ news_scale.get_level_of_consciousness_display }} </p>
-                  <p class="text-lg">Total NEWS score: {{ news_scale.total_score }}</p>
-                  <p class="text-lg">Score Interpretation : {{ news_scale.score_interpretation }}</p>
-                  <p class="text-sm text-gray-500 mt-2">
-                      Created by: {{ news_scale.created_by }} |
-                      Created at: {{ news_scale.created_at|date:"F j, Y H:i" }} |
-                      Modified at: {{ news_scale.modified_at|date:"F j, Y H:i" }}
-                  </p>
-                  {% if news_scale.created_by == user %}
-                      <a href="{% url 'scales:news_update' hospitalization.patient.id hospitalization.id news_scale.id %}" class="font-bold text-blue-500 hover:underline">Edit</a>
-                  {% endif %}
-              </li>
-          {% endfor %}
-      </ul>
+    {% if not hospitalization.is_discharged %}
+        <div class="mb-5">
+        <a href="{% url 'scales:news_create' hospitalization.patient.id hospitalization.id %}" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add NEWS Scale</a>
+        </div>
+    {% endif %}
+    {% if news_scale %}
+        <ul>
+            {% for news_scale in news_scales %}
+                <li class="border p-4 rounded-md mb-4">
+                    <p class="text-lg">Respiratory Rate: {{ news_scale.respiratory_rate }} BPM</p>
+                    <p class="text-lg">Oxygen Saturation: {{ news_scale.oxygen_saturation }}%</p>
+                    <p class="text-lg">Oxygen Supplementaion: {{ news_scale.get_is_on_oxygen_display }}</p>
+                    <p class="text-lg">Is the patient in Acute exacebrations of chronic obstructive pulmonary disease state: {{ news_scale.get_aecopd_state_display }}</p>
+                    <p class="text-lg">Body Temperature: {{ news_scale.temperature }} °C </p>
+                    <p class="text-lg">Blood Pressure: {{ news_scale.systolic_blood_pressure }}/{{ news_scale.diastolic_blood_pressure }} mmHg</p>
+                    <p class="text-lg">Heart Rate: {{ news_scale.heart_rate }} BPM</p>
+                    <p class="text-lg">Level of consciousness: {{ news_scale.get_level_of_consciousness_display }} </p>
+                    <p class="text-lg">Total NEWS score: {{ news_scale.total_score }}</p>
+                    <p class="text-lg">Score Interpretation : {{ news_scale.score_interpretation }}</p>
+                    <p class="text-sm text-gray-500 mt-2">
+                        Created by: {{ news_scale.created_by }} |
+                        Created at: {{ news_scale.created_at|date:"F j, Y H:i" }} |
+                        Modified at: {{ news_scale.modified_at|date:"F j, Y H:i" }}
+                    </p>
+                    {% if news_scale.created_by == user %}
+                        <a href="{% url 'scales:news_update' hospitalization.patient.id hospitalization.id news_scale.id %}" class="font-bold text-blue-500 hover:underline">Edit</a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="mt-4">No National Early Warning Score Scale for this hospitalization.</p>
+    {% endif %}
   </div>
 </div>
 

@@ -1,38 +1,64 @@
 
-
-from django.urls import reverse_lazy
+from django.db.models import Count, Max, Case, When, Value, IntegerField, Exists, OuterRef, F
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render, get_object_or_404
+from django.urls import reverse_lazy, reverse
 from django.views.generic.edit import UpdateView, DeleteView
-from django.urls import reverse
-
 from .models import Patient 
 from .forms import PatientForm
+from department.models import Hospitalization
 
 
-@login_required(login_url = "/login/")
+
+
+
+
+@login_required(login_url="/login/")
 def index(request):
-    #non_discharged_patients = Patient.objects.filter(visits__is_discharged=False).distinct().order_by("-admitted_on")
-    #discharged_patients = Patient.objects.filter(visits__is_discharged=True).distinct().order_by("-discharged_on")
-    patients = Patient.objects.all()
+    patients = Patient.objects.annotate(
+        ongoing_admissions=Exists(
+            Hospitalization.objects.filter(
+                patient=OuterRef("pk"), is_discharged=False
+            )
+        ),
+        discharged_admissions=Count(
+            Case(
+                When(hospitalizations__is_discharged=True, then=1),
+                default=Value(0),
+                output_field=IntegerField(),
+            )
+        ),
+        total_admissions=Count("hospitalizations"),
+        latest_discharge_date=Max(
+            Case(
+                When(hospitalizations__is_discharged=True, then="hospitalizations__dicharged_on"),
+                default=None,
+            )
+        ),
+    ).order_by(
+        F("ongoing_admissions").desc(),
+        F("discharged_admissions").desc(),
+        F("latest_discharge_date").desc(nulls_last=True),
+    )
+
     context = {
         "patients": patients,
-        #"discharged_patients" : discharged_patients,
-        #"non_discharged_patients" : non_discharged_patients,
-        "title" : "Patients list"
-        
+        "title": "Patients list",
     }
     return render(request, "patient_list.html", context)
+
 
 @login_required(login_url = "/login/")
 def patient_detail(request, patient_id):
     patient = get_object_or_404(Patient, id=patient_id)
     hospitalizations = patient.hospitalizations.all()
+    ongoing_admission = hospitalizations.filter(is_discharged=False).first()
     back_url = request.META.get('HTTP_REFERER', reverse("patient:index"))
     context = {
         "patient": patient,
         "hospitalizations" : hospitalizations,
+        "ongoing_admission" : ongoing_admission,
         "title": "Patient details",
         "back_url" : back_url,
     }
