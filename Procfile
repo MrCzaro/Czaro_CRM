@@ -1,0 +1,1 @@
+web: gunicorn czaro_crm.wsgi
