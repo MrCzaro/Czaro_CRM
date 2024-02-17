@@ -4,19 +4,13 @@ from django.core.exceptions import ValidationError
 
 from .models import Consultation, Department, Hospitalization, Observation, VitalSigns
 
-
-DEPARTMENT_CLASS = "w-full py-3 px-4 bg-stone-200 rounded-md text-black"
-HOSPITALIZATION_CLASS = "w-60 py-1 px-1 m-1 rounded-md bg-zinc-100"
-NUMERIC_CLASS = "w-1/4 py-1 px-1 bg-stone-200 rounded-md text-black"
-
-
 class DepartmentForm(forms.ModelForm):
     class Meta:
         model = Department
         fields = ["name", "description"]
         widgets = {
-            "name": forms.TextInput(attrs={"class": DEPARTMENT_CLASS}),
-            "description": forms.Textarea(attrs={"class": DEPARTMENT_CLASS}),
+            "name": forms.TextInput(attrs={"class": "department-form"}),
+            "description": forms.Textarea(attrs={"class": "department-form"}),
         }
 
     def clean(self):
@@ -43,7 +37,7 @@ class ConsultationForm(forms.ModelForm):
         widgets = {
             "consultation": CKEditorWidget(config_name="default"),
             "consultation_name": forms.TextInput(
-                attrs={"class": "w-full py-1 px-1 bg-stone-200 rounded-md text-black"}
+                attrs={"class": "consultation-header-form"}
             ),
         }
 
@@ -74,9 +68,9 @@ class HospitalizationForm(forms.ModelForm):
             "additional_symptoms": "Additional symptoms",
         }
         widgets = {
-            "main_symptom": forms.TextInput(attrs={"class": HOSPITALIZATION_CLASS}),
+            "main_symptom": forms.TextInput(attrs={"class": "hospitalization-form"}),
             "additional_symptoms": forms.TextInput(
-                attrs={"class": HOSPITALIZATION_CLASS}
+                attrs={"class": "hospitalization-form"}
             ),
         }
 
@@ -130,14 +124,14 @@ class VitalSignsForm(forms.ModelForm):
             "heart_rate": "Heart Rate",
         }
         widgets = {
-            "respiratory_rate": forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
-            "oxygen_saturation": forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
-            "temperature": forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
+            "respiratory_rate": forms.NumberInput(attrs={"class": "numeric-form "}),
+            "oxygen_saturation": forms.NumberInput(attrs={"class": "numeric-form "}),
+            "temperature": forms.NumberInput(attrs={"class": "numeric-form "}),
             "systolic_blood_pressure": forms.NumberInput(
-                attrs={"class": NUMERIC_CLASS}
+                attrs={"class": "numeric-form "}
             ),
             "diastolic_blood_pressure": forms.NumberInput(
-                attrs={"class": NUMERIC_CLASS}
+                attrs={"class": "numeric-form "}
             ),
-            "heart_rate": forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
+            "heart_rate": forms.NumberInput(attrs={"class": "numeric-form "}),
         }

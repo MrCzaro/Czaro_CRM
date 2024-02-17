@@ -1,7 +1,6 @@
 from django import forms
 from .models import Patient
 
-FORM_CLASS = "w-full my-2 py-2 px-2 rounded-xl bg-zinc-100"
 
 
 class PatientForm(forms.ModelForm):
@@ -34,21 +33,21 @@ class PatientForm(forms.ModelForm):
         }
 
         widgets = {
-            "first_name": forms.TextInput(attrs={"class": FORM_CLASS}),
-            "last_name": forms.TextInput(attrs={"class": FORM_CLASS}),
+            "first_name": forms.TextInput(attrs={"class": "patient-form"}),
+            "last_name": forms.TextInput(attrs={"class": "patient-form"}),
             "date_of_birth": forms.DateInput(
-                attrs={"type": "date", "class": FORM_CLASS}
+                attrs={"type": "date", "class": "patient-form"}
             ),
-            "contact_number": forms.TextInput(attrs={"class": FORM_CLASS}),
-            "is_insured": forms.Select(attrs={"class": FORM_CLASS}),
+            "contact_number": forms.TextInput(attrs={"class": "patient-form"}),
+            "is_insured": forms.Select(attrs={"class": "patient-form"}),
             "insurance": forms.NumberInput(
                 attrs={
-                    "class": FORM_CLASS,
+                    "class": "patient-form",
                     "placeholder": "Please type '0' if no insurance.",
                 }
             ),
-            "country": forms.TextInput(attrs={"class": FORM_CLASS}),
-            "city": forms.TextInput(attrs={"class": FORM_CLASS}),
-            "street": forms.TextInput(attrs={"class": FORM_CLASS}),
-            "zip_code": forms.TextInput(attrs={"class": FORM_CLASS}),
+            "country": forms.TextInput(attrs={"class": "patient-form"}),
+            "city": forms.TextInput(attrs={"class": "patient-form"}),
+            "street": forms.TextInput(attrs={"class": "patient-form"}),
+            "zip_code": forms.TextInput(attrs={"class": "patient-form"}),
         }

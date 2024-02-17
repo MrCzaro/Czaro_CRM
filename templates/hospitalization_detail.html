@@ -63,7 +63,7 @@
                   <ul>
                       {% for observation in observations %}
                           <div class="border p-4 rounded-md mb-4">
-                              <p class="text-lg">{{ observation.observation }}</p>
+                              <p class="text-lg">{{ observation.observation|safe }}</p>
                               <div class="flex justify-between text-sm text-gray-500 mt-2">
                                   {% if observation.created_by == user %}
                                       <a href="{% url 'department:observation_update' hospitalization.patient.id hospitalization.id observation.id %}" class="font-bold text-blue-500 hover:underline">Edit</a>
@@ -92,7 +92,7 @@
                       {% for consultation in consultations %}
                           <div class="border p-4 rounded-md mb-4">
                               <p class="text-xl font-bold">{{ consultation.consultation_name }}</p>
-                              <p class="text-lg">{{ consultation.consultation }}</p>
+                              <p class="text-lg">{{ consultation.consultation|safe }}</p>
                               <div class="flex justify-between text-sm text-gray-500 mt-2">
                                   {% if consultation.created_by == user %}
                                       <a href="{% url 'department:consultation_update' hospitalization.patient.id hospitalization.id consultation.id %}" class="font-bold text-blue-500 hover:underline">Edit</a>
@@ -118,7 +118,7 @@
                     <a href="{% url 'department:vitals_create' hospitalization.patient.id hospitalization.id %}" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add Vital Signs</a>
                 </div>
             {% endif %}
-            {% if vital %}
+            {% if vitals %}
                 <ul>
                     {% for vital in vitals %}
                         <li class="border p-4 rounded-md mb-4">
@@ -153,7 +153,7 @@
             <a href="{% url 'scales:pain_create' hospitalization.patient.id hospitalization.id %}" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add Pain Scale</a>
             </div>
         {% endif %}
-        {% if pain_scale %}
+        {% if pain_scales %}
             <ul>
                 {% for pain_scale in pain_scales %}
                     <li class="border p-4 rounded-md mb-4">
@@ -185,7 +185,7 @@
                 <a href="{% url 'scales:bmi_create' hospitalization.patient.id hospitalization.id %}" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add Body Mass Index</a>
             </div>  
         {% endif %}
-        {% if bmi %}
+        {% if bmis %}
             <ul>
                 {% for bmi in bmis %}
                     <li class="border p-4 rounded-md mb-4">
@@ -219,7 +219,7 @@
             <a href="{% url 'scales:norton_create' hospitalization.patient.id hospitalization.id %}" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add Norton Scale</a>
             </div>
         {% endif %}
-        {% if norton_scale %}
+        {% if norton_scales %}
             <ul>
                 {% for norton_scale in norton_scales %}
                     <li class="border p-4 rounded-md mb-4">
@@ -256,7 +256,7 @@
         <a href="{% url 'scales:glasgow_create' hospitalization.patient.id hospitalization.id %}" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add Glasgow Coma Scale</a>
         </div>  
     {% endif %}
-    {% if glasgow_scale %}
+    {% if glasgow_scales %}
         <ul>
             {% for glasgow_scale in glasgow_scales %}
                 <li class="border p-4 rounded-md mb-4">
@@ -289,7 +289,7 @@
         <a href="{% url 'scales:news_create' hospitalization.patient.id hospitalization.id %}" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add NEWS Scale</a>
         </div>
     {% endif %}
-    {% if news_scale %}
+    {% if news_scales %}
         <ul>
             {% for news_scale in news_scales %}
                 <li class="border p-4 rounded-md mb-4">

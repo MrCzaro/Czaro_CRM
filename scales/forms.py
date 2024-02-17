@@ -19,7 +19,7 @@ from .models import (
     PAIN_CHOICES,
 )
 
-NUMERIC_CLASS = "w-1/4 py-1 px-1 bg-stone-200 rounded-md text-black"
+
 
 
 class BodyMassIndexForm(forms.ModelForm):
@@ -34,8 +34,8 @@ class BodyMassIndexForm(forms.ModelForm):
             "body_weight": "Body weight in kilograms",
         }
         widgets = {
-            "body_height": forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
-            "body_weight": forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
+            "body_height": forms.NumberInput(attrs={"class": "numeric-form"}),
+            "body_weight": forms.NumberInput(attrs={"class": "numeric-form"}),
         }
 
 
@@ -108,16 +108,16 @@ class NewsScaleForm(forms.ModelForm):
             "level_of_consciousness ": "Level of consciousness",
         }
         widgets = {
-            "respiratory_rate": forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
-            "oxygen_saturation": forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
-            "temperature": forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
+            "respiratory_rate": forms.NumberInput(attrs={"class": "numeric-form"}),
+            "oxygen_saturation": forms.NumberInput(attrs={"class": "numeric-form"}),
+            "temperature": forms.NumberInput(attrs={"class": "numeric-form"}),
             "systolic_blood_pressure": forms.NumberInput(
-                attrs={"class": NUMERIC_CLASS}
+                attrs={"class": "numeric-form"}
             ),
             "diastolic_blood_pressure": forms.NumberInput(
-                attrs={"class": NUMERIC_CLASS}
+                attrs={"class": "numeric-form"}
             ),
-            "heart_rate": forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
+            "heart_rate": forms.NumberInput(attrs={"class": "numeric-form"}),
         }
 
 
@@ -149,7 +149,7 @@ class PainScaleForm(forms.ModelForm):
     pain_level = forms.ChoiceField(widget=forms.RadioSelect, choices=PAIN_CHOICES)
     pain_comment = forms.CharField(
         widget=forms.Textarea(
-            attrs={"class": "w-80 h-20 bg-stone-100 border border-gray-400 p-4"}
+            attrs={"class": "pain-comment-form"}
         ),
     )
 
