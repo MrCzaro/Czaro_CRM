@@ -1,1 +1,1 @@
-gunicorn czaro_crm.wsgi:application
+web: gunicorn czaro_crm.wsgi:application
