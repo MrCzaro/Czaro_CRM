@@ -1,9 +1,7 @@
 import uuid
 
-
 from django.db import models
 from main.models import User
-
 
 YES = True
 NO = False
@@ -11,7 +9,6 @@ YES_NO_CHOICES = [
     (YES, "Yes"),
     (NO, "No"),
 ]
-
 
 class Patient(models.Model):
     # Credentials
@@ -27,13 +24,10 @@ class Patient(models.Model):
     city = models.CharField(max_length=255)
     street = models.CharField(max_length=255)
     zip_code = models.CharField(max_length=255)
-    
+
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True, null=True)
 
     def __str__(self):
-       return f"{self.first_name} {self.last_name}"
-   
-
-   
+        return f"{self.first_name} {self.last_name}"

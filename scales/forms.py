@@ -1,5 +1,5 @@
-from django import forms
 from django.core.exceptions import ValidationError
+from django import forms
 from .models import (
     BodyMassIndex,
     GlasgowComaScale,
@@ -30,13 +30,15 @@ class BodyMassIndexForm(forms.ModelForm):
             "body_weight",
         ]
         labels = {
-            "body_height" : "Body height in cenimeters",
-            "body_weight" : "Body weight in kilograms",
+            "body_height": "Body height in cenimeters",
+            "body_weight": "Body weight in kilograms",
         }
         widgets = {
-            "body_height" : forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
-            "body_weight" : forms.NumberInput(attrs={"class": NUMERIC_CLASS})
+            "body_height": forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
+            "body_weight": forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
         }
+
+
 class GlasgowComaScaleForm(forms.ModelForm):
     eye_response = forms.ChoiceField(
         widget=forms.RadioSelect, choices=EYE_RESPONSE_CHOICES
@@ -47,7 +49,7 @@ class GlasgowComaScaleForm(forms.ModelForm):
     motor_response = forms.ChoiceField(
         widget=forms.RadioSelect, choices=MOTOR_RESPONSE_CHOICES
     )
-    
+
     class Meta:
         model = GlasgowComaScale
         fields = [
@@ -56,33 +58,31 @@ class GlasgowComaScaleForm(forms.ModelForm):
             "motor_response",
         ]
         labels = {
-            "eye_response" : "Best eye response",
-            "verbal_response" : "Best verbal response",
-            "motor_response" : "Best motor response",
+            "eye_response": "Best eye response",
+            "verbal_response": "Best verbal response",
+            "motor_response": "Best motor response",
         }
-        
+
+
 class NewsScaleForm(forms.ModelForm):
-    is_on_oxygen = forms.ChoiceField(
-        widget=forms.RadioSelect, choices=YES_NO_CHOICES
-    )
-    aecopd_state = forms.ChoiceField(
-        widget=forms.RadioSelect, choices=YES_NO_CHOICES
-    )
+    is_on_oxygen = forms.ChoiceField(widget=forms.RadioSelect, choices=YES_NO_CHOICES)
+    aecopd_state = forms.ChoiceField(widget=forms.RadioSelect, choices=YES_NO_CHOICES)
     level_of_consciousness = forms.ChoiceField(
         widget=forms.RadioSelect, choices=LOC_CHOICES
     )
-    
+
     def clean(self):
         cleaned_data = super().clean()
         systolic_bp = cleaned_data.get("systolic_blood_pressure")
         diastolic_bp = cleaned_data.get("diastolic_blood_pressure")
-        
+
         if systolic_bp is not None and diastolic_bp is not None:
             if systolic_bp < diastolic_bp:
                 raise ValidationError(
                     "Systolic blood pressure must be equal or higher than diastolic blood pressure.",
-                    code="invalid_blood_pressure"
+                    code="invalid_blood_pressure",
                 )
+
     class Meta:
         model = NewsScale
         fields = [
@@ -97,24 +97,30 @@ class NewsScaleForm(forms.ModelForm):
             "level_of_consciousness",
         ]
         labels = {
-            "respiratory_rate" : "Respiratory rate",
-            "oxygen_saturation" : "Oxygen saturation level",
-            "is_on_oxygen" : "Oxygen supplementation",
-            "aecopd_state" : "Is the patient in Acute exacebrations of chronic obstructive pulmonary disease state",
-            "temperature" : "Body temperature",
-            "systolic_blood_pressure" : "Systolic blood presurre",
-            "diastolic_blood_pressure" : "Diastolic blood pressure",
-            "heart_rate" : "Heart Rate",
-            "level_of_consciousness " : "Level of consciousness",
+            "respiratory_rate": "Respiratory rate",
+            "oxygen_saturation": "Oxygen saturation level",
+            "is_on_oxygen": "Oxygen supplementation",
+            "aecopd_state": "Is the patient in Acute exacebrations of chronic obstructive pulmonary disease state",
+            "temperature": "Body temperature",
+            "systolic_blood_pressure": "Systolic blood presurre",
+            "diastolic_blood_pressure": "Diastolic blood pressure",
+            "heart_rate": "Heart Rate",
+            "level_of_consciousness ": "Level of consciousness",
         }
         widgets = {
-            "respiratory_rate" : forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
-            "oxygen_saturation" : forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
-            "temperature" : forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
-            "systolic_blood_pressure" : forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
-            "diastolic_blood_pressure" : forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
-            "heart_rate" : forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
+            "respiratory_rate": forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
+            "oxygen_saturation": forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
+            "temperature": forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
+            "systolic_blood_pressure": forms.NumberInput(
+                attrs={"class": NUMERIC_CLASS}
+            ),
+            "diastolic_blood_pressure": forms.NumberInput(
+                attrs={"class": NUMERIC_CLASS}
+            ),
+            "heart_rate": forms.NumberInput(attrs={"class": NUMERIC_CLASS}),
         }
+
+
 class NortonScaleForm(forms.ModelForm):
     physical_condition = forms.ChoiceField(
         widget=forms.RadioSelect, choices=PHYSICAL_CHOICES
@@ -138,13 +144,15 @@ class NortonScaleForm(forms.ModelForm):
             "incontinence",
         ]
 
+
 class PainScaleForm(forms.ModelForm):
-    pain_level = forms.ChoiceField(
-        widget = forms.RadioSelect, choices=PAIN_CHOICES
-    )
+    pain_level = forms.ChoiceField(widget=forms.RadioSelect, choices=PAIN_CHOICES)
     pain_comment = forms.CharField(
-        widget=forms.Textarea(attrs={"class": "w-80 h-20 bg-stone-100 border border-gray-400 p-4"}),
+        widget=forms.Textarea(
+            attrs={"class": "w-80 h-20 bg-stone-100 border border-gray-400 p-4"}
+        ),
     )
+
     class Meta:
         model = PainScale
         fields = [

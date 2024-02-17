@@ -1,26 +1,38 @@
-{% extends "base.html"%}
+{% extends "base.html" %}
 
 {% block content %}
+<div class="container mx-auto mt-16">
+    <h1 class="mb-8 text-3xl font-bold text-center">{{ title }}</h1>
 
-<h1 class="text-3xl font-bold text-black text-center mb-20">{{ title }}</h1>
-<p class="text-2xl text-center mb-5">Patients:</p>
-
-{% for patient in patients %}
-    <div class="flex justify-center">
-        <a href="{% url 'patient:detail' patient.id %}">
-            <p class="mb-3 text-lg">
-                <span class="font-bold">{{ patient.first_name }} {{ patient.last_name }}</span>
-                {% if patient.ongoing_admissions > 0 %}
-                    - Ongoing Admission
-                {% elif patient.discharged_admissions > 0 %}
-                    {% if patient.latest_discharge_date %}
-                        - Last Discharged on {{ patient.latest_discharge_date|default:"N/A"|date:"d F Y" }}
-                    {% else %}
-                        - No Hospitalization History
-                    {% endif %}
-                {% endif %}
-            </p>
-        </a>
+    <div class="flex justify-center mt-8">
+        <table class="min-w-max w-2/3 bg-white border border-gray-300 rounded-lg overflow-hidden">
+            <thead>
+                <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                    <th class="py-3 px-6 text-left">Patient Name</th>
+                    <th class="py-3 px-6 text-left">Admission Status</th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-600 text-sm font-light">
+                {% for patient in patients %}
+                    <tr class="border-b border-gray-300 hover:bg-gray-100">
+                        <td class="py-3 px-6 text-left whitespace-nowrap">
+                            <a href="{% url 'patient:detail' patient.id %}" class="text-blue-500">{{ patient.first_name }} {{ patient.last_name }}</a>
+                        </td>
+                        <td class="py-3 px-6 text-left">
+                            {% if patient.ongoing_admissions > 0 %}
+                                Ongoing Admission
+                            {% elif patient.discharged_admissions > 0 %}
+                                {% if patient.latest_discharge_date %}
+                                    Last Discharged on {{ patient.latest_discharge_date|default:"N/A"|date:"d F Y" }}
+                                {% else %}
+                                    No Hospitalization History
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-{% endfor %}
+</div>
 {% endblock %}

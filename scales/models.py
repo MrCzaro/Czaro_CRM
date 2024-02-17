@@ -5,17 +5,12 @@ from main.models import User
 from department.models import Hospitalization
 
 # Global variables for NortonScale
-PHYSICAL_CHOICES = [
-    ("4","Good"),
-    ("3", "Fair"),
-    ("2", "Poor"),
-    ("1", "Very Bad")
-]
+PHYSICAL_CHOICES = [("4", "Good"), ("3", "Fair"), ("2", "Poor"), ("1", "Very Bad")]
 MENTAL_CHOICES = [
     ("4", "Alert"),
     ("3", "Apathetic"),
     ("2", "Confused"),
-    ("1", "Stuporous")
+    ("1", "Stuporous"),
 ]
 ACTIVITY_CHOICES = [
     ("4", "Ambulant"),
@@ -37,7 +32,7 @@ INCONTINENCE_CHOICES = [
 ]
 
 # Global variables for GlasgowComaScale
-EYE_RESPONSE_CHOICES =[
+EYE_RESPONSE_CHOICES = [
     ("4", "Eyes open spontaneously"),
     ("3", "Eye opening to sound"),
     ("2", "Eye opening to pain"),
@@ -73,7 +68,7 @@ PAIN_CHOICES = [
     ("10", 10),
 ]
 
-# Global variables for NEWS 
+# Global variables for NEWS
 YES = True
 NO = False
 YES_NO_CHOICES = [
@@ -84,8 +79,9 @@ LOC_CHOICES = [
     ("awake", "Awake"),
     ("verbal", "Patient responds to a verbal stimulus"),
     ("pain", "Patient responds to a pain stimulus"),
-    ("unresponsive", "Patient is unresponsive to stimulus")
+    ("unresponsive", "Patient is unresponsive to stimulus"),
 ]
+
 
 class BodyMassIndex(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -93,22 +89,28 @@ class BodyMassIndex(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-    body_height = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(300)])
-    body_weight = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(400)])
-    bmi = models.DecimalField(max_digits=4, decimal_places=1, validators=[MinValueValidator(0)])
+    body_height = models.IntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(300)]
+    )
+    body_weight = models.IntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(400)]
+    )
+    bmi = models.DecimalField(
+        max_digits=4, decimal_places=1, validators=[MinValueValidator(0)]
+    )
     interpretation = models.CharField(max_length=50)
-    
+
     class Meta:
         ordering = ("-created_at",)
-        
+
     def __str__(self):
         return f"{self.hospitalization.patient.first_name} {self.bmi}-points: {self.intepretation}"
-    
+
     def calculate_bmi(self):
         body_height = self.body_height / 100
-        bmi = round((self.body_weight / (body_height **2)),1)
+        bmi = round((self.body_weight / (body_height**2)), 1)
         return bmi
-    
+
     def interpretation(self):
         if self.bmi < 18.5:
             return "Underweight"
@@ -124,14 +126,52 @@ class BodyMassIndex(models.Model):
             return "Obesity class III"
         else:
             return "Error"
-        
+
     def save(self, *args, **kwargs):
         self.bmi = self.calculate_bmi()
         self.interpretation = self.interpretation()
         super().save(*args, **kwargs)
-        
-        
-    
+
+
+class GlasgowComaScale(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    hospitalization = models.ForeignKey(Hospitalization, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+    eye_response = models.CharField(max_length=30, choices=EYE_RESPONSE_CHOICES)
+    verbal_response = models.CharField(max_length=30, choices=VERBAL_RESPONSE_CHOICES)
+    motor_response = models.CharField(max_length=30, choices=MOTOR_RESPONSE_CHOICES)
+    total_points = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.patient.first_name}"
+
+    def calculate_total_points(self):
+        choices_values = {
+            "6": 6,
+            "5": 5,
+            "4": 4,
+            "3": 3,
+            "2": 2,
+            "1": 1,
+        }
+
+        total = 0
+        total += choices_values.get(self.eye_response, 0)
+        total += choices_values.get(self.verbal_response, 0)
+        total += choices_values.get(self.motor_response, 0)
+
+        return total
+
+    def save(self, *args, **kwargs):
+        self.total_points = self.calculate_total_points()
+        super().save(*args, **kwargs)
+
+
 class NortonScale(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     hospitalization = models.ForeignKey(Hospitalization, on_delete=models.CASCADE)
@@ -145,20 +185,19 @@ class NortonScale(models.Model):
     incontinence = models.CharField(max_length=20, choices=INCONTINENCE_CHOICES)
     total_points = models.IntegerField(blank=True, null=True)
     pressure_risk = models.CharField(max_length=20, blank=True, null=True)
+
     class Meta:
         ordering = ("-created_at",)
-        
+
     def __str__(self):
         return f"{self.hospitalization.patient.first_name} points {self.total_points}"
-    
-    
-        
+
     def calculate_total_points(self):
         choices_values = {
-            "4" : 4,
-            "3" : 3,
-            "2" : 2,
-            "1" : 1,
+            "4": 4,
+            "3": 3,
+            "2": 2,
+            "1": 1,
         }
 
         total = 0
@@ -169,12 +208,11 @@ class NortonScale(models.Model):
         total += choices_values.get(self.incontinence, 0)
 
         return total
-    
-    
+
     def calculate_risk(self):
-        if self.total_points in [19,20]:
+        if self.total_points in [19, 20]:
             risk = "Low Risk"
-        elif  14 <= self.total_points <= 18:
+        elif 14 <= self.total_points <= 18:
             risk = "Medium Risk"
         elif 10 <= self.total_points <= 13:
             risk = "High Risk"
@@ -182,106 +220,58 @@ class NortonScale(models.Model):
             risk = "Very High Risk"
         else:
             risk = "Error"
-            
+
         return risk
-    
+
     def save(self, *args, **kwargs):
         self.total_points = self.calculate_total_points()
         self.pressure_risk = self.calculate_risk()
         super().save(*args, **kwargs)
-        
-class GlasgowComaScale(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    hospitalization = models.ForeignKey(Hospitalization, on_delete=models.CASCADE)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    modified_at = models.DateTimeField(auto_now=True)
-    eye_response = models.CharField(max_length=30, choices=EYE_RESPONSE_CHOICES)
-    verbal_response = models.CharField(max_length=30, choices=VERBAL_RESPONSE_CHOICES)
-    motor_response = models.CharField(max_length=30, choices=MOTOR_RESPONSE_CHOICES)
-    total_points = models.IntegerField(blank=True, null=True)
-    
-    class Meta:
-        ordering = ("-created_at",)
-        
-    def __str__(self):
-        return f"{self.patient.first_name}"
-    
-    
-        
-    def calculate_total_points(self):
-        choices_values = {
-            "6" : 6,
-            "5" : 5,
-            "4" : 4,
-            "3" : 3,
-            "2" : 2,
-            "1" : 1,
-        }
 
-        total = 0
-        total += choices_values.get(self.eye_response , 0)
-        total += choices_values.get(self.verbal_response, 0)
-        total += choices_values.get(self.motor_response, 0)
 
-        return total
-    
-    def save(self, *args, **kwargs):
-        self.total_points = self.calculate_total_points()
-        super().save(*args, **kwargs)
 
-class PainScale(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    hospitalization = models.ForeignKey(Hospitalization, on_delete=models.CASCADE)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    modified_at = models.DateTimeField(auto_now=True)
-    pain_comment = models.CharField(max_length=255, blank=True, null=True)
-    pain_level = models.CharField(max_length=2, choices=PAIN_CHOICES)
-    pain_intepretation = models.TextField()
-    class Meta:
-        ordering = ("-created_at",)
-        
-    def pain_intepretation(self):
-        if self.pain_level == 0:
-            interpretation = "No Pain"
-        elif self.pain_level in [1,2,3]:
-            interpretation = "Mild Pain"
-        elif self.pain_level in [4,5,6]:
-            interpretation = "Moderate Pain"
-        else:
-            interpretation = "Severe Pain"
-        return interpretation
-            
-    def save(self, *args, **kwargs):
-        self.pain_intepretation = self.pain_intepretation()
-        super().save(*args, **kwargs)
-        
+
 class NewsScale(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     hospitalization = models.ForeignKey(Hospitalization, on_delete=models.CASCADE)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-    respiratory_rate = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
-    oxygen_saturation = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(100)])
+    respiratory_rate = models.IntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(100)]
+    )
+    oxygen_saturation = models.IntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(100)]
+    )
     is_on_oxygen = models.BooleanField(choices=YES_NO_CHOICES, default=NO)
-    #AECOPD state - Acute exacebrations of chronic obstructive pulmonary disease
+    # AECOPD state - Acute exacebrations of chronic obstructive pulmonary disease
     aecopd_state = models.BooleanField(choices=YES_NO_CHOICES, default=NO)
-    temperature = models.DecimalField(max_digits=3, decimal_places=1,validators=[MinValueValidator(0), MaxValueValidator(50)])
-    systolic_blood_pressure = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(300)])
-    diastolic_blood_pressure = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(200)])
-    heart_rate = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(300)])
-    level_of_consciousness = models.CharField(max_length=60,choices=LOC_CHOICES, default="awake")
+    temperature = models.DecimalField(
+        max_digits=3,
+        decimal_places=1,
+        validators=[MinValueValidator(0), MaxValueValidator(50)],
+    )
+    systolic_blood_pressure = models.IntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(300)]
+    )
+    diastolic_blood_pressure = models.IntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(200)]
+    )
+    heart_rate = models.IntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(300)]
+    )
+    level_of_consciousness = models.CharField(
+        max_length=60, choices=LOC_CHOICES, default="awake"
+    )
     total_score = models.IntegerField(blank=True, null=True)
     score_interpretation = models.TextField()
-    
+
     class Meta:
         ordering = ("-created_at",)
-        
+
     def __str__(self):
         return f"{self.aecopd_state} {self.respiratory_rate} {self.level_of_consciousness} {self.heart_rate}"
-    
+
     def calculate_respiratory_respiratory_rate_score(self):
         if self.respiratory_rate <= 8:
             return 3
@@ -293,23 +283,25 @@ class NewsScale(models.Model):
             return 2
         else:
             return 3
-    
+
     def calculate_oxygen_saturation_score(self):
         if self.aecopd_state:
-            if self.oxygen_saturation  <= 83:
+            if self.oxygen_saturation <= 83:
                 return 3
             elif self.oxygen_saturation in [84, 85]:
                 return 2
-            elif self.oxygen_saturation  in [86, 87]:
+            elif self.oxygen_saturation in [86, 87]:
                 return 1
-            elif (88 <= self.oxygen_saturation <= 92) or (93 <= self.oxygen_saturation and not self.is_on_oxygen):
+            elif (88 <= self.oxygen_saturation <= 92) or (
+                93 <= self.oxygen_saturation and not self.is_on_oxygen
+            ):
                 return 0
             elif self.is_on_oxygen:
-                if self.oxygen_saturation  in [93, 94]:
+                if self.oxygen_saturation in [93, 94]:
                     return 1
-                elif self.oxygen_saturation  in [95, 96]:
+                elif self.oxygen_saturation in [95, 96]:
                     return 2
-                elif self.oxygen_saturation  >= 97:
+                elif self.oxygen_saturation >= 97:
                     return 3
         elif not self.aecopd_state:
             if self.oxygen_saturation <= 91:
@@ -320,13 +312,13 @@ class NewsScale(models.Model):
                 return 1
             elif self.oxygen_saturation >= 96:
                 return 0
-            
+
     def calculate_is_on_oxygen_score(self):
         if self.is_on_oxygen:
             return 2
         elif not self.is_on_oxygen:
             return 0
-        
+
     def calculate_temperature_score(self):
         if self.temperature <= 35.0:
             return 3
@@ -338,7 +330,7 @@ class NewsScale(models.Model):
             return 1
         elif self.temperature >= 39.1:
             return 2
-        
+
     def calculate_systolic_blood_pressure_score(self):
         if self.systolic_blood_pressure <= 90:
             return 3
@@ -350,7 +342,7 @@ class NewsScale(models.Model):
             return 0
         elif self.systolic_blood_pressure >= 220:
             return 3
-        
+
     def calculate_heart_rate_score(self):
         if self.heart_rate <= 40:
             return 3
@@ -364,13 +356,13 @@ class NewsScale(models.Model):
             return 2
         elif self.heart_rate > 131:
             return 3
-        
+
     def calculate_level_of_consciousness_score(self):
         if self.level_of_consciousness == "awake":
-            return 0 
+            return 0
         elif self.level_of_consciousness in ["verbal", "pain", "unresponsive"]:
             return 3
-    
+
     def calculate_total_score(self):
         total = 0
         total += self.calculate_respiratory_respiratory_rate_score()
@@ -388,17 +380,44 @@ class NewsScale(models.Model):
         total += self.calculate_level_of_consciousness_score()
         print(f"LOC {total}, {self.calculate_level_of_consciousness_score()}")
         return total
-    
+
     def score_interpretation(self):
         if self.total_score <= 4:
             return f"National Early Warning Score (NEWS) = {self.total_score}. Interpretation: This is a low score that suggests clinical monitoring should be continued and the medical professional, usually a registered nurse will decide further if clinical care needs to be updated."
-        elif self.total_score in [5,6]:
+        elif self.total_score in [5, 6]:
             return f"National Early Warning Score (NEWS) = {self.total_score}. Interpretation: This is a medium score that suggests the patient should be reviewed by a medical specialist with competencies in acute illness, even with the possibility of referring the patient to the critical care unit at the end of the assessment."
-        elif 7 <= self.total_score <=20:
-            return f"National Early Warning Score (NEWS) = {self.total_score}. Interpretation: This is a high score (red score) that is indicative of urgent critical care need and the patient should be transferred to the appropriate specialized department for further care." 
-    
+        elif 7 <= self.total_score <= 20:
+            return f"National Early Warning Score (NEWS) = {self.total_score}. Interpretation: This is a high score (red score) that is indicative of urgent critical care need and the patient should be transferred to the appropriate specialized department for further care."
+
     def save(self, *args, **kwargs):
         self.total_score = self.calculate_total_score()
         self.score_interpretation = self.score_interpretation()
         super().save(*args, **kwargs)
 
+class PainScale(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    hospitalization = models.ForeignKey(Hospitalization, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+    pain_comment = models.CharField(max_length=255, blank=True, null=True)
+    pain_level = models.CharField(max_length=2, choices=PAIN_CHOICES)
+    pain_intepretation = models.TextField()
+
+    class Meta:
+        ordering = ("-created_at",)
+
+    def pain_intepretation(self):
+        if self.pain_level == 0:
+            interpretation = "No Pain"
+        elif self.pain_level in [1, 2, 3]:
+            interpretation = "Mild Pain"
+        elif self.pain_level in [4, 5, 6]:
+            interpretation = "Moderate Pain"
+        else:
+            interpretation = "Severe Pain"
+        return interpretation
+
+    def save(self, *args, **kwargs):
+        self.pain_intepretation = self.pain_intepretation()
+        super().save(*args, **kwargs)

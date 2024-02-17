@@ -17,32 +17,38 @@ class PatientForm(forms.ModelForm):
             "country",
             "city",
             "street",
-            "zip_code",      
+            "zip_code",
         ]
-        
+
         labels = {
             "first_name": "First Name:",
             "last_name": "Last Name:",
             "date_of_birth": "Date of Birth:",
             "contact_number": "Telephone number:",
-            "is_insured" : "Insured:",
-            "insurance" : "Insurance Number",
+            "is_insured": "Insured:",
+            "insurance": "Insurance Number",
             "country": "Country:",
             "city": "City:",
             "street": "Street adress:",
             "zip_code": "Zip-code:",
         }
-        
+
         widgets = {
-            "first_name" : forms.TextInput(attrs={"class": FORM_CLASS}),
-            "last_name" : forms.TextInput(attrs={"class": FORM_CLASS}),
-            "date_of_birth": forms.DateInput(attrs={"type": "date", "class": FORM_CLASS}),
-            "contact_number" : forms.TextInput(attrs={"class": FORM_CLASS}),
-            "is_insured" : forms.Select(attrs={"class": FORM_CLASS}),
-            "insurance" : forms.NumberInput(attrs={"class": FORM_CLASS, "placeholder" :  "Please type '0' if no insurance."}),
-            "country" : forms.TextInput(attrs={"class": FORM_CLASS}),
-            "city" : forms.TextInput(attrs={"class": FORM_CLASS}),
-            "street" : forms.TextInput(attrs={"class": FORM_CLASS}),
-            "zip_code" : forms.TextInput(attrs={"class": FORM_CLASS}),
+            "first_name": forms.TextInput(attrs={"class": FORM_CLASS}),
+            "last_name": forms.TextInput(attrs={"class": FORM_CLASS}),
+            "date_of_birth": forms.DateInput(
+                attrs={"type": "date", "class": FORM_CLASS}
+            ),
+            "contact_number": forms.TextInput(attrs={"class": FORM_CLASS}),
+            "is_insured": forms.Select(attrs={"class": FORM_CLASS}),
+            "insurance": forms.NumberInput(
+                attrs={
+                    "class": FORM_CLASS,
+                    "placeholder": "Please type '0' if no insurance.",
+                }
+            ),
+            "country": forms.TextInput(attrs={"class": FORM_CLASS}),
+            "city": forms.TextInput(attrs={"class": FORM_CLASS}),
+            "street": forms.TextInput(attrs={"class": FORM_CLASS}),
+            "zip_code": forms.TextInput(attrs={"class": FORM_CLASS}),
         }
-        
