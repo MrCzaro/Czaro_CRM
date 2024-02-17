@@ -1,1 +1,1 @@
-web: gunicorn "czaro_crm.wsgi"
+web: gunicorn "czaro_crm.wsgi.application"
