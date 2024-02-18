@@ -2,7 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+
 @layer componets {
+    /* Forms style*/
     .patient-form {
         @apply w-full my-2 py-2 px-2 rounded-xl bg-zinc-100;
     }
@@ -21,4 +23,17 @@
     .consultation-header-form {
         @apply w-full py-1 px-1 bg-stone-200 rounded-md text-black;
     }
+    
+    /* Buttons style*/
+    .back-button {
+        @apply py-2 px-4 bg-blue-500 rounded-md mr-3 text-white;    
+    }
+    .edit-button {
+        @apply py-2 px-4 bg-indigo-500 rounded-md mr-3 text-white;
+    }
+    .delete-button {
+        @apply py-2 px-4 bg-red-500 rounded-md mr-3 text-white;
+    }
+
 }
+

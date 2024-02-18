@@ -19,8 +19,8 @@
             {{ form.department_id }}
 
             <div class="flex items-center justify-center">
-                <button type="submit" class="py-3 px-6 bg-blue-500 text-white rounded-md m-3">Edit</button>
-                <a href="{% url 'department:hospitalization' hospitalization_id %}" class="py-3 px-6 bg-indigo-500 rounded-md text-white mr-3">Back</a>
+                <button type="submit" class="edit-button">Edit</button>
+                <a href="{% url 'department:hospitalization' hospitalization_id %}" class="back-button">Back</a>
             </div>
         </form>
     </div>

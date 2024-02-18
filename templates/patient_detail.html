@@ -66,13 +66,13 @@
     </div>
 
     <div class="flex justify-center mt-8">
-        <div class="flex items-center">
+        <div class="flex items-center text-white">
             {% if not ongoing_admission %}
                 <a href="{% url 'department:admit_patient' patient.id %}" class="py-3 px-6 bg-teal-500 rounded-md text-white mr-3">Admit Patient</a>
             {% endif %}
-            <a href="{{ back_url }}" class="py-3 px-6 bg-indigo-800 rounded-md text-white mr-3">Back</a>
-            <a href="{% url 'patient:update' patient.id %}" class="py-3 px-6 bg-indigo-500 rounded-md text-white mr-3">Edit</a>
-            <a href="{% url 'patient:delete' patient.id %}" class="py-3 px-6 bg-red-500 rounded-md text-white">Delete</a>
+            <a href="{{ back_url }}" class="back-button">Back</a>
+            <a href="{% url 'patient:update' patient.id %}" class="edit-button">Edit</a>
+            <a href="{% url 'patient:delete' patient.id %}" class="delete-button">Delete</a>
         </div>
     </div>
 {% endblock %}

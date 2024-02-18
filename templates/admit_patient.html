@@ -26,9 +26,9 @@
                 </select></p>
             </div>
 
-            <div class="flex items-center justify-center">
+            <div class="flex items-center justify-center text-white">
                 <button type="submit" class="py-3 px-6 bg-blue-500 text-white rounded-md m-3">Admit</button>
-                <a href="{% url 'patient:detail' patient.id %}" class="py-3 px-6 bg-indigo-500 rounded-md text-white mr-3">Back</a>
+                <a href="{% url 'patient:detail' patient.id %}" class="back-button">Back</a>
             </div>
         </form>
     </div>

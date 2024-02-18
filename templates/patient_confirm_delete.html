@@ -9,12 +9,12 @@
         </div>
         <form class="mt-5 px-8 space-y-4" method="post">
             {% csrf_token %}
-            <div>
-                <button class="mb-9 py-3 px-6 bg-red-600 text-white rounded-md" type="submit">Confirm Delete</button>
+            <div class="mb-9">
+                <button class="mb-9 py-2 px-4 bg-red-600 text-white rounded-md" type="submit">Confirm Delete</button>
             </div>
         </form>
-        <div>
-            <a class="py-3 px-6 bg-blue-700 text-white rounded-md" href="{% url 'patient:index' %}">Cancel</a>
+        <div class="text-white">
+            <a class="back-button" href="{% url 'patient:index' %}">Cancel</a>
         </div>
     </div>
 </div>
