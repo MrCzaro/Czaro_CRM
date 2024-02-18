@@ -1,1 +1,1 @@
-web: gunicorn "czaro_crm.wsgi.application"
+web: python manage.py migrate && python manage.py collectstatic --no-input && gunicorn czaro_crm.wsgi

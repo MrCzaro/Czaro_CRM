@@ -24,10 +24,12 @@ CKEDITOR_CONFIGS = {
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-ko+iva)$#7(i&5oha3-$=wmo&wsjofdw(v5dm1pz_356cl!7*b"
+# SECRET_KEY = "django-insecure-ko+iva)$#7(i&5oha3-$=wmo&wsjofdw(v5dm1pz_356cl!7*b"
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY',"django-insecure-ko+iva)$#7(i&5oha3-$=wmo&wsjofdw(v5dm1pz_356cl!7*b")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+#DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
 ALLOWED_HOSTS = ["*"]
 
@@ -147,3 +149,12 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Update database configuration from $DATABASE_URL environment variable (if defined)
+import dj_database_url
+
+if 'DATABASE_URL' in os.environ:
+    DATABASES['default'] = dj_database_url.config(
+        conn_max_age=500,
+        conn_health_checks=True,
+    )
