@@ -65,10 +65,10 @@
         </table>
     </div>
 
-    <div class="flex justify-center mt-8">
+    <div class="flex justify-center mt-8 mb-10">
         <div class="flex items-center text-white">
             {% if not ongoing_admission %}
-                <a href="{% url 'department:admit_patient' patient.id %}" class="py-3 px-6 bg-teal-500 rounded-md text-white mr-3">Admit Patient</a>
+                <a href="{% url 'department:admit_patient' patient.id %}" class="py-2 px-4 bg-teal-500 rounded-md mr-3">Admit Patient</a>
             {% endif %}
             <a href="{{ back_url }}" class="back-button">Back</a>
             <a href="{% url 'patient:update' patient.id %}" class="edit-button">Edit</a>

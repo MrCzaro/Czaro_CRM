@@ -12,8 +12,8 @@
             <p class="text-lg">{{ form.consultation.label_tag }}
                 {{ form.consultation }}
                 {{ form.media }}
-            <div class="mt-6 flex items-center justify-center">
-                <button class="py-3 px-6 bg-blue-500 text-white rounded-md m-3">{{ title }}</button>
+            <div class="mt-6 flex items-center justify-center text-white">
+                <button class="py-2 px-4 bg-blue-500 text-white rounded-md m-3">{{ title }}</button>
                 <a href="{% url 'department:hospitalization' hospitalization_id %}" class="back-button">Back</a>
 
             </div>

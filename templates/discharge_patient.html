@@ -17,8 +17,8 @@
                 <input type="time" name="discharge_time" id="id_discharge_time" required value="{{ default_discharge_time|default:'' }}">
             </div>
 
-            <div class="flex items-center justify-center">
-                <button type="submit" class="py-3 px-6 bg-blue-500 text-white rounded-md m-3">Discharge</button>
+            <div class="flex items-center justify-center text-white">
+                <button type="submit" class="py-2 px-4 bg-blue-500 rounded-md m-3">Discharge</button>
                 <a href="{% url 'department:hospitalization' hospitalization.id %}" class="back-button">Back</a>
             </div>
 

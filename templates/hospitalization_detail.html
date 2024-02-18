@@ -28,7 +28,7 @@
                         {% if hospitalization.is_discharged %}
                             <strong class="font-bold">Admitted on:</strong> {{ hospitalization.admitted_on }}
                         {% else %}
-                            <a href="{% url 'department:transfer' hospitalization.patient.id hospitalization.id %}" class="inline-block px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Transfer Patient</a>
+                            <a href="{% url 'department:transfer' hospitalization.patient.id hospitalization.id %}" class="inline-block normal-button text-white">Transfer Patient</a>
                         {% endif %}
                     </td>
                     <td class="py-3 px-6 text-left">
@@ -38,10 +38,10 @@
                             <a href="{% url 'department:discharge' hospitalization.id %}" class="inline-block px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">Discharge Patient</a>
                         {% endif %}
                     </td>
-                    <td class="py-3 px-6 text-left font-bold">
+                    <td class="py-3 px-6 text-left">
                         <a href="{% url 'patient:detail' hospitalization.patient.id %}" class="inline-block px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600">Patient Details</a>
                     </td>
-                    <td class="py-3 px-6 text-left font-bold">
+                    <td class="py-3 px-6 text-left">
                         <a href="{% url 'department:hospitalization_update' hospitalization.patient.id hospitalization.id %}" class="inline-block px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600">Edit Symptoms</a>
                     </td>
                 </tr>
@@ -56,8 +56,8 @@
         <div class="flex justify-center mt-3">
           <div class="w-2/3">
               <h2 class="text-3xl font-bold mb-4">Observations:</h2>
-              <div class="mb-5">
-                <a href="{% url 'department:observation_create' hospitalization.patient.id hospitalization.id %}" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add Observation</a>
+              <div class="mb-5 text-white">
+                <a href="{% url 'department:observation_create' hospitalization.patient.id hospitalization.id %}" class="normal-button">Add Observation</a>
               </div>
               {% if observations %}
                   <ul>
@@ -84,8 +84,8 @@
       <div class="flex justify-center mt-3">
           <div class="w-2/3">
               <h2 class="text-3xl font-bold mb-4">Consultations:</h2>
-              <div class="mb-5">
-                <a href="{% url 'department:consultation_create' hospitalization.patient.id hospitalization.id %}" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add Consultation</a>
+              <div class="mb-5 text-white">
+                <a href="{% url 'department:consultation_create' hospitalization.patient.id hospitalization.id %}" class="normal-button">Add Consultation</a>
               </div>
               {% if consultations %}
                   <ul>
@@ -114,8 +114,8 @@
         <div class="w-2/3">
           <h2 class="text-3xl font-bold mb-4">Vital Signs:</h2>
             {% if not hospitalization.is_discharged %}
-                <div class="mb-5">
-                    <a href="{% url 'department:vitals_create' hospitalization.patient.id hospitalization.id %}" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add Vital Signs</a>
+                <div class="mb-5 text-white">
+                    <a href="{% url 'department:vitals_create' hospitalization.patient.id hospitalization.id %}" class="normal-button">Add Vital Signs</a>
                 </div>
             {% endif %}
             {% if vitals %}
@@ -149,8 +149,8 @@
         <h2 class="text-3xl font-bold mb-4">Pain Scales</h2>
         
         {% if not hospitalization.is_discharged %}
-            <div class="mb-5">
-            <a href="{% url 'scales:pain_create' hospitalization.patient.id hospitalization.id %}" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add Pain Scale</a>
+            <div class="mb-5 text-white">
+            <a href="{% url 'scales:pain_create' hospitalization.patient.id hospitalization.id %}" class="normal-button">Add Pain Scale</a>
             </div>
         {% endif %}
         {% if pain_scales %}
@@ -181,8 +181,8 @@
     <div class="w-2/3">
         <h2 class="text-3xl font-bold mb-4">Body Mass Index:</h2>
         {% if not hospitalization.is_discharged %}
-            <div class="mb-5">
-                <a href="{% url 'scales:bmi_create' hospitalization.patient.id hospitalization.id %}" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add Body Mass Index</a>
+            <div class="mb-5 text-white">
+                <a href="{% url 'scales:bmi_create' hospitalization.patient.id hospitalization.id %}" class="normal-button">Add Body Mass Index</a>
             </div>  
         {% endif %}
         {% if bmis %}
@@ -215,8 +215,8 @@
       <div class="w-2/3">
         <h2 class="text-3xl font-bold mb-4">Norton Scales:</h2>
         {% if not hospitalization.is_discharged %}
-            <div class="mb-5">
-            <a href="{% url 'scales:norton_create' hospitalization.patient.id hospitalization.id %}" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add Norton Scale</a>
+            <div class="mb-5 text-white">
+            <a href="{% url 'scales:norton_create' hospitalization.patient.id hospitalization.id %}" class="normal-button">Add Norton Scale</a>
             </div>
         {% endif %}
         {% if norton_scales %}
@@ -252,8 +252,8 @@
   <div class="w-2/3">
     <h2 class="text-3xl font-bold mb-4">Glasgow Coma Scales:</h2>
     {% if not hospitalization.is_discharged %}
-        <div class="mb-5">
-        <a href="{% url 'scales:glasgow_create' hospitalization.patient.id hospitalization.id %}" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add Glasgow Coma Scale</a>
+        <div class="mb-5 text-white">
+        <a href="{% url 'scales:glasgow_create' hospitalization.patient.id hospitalization.id %}" class="normal-button">Add Glasgow Coma Scale</a>
         </div>  
     {% endif %}
     {% if glasgow_scales %}
@@ -285,8 +285,8 @@
   <div class="w-2/3">
     <h2 class="text-3xl font-bold mb-4">National Early Warning Score Scales:</h2>
     {% if not hospitalization.is_discharged %}
-        <div class="mb-5">
-        <a href="{% url 'scales:news_create' hospitalization.patient.id hospitalization.id %}" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add NEWS Scale</a>
+        <div class="mb-5 text-white">
+        <a href="{% url 'scales:news_create' hospitalization.patient.id hospitalization.id %}" class="normal-button">Add NEWS Scale</a>
         </div>
     {% endif %}
     {% if news_scales %}
