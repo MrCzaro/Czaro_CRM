@@ -51,7 +51,7 @@ def signup_view(request):
             and profession
         ):
             if password1 == password2:
-                user = User.objects.create_user(
+                User.objects.create_user(
                     first_name, last_name, email, password1, profession
                 )
                 messages.success(

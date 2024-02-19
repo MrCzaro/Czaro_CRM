@@ -104,8 +104,6 @@ def edit_patient_symptoms(request, hospitalization_id, patient_id):
             return redirect(
                 "department:department_detail", hospitalization.department.id
             )
-        else:
-            print(form.errors)
     else:
         form = HospitalizationForm(
             instance=hospitalization, initial={"department_id": department_id}
@@ -160,7 +158,6 @@ def discharge_patient(request, hospitalization_id):
             discharge_date = form.cleaned_data["discharge_date"]
             discharge_time = form.cleaned_data["discharge_time"]
             discharge_datetime = datetime.combine(discharge_date, discharge_time)
-            # dicharge_date = form.cleaned_data['dicharge_date']
             hospitalization.dicharged_on = discharge_datetime
             hospitalization.is_discharged = True
             hospitalization.save()
@@ -207,10 +204,9 @@ def create_department(request):
     if request.method == "POST":
         form = DepartmentForm(request.POST)
         if form.is_valid():
-            # Add the created_by field based on the logged-in user
             form.instance.created_by = request.user
             form.save()
-            return redirect("department:department_list")  # Adjust the redirect URL
+            return redirect("department:department_list") 
     else:
         form = DepartmentForm()
 
@@ -232,7 +228,7 @@ def department_list(request):
     # Count the number of patients admitted in each department
     department_counts = (
         {}
-    )  # Assuming you have a dictionary with department UUIDs as keys and counts as values
+    )  
 
     for department in departments:
         department_count = Hospitalization.objects.filter(
