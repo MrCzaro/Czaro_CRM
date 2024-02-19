@@ -7,6 +7,7 @@ from patient.models import Patient
 from main.models import User
 
 
+        
 class Department(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255, unique=True, validators=[MinLengthValidator(1)])
