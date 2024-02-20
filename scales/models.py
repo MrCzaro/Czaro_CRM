@@ -5,7 +5,12 @@ from main.models import User
 from department.models import Hospitalization
 
 # Global variables for NortonScale
-PHYSICAL_CHOICES = [("4", "Good"), ("3", "Fair"), ("2", "Poor"), ("1", "Very Bad")]
+PHYSICAL_CHOICES = [
+    ("4", "Good"), 
+    ("3", "Fair"), 
+    ("2", "Poor"), 
+    ("1", "Very Bad"),
+]
 MENTAL_CHOICES = [
     ("4", "Alert"),
     ("3", "Apathetic"),
@@ -381,7 +386,7 @@ class NewsScale(models.Model):
         print(f"LOC {total}, {self.calculate_level_of_consciousness_score()}")
         return total
 
-    def score_interpretation(self):
+    def calculate_score_interpretation(self):
         if self.total_score <= 4:
             return f"National Early Warning Score (NEWS) = {self.total_score}. Interpretation: This is a low score that suggests clinical monitoring should be continued and the medical professional, usually a registered nurse will decide further if clinical care needs to be updated."
         elif self.total_score in [5, 6]:
@@ -391,7 +396,7 @@ class NewsScale(models.Model):
 
     def save(self, *args, **kwargs):
         self.total_score = self.calculate_total_score()
-        self.score_interpretation = self.score_interpretation()
+        self.score_interpretation = self.calculate_score_interpretation()
         super().save(*args, **kwargs)
 
 class PainScale(models.Model):
@@ -402,22 +407,27 @@ class PainScale(models.Model):
     modified_at = models.DateTimeField(auto_now=True)
     pain_comment = models.CharField(max_length=255, blank=True, null=True)
     pain_level = models.CharField(max_length=2, choices=PAIN_CHOICES)
-    pain_intepretation = models.TextField()
+    pain_interpretation = models.TextField()
 
     class Meta:
         ordering = ("-created_at",)
+    
+    def __str__(self):
+        return f"{self.hospitalization.patient.first_name} - {self.pain_level} - {self.pain_interpretation}"
 
-    def pain_intepretation(self):
-        if self.pain_level == 0:
+    def calculate_pain_intepretation(self):
+        if int(self.pain_level) == 0:
             interpretation = "No Pain"
-        elif self.pain_level in [1, 2, 3]:
+        elif int(self.pain_level) in [1, 2, 3]:
             interpretation = "Mild Pain"
-        elif self.pain_level in [4, 5, 6]:
+        elif int(self.pain_level) in [4, 5, 6]:
             interpretation = "Moderate Pain"
-        else:
+        elif int(self.pain_level) > 6:
             interpretation = "Severe Pain"
+        else:
+            interpretation = "Error"
         return interpretation
 
     def save(self, *args, **kwargs):
-        self.pain_intepretation = self.pain_intepretation()
+        self.pain_intepretation = self.calculate_pain_intepretation()
         super().save(*args, **kwargs)
