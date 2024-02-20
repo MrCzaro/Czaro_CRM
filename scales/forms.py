@@ -149,8 +149,9 @@ class PainScaleForm(forms.ModelForm):
     pain_level = forms.ChoiceField(widget=forms.RadioSelect, choices=PAIN_CHOICES)
     pain_comment = forms.CharField(
         widget=forms.Textarea(
-            attrs={"class": "pain-comment-form"}
+            attrs={"class": "pain-comment-form"},
         ),
+        required=False
     )
 
     class Meta:

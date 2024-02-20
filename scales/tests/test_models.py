@@ -260,6 +260,7 @@ class NortonScaleModelTest(TestCase):
         norton.save()
         self.assertIsNotNone(norton.total_points)
         self.assertIsNotNone(norton.pressure_risk)
+        
 class NewsScaleModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -307,7 +308,7 @@ class NewsScaleModelTest(TestCase):
             heart_rate=64,
             level_of_consciousness="awake"        
         )
-        #cls.news.save()
+        cls.news.save()
         
     def test_valid_news_scale(self):
         self.assertEqual(self.news.respiratory_rate, 20)
@@ -359,7 +360,197 @@ class NewsScaleModelTest(TestCase):
     def test_level_of_consciousness_label(self):
         field_label = self.news._meta.get_field("level_of_consciousness").verbose_name
         self.assertEqual(field_label, "level of consciousness")
-    
+        
+    def test_calculate_respiratory_respiratory_rate_score(self):
+        self.assertEqual(self.news.calculate_respiratory_respiratory_rate_score(), 0)
+        
+        news_second = NewsScale(
+            hospitalization=self.hospitalization,
+            created_by=self.user,
+            respiratory_rate=26,
+            oxygen_saturation=99,
+            is_on_oxygen=False,
+            aecopd_state=False,
+            temperature=36.6,
+            systolic_blood_pressure=120,
+            diastolic_blood_pressure=70,
+            heart_rate=64,
+            level_of_consciousness="awake"        
+        )
+        self.assertEqual(news_second.calculate_respiratory_respiratory_rate_score(), 3)
+        
+    def test_calculate_oxygen_saturation_score(self):
+        self.assertEqual(self.news.calculate_oxygen_saturation_score(), 0)
+        
+        news_second = NewsScale(
+            hospitalization=self.hospitalization,
+            created_by=self.user,
+            respiratory_rate=26,
+            oxygen_saturation=79,
+            is_on_oxygen=False,
+            aecopd_state=False,
+            temperature=36.6,
+            systolic_blood_pressure=120,
+            diastolic_blood_pressure=70,
+            heart_rate=64,
+            level_of_consciousness="awake"        
+        )
+        self.assertEqual(news_second.calculate_oxygen_saturation_score(), 3)
+        
+    def test_calculate_is_on_oxygen_score(self):
+        self.assertEqual(self.news.calculate_is_on_oxygen_score(), 0)
+        
+        news_second = NewsScale(
+            hospitalization=self.hospitalization,
+            created_by=self.user,
+            respiratory_rate=26,
+            oxygen_saturation=79,
+            is_on_oxygen=True,
+            aecopd_state=False,
+            temperature=36.6,
+            systolic_blood_pressure=120,
+            diastolic_blood_pressure=70,
+            heart_rate=64,
+            level_of_consciousness="awake"        
+        )
+        self.assertEqual(news_second.calculate_is_on_oxygen_score(), 2)
+        
+    def test_calculate_temperature_score(self):
+        self.assertEqual(self.news.calculate_temperature_score(), 0)
+        
+        news_second = NewsScale(
+            hospitalization=self.hospitalization,
+            created_by=self.user,
+            respiratory_rate=26,
+            oxygen_saturation=79,
+            is_on_oxygen=True,
+            aecopd_state=False,
+            temperature=34.6,
+            systolic_blood_pressure=120,
+            diastolic_blood_pressure=70,
+            heart_rate=64,
+            level_of_consciousness="awake"        
+        )
+        self.assertEqual(news_second.calculate_temperature_score(), 3)
+        
+    def test_calculate_systolic_blood_pressure_score(self):
+        self.assertEqual(self.news.calculate_systolic_blood_pressure_score(), 0)
+        
+        news_second = NewsScale(
+            hospitalization=self.hospitalization,
+            created_by=self.user,
+            respiratory_rate=26,
+            oxygen_saturation=79,
+            is_on_oxygen=True,
+            aecopd_state=False,
+            temperature=34.6,
+            systolic_blood_pressure=60,
+            diastolic_blood_pressure=70,
+            heart_rate=64,
+            level_of_consciousness="awake"        
+        )
+        self.assertEqual(news_second.calculate_systolic_blood_pressure_score(), 3)
+        
+    def test_calculate_heart_rate_score(self):
+        self.assertEqual(self.news.calculate_heart_rate_score(), 0)
+        
+        news_second = NewsScale(
+            hospitalization=self.hospitalization,
+            created_by=self.user,
+            respiratory_rate=26,
+            oxygen_saturation=79,
+            is_on_oxygen=True,
+            aecopd_state=False,
+            temperature=34.6,
+            systolic_blood_pressure=60,
+            diastolic_blood_pressure=70,
+            heart_rate=164,
+            level_of_consciousness="awake"        
+        )
+        self.assertEqual(news_second.calculate_heart_rate_score(), 3)
+        
+    def test_calculate_level_of_consciousness_score(self):
+        self.assertEqual(self.news.calculate_level_of_consciousness_score(), 0)
+        
+        news_second = NewsScale(
+            hospitalization=self.hospitalization,
+            created_by=self.user,
+            respiratory_rate=26,
+            oxygen_saturation=79,
+            is_on_oxygen=True,
+            aecopd_state=False,
+            temperature=34.6,
+            systolic_blood_pressure=60,
+            diastolic_blood_pressure=70,
+            heart_rate=164,
+            level_of_consciousness="unresponsive"        
+        )
+        self.assertEqual(news_second.calculate_level_of_consciousness_score(), 3)
+        
+    def test_calculate_total_score(self):
+        self.assertEqual(self.news.calculate_total_score(),0)
+        
+        news_second = NewsScale(
+            hospitalization=self.hospitalization,
+            created_by=self.user,
+            respiratory_rate=26,
+            oxygen_saturation=79,
+            is_on_oxygen=True,
+            aecopd_state=False,
+            temperature=34.6,
+            systolic_blood_pressure=60,
+            diastolic_blood_pressure=70,
+            heart_rate=164,
+            level_of_consciousness="unresponsive"        
+        )
+        self.assertEqual(news_second.calculate_total_score(), 20)
+        
+    def test_calculate_score_interpretation(self):
+        expected_str = f"National Early Warning Score (NEWS) = {self.news.total_score}. Interpretation: This is a low score that suggests clinical monitoring should be continued and the medical professional, usually a registered nurse will decide further if clinical care needs to be updated."
+        self.assertEqual(self.news.calculate_score_interpretation(),expected_str)
+        
+        news_second = NewsScale(
+            hospitalization=self.hospitalization,
+            created_by=self.user,
+            respiratory_rate=26,
+            oxygen_saturation=79,
+            is_on_oxygen=True,
+            aecopd_state=False,
+            temperature=34.6,
+            systolic_blood_pressure=60,
+            diastolic_blood_pressure=70,
+            heart_rate=164,
+            level_of_consciousness="unresponsive"        
+        )
+        news_second.save()
+        expected_str = f"National Early Warning Score (NEWS) = {news_second.total_score}. Interpretation: This is a high score (red score) that is indicative of urgent critical care need and the patient should be transferred to the appropriate specialized department for further care."
+        self.assertEqual(news_second.calculate_score_interpretation(), expected_str)
+        
+    def test_save_method(self):
+        news_second = NewsScale(
+            hospitalization=self.hospitalization,
+            created_by=self.user,
+            respiratory_rate=26,
+            oxygen_saturation=79,
+            is_on_oxygen=True,
+            aecopd_state=False,
+            temperature=34.6,
+            systolic_blood_pressure=60,
+            diastolic_blood_pressure=70,
+            heart_rate=164,
+            level_of_consciousness="unresponsive"        
+        )
+        news_second.save()
+        self.assertIsNotNone(news_second.total_score)
+        self.assertIsNotNone(news_second.score_interpretation)
+        
+    def test_string_representation(self):
+        # Test the __str__ representation
+        expected_str = f"{self.news.hospitalization.patient.first_name} - {self.news.total_score} points in NEWS Score"
+        self.assertEqual(str(self.news), expected_str)
+        
+        
+        
 class PainScaleModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -419,6 +610,7 @@ class PainScaleModelTest(TestCase):
     
     def test_calculate_pain_intepretation(self):
         self.assertEqual(self.pain.calculate_pain_intepretation(), "Moderate Pain")
+        
         
     def test_save_method(self):
         pain = PainScale.objects.create(

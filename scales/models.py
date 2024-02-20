@@ -275,7 +275,7 @@ class NewsScale(models.Model):
         ordering = ("-created_at",)
 
     def __str__(self):
-        return f"{self.aecopd_state} {self.respiratory_rate} {self.level_of_consciousness} {self.heart_rate}"
+        return f"{self.hospitalization.patient.first_name} - {self.total_score} points in NEWS Score"
 
     def calculate_respiratory_respiratory_rate_score(self):
         if self.respiratory_rate <= 8:
@@ -371,19 +371,19 @@ class NewsScale(models.Model):
     def calculate_total_score(self):
         total = 0
         total += self.calculate_respiratory_respiratory_rate_score()
-        print(f"RR {total}, {self.calculate_respiratory_respiratory_rate_score()}")
+        #print(f"RR {total}, {self.calculate_respiratory_respiratory_rate_score()}")
         total += self.calculate_oxygen_saturation_score()
-        print(f"Oxy {total}, {self.calculate_oxygen_saturation_score()}")
+        #print(f"Oxy {total}, {self.calculate_oxygen_saturation_score()}")
         total += self.calculate_is_on_oxygen_score()
-        print(f"OxySup {total}, {self.calculate_is_on_oxygen_score()}")
+        #print(f"OxySup {total}, {self.calculate_is_on_oxygen_score()}")
         total += self.calculate_temperature_score()
-        print(f"Temp {total}, {self.calculate_temperature_score()}")
+        #print(f"Temp {total}, {self.calculate_temperature_score()}")
         total += self.calculate_systolic_blood_pressure_score()
-        print(f"SBP {total}, {self.calculate_systolic_blood_pressure_score()}")
+        #print(f"SBP {total}, {self.calculate_systolic_blood_pressure_score()}")
         total += self.calculate_heart_rate_score()
-        print(f"HR {total}, {self.calculate_heart_rate_score()}")
+        #print(f"HR {total}, {self.calculate_heart_rate_score()}")
         total += self.calculate_level_of_consciousness_score()
-        print(f"LOC {total}, {self.calculate_level_of_consciousness_score()}")
+        #print(f"LOC {total}, {self.calculate_level_of_consciousness_score()}")
         return total
 
     def calculate_score_interpretation(self):
@@ -429,5 +429,5 @@ class PainScale(models.Model):
         return interpretation
 
     def save(self, *args, **kwargs):
-        self.pain_intepretation = self.calculate_pain_intepretation()
+        self.pain_interpretation = self.calculate_pain_intepretation()
         super().save(*args, **kwargs)
