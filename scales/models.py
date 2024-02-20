@@ -104,7 +104,7 @@ class BodyMassIndex(models.Model):
         ordering = ("-created_at",)
 
     def __str__(self):
-        return f"{self.hospitalization.patient.first_name} {self.bmi}-points: {self.intepretation}"
+        return f"{self.hospitalization.patient.first_name} {self.bmi}-points: {self.interpretation}"
 
     def calculate_bmi(self):
         body_height = self.body_height / 100
@@ -148,7 +148,7 @@ class GlasgowComaScale(models.Model):
         ordering = ("-created_at",)
 
     def __str__(self):
-        return f"{self.patient.first_name}"
+        return f"{self.hospitalization.patient.first_name}"
 
     def calculate_total_points(self):
         choices_values = {
