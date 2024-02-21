@@ -41,13 +41,13 @@ class BodyMassIndexForm(forms.ModelForm):
 
 class GlasgowComaScaleForm(forms.ModelForm):
     eye_response = forms.ChoiceField(
-        widget=forms.RadioSelect, choices=EYE_RESPONSE_CHOICES
+        widget=forms.RadioSelect, choices=EYE_RESPONSE_CHOICES, label="Best eye response"
     )
     verbal_response = forms.ChoiceField(
-        widget=forms.RadioSelect, choices=VERBAL_RESPONSE_CHOICES
+        widget=forms.RadioSelect, choices=VERBAL_RESPONSE_CHOICES, label="Best verbal response"
     )
     motor_response = forms.ChoiceField(
-        widget=forms.RadioSelect, choices=MOTOR_RESPONSE_CHOICES
+        widget=forms.RadioSelect, choices=MOTOR_RESPONSE_CHOICES, label="Best motor response"
     )
 
     class Meta:
@@ -57,11 +57,6 @@ class GlasgowComaScaleForm(forms.ModelForm):
             "verbal_response",
             "motor_response",
         ]
-        labels = {
-            "eye_response": "Best eye response",
-            "verbal_response": "Best verbal response",
-            "motor_response": "Best motor response",
-        }
 
 
 class NewsScaleForm(forms.ModelForm):
@@ -123,15 +118,15 @@ class NewsScaleForm(forms.ModelForm):
 
 class NortonScaleForm(forms.ModelForm):
     physical_condition = forms.ChoiceField(
-        widget=forms.RadioSelect, choices=PHYSICAL_CHOICES
+        widget=forms.RadioSelect, choices=PHYSICAL_CHOICES, label="Physical condition"
     )
     mental_condition = forms.ChoiceField(
-        widget=forms.RadioSelect, choices=MENTAL_CHOICES
+        widget=forms.RadioSelect, choices=MENTAL_CHOICES, label="Mental condition"
     )
-    activity = forms.ChoiceField(widget=forms.RadioSelect, choices=ACTIVITY_CHOICES)
-    mobility = forms.ChoiceField(widget=forms.RadioSelect, choices=MOBILITY_CHOICES)
+    activity = forms.ChoiceField(widget=forms.RadioSelect, choices=ACTIVITY_CHOICES, label="Activity")
+    mobility = forms.ChoiceField(widget=forms.RadioSelect, choices=MOBILITY_CHOICES, label="Mobility")
     incontinence = forms.ChoiceField(
-        widget=forms.RadioSelect, choices=INCONTINENCE_CHOICES
+        widget=forms.RadioSelect, choices=INCONTINENCE_CHOICES, label="Incontinence"
     )
 
     class Meta:
@@ -146,11 +141,11 @@ class NortonScaleForm(forms.ModelForm):
 
 
 class PainScaleForm(forms.ModelForm):
-    pain_level = forms.ChoiceField(widget=forms.RadioSelect, choices=PAIN_CHOICES)
+    pain_level = forms.ChoiceField(widget=forms.RadioSelect, choices=PAIN_CHOICES, label="Pain level")
     pain_comment = forms.CharField(
         widget=forms.Textarea(
             attrs={"class": "pain-comment-form"},
-        ),
+        ), label="Pain comment",
         required=False
     )
 

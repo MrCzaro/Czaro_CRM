@@ -28,7 +28,8 @@ class PatientFormTest(TestCase):
             "zip_code" : "00-00"
         }
         form = PatientForm(data)
-        self.assertTrue(form.is_valid)
+        
+        self.assertTrue(form.is_valid())
         
     def test_invalid_form(self):
         data = {
@@ -60,7 +61,7 @@ class PatientFormTest(TestCase):
             "zip_code" : "00-00"
         }
         form = PatientForm(data)
-        self.assertTrue(form.is_valid)
+        self.assertTrue(form.is_valid())
         
         patient = form.save(commit=False)
         patient.created_by = self.user
