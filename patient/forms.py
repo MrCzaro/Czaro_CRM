@@ -25,7 +25,7 @@ class PatientForm(forms.ModelForm):
             "date_of_birth": "Date of Birth:",
             "contact_number": "Telephone number:",
             "is_insured": "Insured:",
-            "insurance": "Insurance Number",
+            "insurance": "Insurance Number:",
             "country": "Country:",
             "city": "City:",
             "street": "Street adress:",
