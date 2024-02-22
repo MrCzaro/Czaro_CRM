@@ -20,9 +20,7 @@ class DepartmentModelTest(TestCase):
             name="Test Department", 
             description="This is a test department", 
             created_by=cls.user)
-        
-        cls.department_uuid = cls.department.id
-   
+           
     def test_valid_hospitalization(self):
         self.assertIsNotNone(self.department.created_at)
         self.assertEqual(self.department.name, "Test Department")
