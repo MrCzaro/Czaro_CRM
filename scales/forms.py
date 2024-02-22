@@ -60,10 +60,15 @@ class GlasgowComaScaleForm(forms.ModelForm):
 
 
 class NewsScaleForm(forms.ModelForm):
-    is_on_oxygen = forms.ChoiceField(widget=forms.RadioSelect, choices=YES_NO_CHOICES)
-    aecopd_state = forms.ChoiceField(widget=forms.RadioSelect, choices=YES_NO_CHOICES)
+    is_on_oxygen = forms.ChoiceField(
+        widget=forms.RadioSelect, choices=YES_NO_CHOICES, label= "Oxygen supplementation"
+    )
+    aecopd_state = forms.ChoiceField(
+        widget=forms.RadioSelect, choices=YES_NO_CHOICES,
+        label="Is the patient in Acute exacebrations of chronic obstructive pulmonary disease state",
+    )
     level_of_consciousness = forms.ChoiceField(
-        widget=forms.RadioSelect, choices=LOC_CHOICES
+        widget=forms.RadioSelect, choices=LOC_CHOICES, label="Level of consciousness"
     )
 
     def clean(self):
@@ -94,13 +99,10 @@ class NewsScaleForm(forms.ModelForm):
         labels = {
             "respiratory_rate": "Respiratory rate",
             "oxygen_saturation": "Oxygen saturation level",
-            "is_on_oxygen": "Oxygen supplementation",
-            "aecopd_state": "Is the patient in Acute exacebrations of chronic obstructive pulmonary disease state",
             "temperature": "Body temperature",
             "systolic_blood_pressure": "Systolic blood presurre",
             "diastolic_blood_pressure": "Diastolic blood pressure",
             "heart_rate": "Heart Rate",
-            "level_of_consciousness ": "Level of consciousness",
         }
         widgets = {
             "respiratory_rate": forms.NumberInput(attrs={"class": "numeric-form"}),

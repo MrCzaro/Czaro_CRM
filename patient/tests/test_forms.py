@@ -13,7 +13,11 @@ class PatientFormTest(TestCase):
             password="adminpassword",
             profession="admins",
         )
-    
+        
+    def test_form_initialization(self):
+        form = PatientForm()
+        self.assertIsInstance(form, PatientForm)
+        
     def test_valid_form(self):
         data = {
             "first_name" : "Patient",
@@ -30,8 +34,14 @@ class PatientFormTest(TestCase):
         form = PatientForm(data)
         
         self.assertTrue(form.is_valid())
-        
+     
     def test_invalid_form(self):
+        # Empty form
+        data = {}
+        form = PatientForm(data)
+        self.assertFalse(form.is_valid())
+        
+        # Missing fields
         data = {
             "first_name" : "Patient",
             "last_name" : "Mr Sick",
@@ -46,7 +56,7 @@ class PatientFormTest(TestCase):
         }
         form = PatientForm(data)
         self.assertFalse(form.is_valid())
-    
+        
     def test_save_method(self):
         data = {
             "first_name" : "Patient",
@@ -68,17 +78,45 @@ class PatientFormTest(TestCase):
         patient.save()
         
         self.assertIsInstance(patient, Patient)
-        
-    def test_form_labels(self):
+    
+    def test_first_name_label(self):
         form = PatientForm()
-        self.assertTrue(form.fields["first_name"].label == "First Name:")
-        self.assertTrue(form.fields["last_name"].label == "Last Name:")
-        self.assertTrue(form.fields["date_of_birth"].label == "Date of Birth:")
-        self.assertTrue(form.fields["contact_number"].label == "Telephone number:")
-        self.assertTrue(form.fields["is_insured"].label == "Insured:")
-        self.assertTrue(form.fields["insurance"].label == "Insurance Number:")
-        self.assertTrue(form.fields["country"].label == "Country:")
-        self.assertTrue(form.fields["city"].label == "City:")
-        self.assertTrue(form.fields["street"].label == "Street adress:")
-        self.assertTrue(form.fields["zip_code"].label == "Zip-code:")
+        self.assertEqual(form.fields["first_name"].label, "First Name:")
         
+    def test_last_name_label(self):
+        form = PatientForm()
+        self.assertEqual(form.fields["last_name"].label, "Last Name:")
+        
+    def test_date_of_birth_label(self):
+        form = PatientForm()
+        self.assertEqual(form.fields["date_of_birth"].label, "Date of Birth:")
+        
+    def test_contact_number_label(self):
+        form = PatientForm()
+        self.assertEqual(form.fields["contact_number"].label, "Telephone number:")
+        
+    def test_is_insured_label(self):
+        form = PatientForm()
+        self.assertEqual(form.fields["is_insured"].label, "Insured:")
+        
+    def test_insurance_label(self):
+        form = PatientForm()
+        self.assertEqual(form.fields["insurance"].label, "Insurance Number:")
+        
+    def test_country_label(self):
+        form = PatientForm()
+        self.assertEqual(form.fields["country"].label, "Country:")
+        
+    def test_city_label(self):
+        form = PatientForm()
+        self.assertEqual(form.fields["city"].label, "City:")
+            
+    def test_street_label(self):
+        form = PatientForm()
+        self.assertEqual(form.fields["street"].label, "Street adress:")
+            
+    def test_zip_code_label(self):
+        form = PatientForm()
+        self.assertEqual(form.fields["zip_code"].label, "Zip-code:")
+    
+
