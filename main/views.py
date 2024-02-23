@@ -1,10 +1,10 @@
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.shortcuts import render, redirect
-
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 
 from .models import User, USER_CHOICES
-
 
 @login_required(login_url="/login/")
 def main(request):
@@ -23,7 +23,7 @@ def login_view(request):
 
         if user is not None:
             auth.login(request, user)
-            return redirect("main:index")
+            return redirect("patient:index")
         else:
             messages.error(request, "Invalid login credentials. Please try again.")
 
@@ -42,6 +42,7 @@ def signup_view(request):
         password1 = request.POST.get("password1", "")
         password2 = request.POST.get("password2", "")
 
+        
         if (
             first_name
             and last_name
@@ -51,13 +52,19 @@ def signup_view(request):
             and profession
         ):
             if password1 == password2:
-                User.objects.create_user(
-                    first_name, last_name, email, password1, profession
-                )
-                messages.success(
-                    request, "Your account has been created. You can login."
-                )
-                return redirect("main:login")
+                try:
+                    validate_email(email)
+                    User.objects.create_user(
+                        email=email,
+                        first_name=first_name,
+                        last_name=last_name,
+                        password=password1,
+                        profession=profession,
+                    )
+                    messages.success(request, "Your account has been created. You can login.")
+                    return redirect("main:login")
+                except ValidationError:
+                     messages.error(request, "Please provide a valid email address.")
             else:
                 messages.error(request, "Your password do not match.")
         else:
@@ -65,6 +72,7 @@ def signup_view(request):
                 request,
                 "Error while creating an account. Please provide a valid email address, name, and password.",
             )
+         
 
     context = {
         "title": "Signup",

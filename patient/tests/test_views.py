@@ -226,4 +226,50 @@ class PatientUpdateViewTest(TestCase):
         self.assertRedirects(response, reverse("patient:index"))
         updated_patient = Patient.objects.get(id=self.patient.id)
         self.assertEqual(updated_patient.first_name, "Juzef")
+
+class PatientDeleteViewTest(TestCase):
+    @classmethod
+    def setUp(cls):
+        cls.user = User.objects.create_user(
+            first_name="AdminTest",
+            last_name="User",
+            email="testadmin@admin.com",
+            password="adminpassword",
+            profession="admins",
+        )
+        cls.patient = Patient.objects.create(
+            first_name="Stefan",
+            last_name="Master",
+            date_of_birth="1999-09-09",
+            contact_number="+48600500400",
+            is_insured=True,
+            insurance="1234567890",
+            country="Country",
+            city="City",
+            street="Street",
+            zip_code="00-00",
+            created_by=cls.user
+        )
+        cls.client = Client()
+    
+    
+    def test_successful_rendering(self):
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.get(reverse("patient:delete", args=[self.patient.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "patient_confirm_delete.html")
+
+    def test_context_data(self):
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.get(reverse("patient:delete", args=[self.patient.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("title", response.context)
+        self.assertIsInstance(response.context["object"], Patient)
         
+    def test_patient_deletion(self):
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.post(reverse("patient:delete", args=[self.patient.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("patient:index"))
+        with self.assertRaises(Patient.DoesNotExist):
+            deleted_patient = Patient.objects.get(id=self.patient.id)
