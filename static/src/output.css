@@ -1145,6 +1145,19 @@ video {
     color: rgb(0 0 0 / var(--tw-text-opacity));
   }
 
+  .signup-form {
+    width: 100%;
+    border-radius: 0.75rem;
+    --tw-bg-opacity: 1;
+    background-color: rgb(231 229 228 / var(--tw-bg-opacity));
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    --tw-text-opacity: 1;
+    color: rgb(0 0 0 / var(--tw-text-opacity));
+  }
+
   /* Buttons style*/
 
   .back-button {

@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 
+
 from .models import User, USER_CHOICES
 
 @login_required(login_url="/login/")
@@ -32,7 +33,6 @@ def login_view(request):
     }
     return render(request, "login.html", context)
 
-
 def signup_view(request):
     if request.method == "POST":
         first_name = request.POST.get("first_name", "")
@@ -51,7 +51,9 @@ def signup_view(request):
             and password2
             and profession
         ):
-            if password1 == password2:
+            if User.objects.filter(email=email).exists():
+                messages.error(request,"An account with this email already exists.")
+            elif password1 == password2:
                 try:
                     validate_email(email)
                     User.objects.create_user(

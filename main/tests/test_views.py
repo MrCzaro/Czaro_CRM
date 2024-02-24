@@ -127,3 +127,19 @@ class SignUpViewTest(TestCase):
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(len(messages), 1)
         self.assertEqual(str(messages[0]), "Please provide a valid email address.")
+        
+    def test_existing_email(self):
+        data = {
+            "first_name" : "AdminTest",
+            "last_name" : "User",
+            "email" : "testadmin@admin.com",
+            "password1" : "adminpassword",
+            "password2" : "adminpassword",
+            "profession" : "admins",
+        }
+        response = self.client.post("/signup/", data)
+        self.assertEqual(response.status_code, 200)
+        # Check for error messages
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(str(messages[0]), "An account with this email already exists.")

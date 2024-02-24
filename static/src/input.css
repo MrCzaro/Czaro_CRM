@@ -23,6 +23,9 @@
     .consultation-header-form {
         @apply w-full py-1 px-1 bg-stone-200 rounded-md text-black;
     }
+    .signup-form {
+    	@apply w-full py-3 px-3 bg-stone-200 rounded-xl text-black;
+    }
     
     /* Buttons style*/
     .back-button {
