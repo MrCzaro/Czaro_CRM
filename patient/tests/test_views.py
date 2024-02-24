@@ -18,9 +18,6 @@ class IndexViewTest(TestCase):
             profession="admins",
         )
         
-        cls.client = Client()
-        
-        
     def test_authentication_required(self):
         response = self.client.get(reverse("patient:index"))
         self.assertEqual(response.status_code, 302)
@@ -64,7 +61,6 @@ class PatientDetailViewTest(TestCase):
             created_by=cls.user
         )
         
-        cls.client = Client()
     
     def test_authentication_required(self):
         response = self.client.get(reverse("patient:detail", args=[self.patient.id]))
@@ -109,7 +105,6 @@ class PatientCreateViewTest(TestCase):
             password="adminpassword",
             profession="admins",
         )
-        cls.client = Client()
     
     def test_authentication_required(self):
         response = self.client.get(reverse("patient:create"))
@@ -191,9 +186,7 @@ class PatientUpdateViewTest(TestCase):
             zip_code="00-00",
             created_by=cls.user
         )
-        cls.client = Client()
-    
-    
+
     def test_successful_rendering(self):
         self.client.login(username="testadmin@admin.com", password="adminpassword")
         response = self.client.get(reverse("patient:update", args=[self.patient.id]))
@@ -250,9 +243,7 @@ class PatientDeleteViewTest(TestCase):
             zip_code="00-00",
             created_by=cls.user
         )
-        cls.client = Client()
-    
-    
+
     def test_successful_rendering(self):
         self.client.login(username="testadmin@admin.com", password="adminpassword")
         response = self.client.get(reverse("patient:delete", args=[self.patient.id]))
@@ -273,3 +264,4 @@ class PatientDeleteViewTest(TestCase):
         self.assertRedirects(response, reverse("patient:index"))
         with self.assertRaises(Patient.DoesNotExist):
             deleted_patient = Patient.objects.get(id=self.patient.id)
+            

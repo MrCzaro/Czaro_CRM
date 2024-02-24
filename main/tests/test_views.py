@@ -1,4 +1,4 @@
-from django.test import TestCase, Client
+from django.test import TestCase
 from django.urls import reverse
 from django.contrib.messages import get_messages
 
@@ -16,7 +16,6 @@ class LoginViewTest(TestCase):
             profession="admins",
         )
         
-        cls.client = Client()
         
     def test_successful_rendering(self):
         response = self.client.get("/login/")
@@ -42,8 +41,7 @@ class SignUpViewTest(TestCase):
             password="adminpassword",
             profession="admins",
         )
-        
-        cls.client = Client()
+
     def test_successful_rendering(self):
         response = self.client.get("/signup/")
         self.assertEqual(response.status_code, 200)
@@ -143,3 +141,19 @@ class SignUpViewTest(TestCase):
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(len(messages), 1)
         self.assertEqual(str(messages[0]), "An account with this email already exists.")
+        
+
+class LogoutViewTest(TestCase):
+    def test_logout(self):
+        User.objects.create_user(
+            first_name="AdminTest",
+            last_name="User",
+            email="testadmin@admin.com",
+            password="adminpassword",
+            profession="admins",
+        )
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.get(reverse("main:logout"))
+        self.assertRedirects(response, reverse("main:login"))
+        self.assertFalse(response.wsgi_request.user.is_authenticated)
+        

@@ -162,8 +162,7 @@ def create_news_scale(request, patient_id, hospitalization_id):
             scale.hospitalization = hospitalization
             scale.save()
             return redirect("department:hospitalization", hospitalization_id)
-        else:
-            print(form.errors)
+
     else:
         form = NewsScaleForm()
 
