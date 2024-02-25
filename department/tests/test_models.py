@@ -57,7 +57,7 @@ class HospitalizationModelTest(TestCase):
         cls.patient = Patient.objects.create(
             first_name="Stefan",
             last_name="Master",
-            date_of_birth=date(1999,9,9),
+            date_of_birth="1999-09-09",
             contact_number="+48600500400",
             is_insured=True,
             insurance="1234567890",
@@ -116,7 +116,7 @@ class ConsultationModelTest(TestCase):
         cls.patient = Patient.objects.create(
             first_name="Stefan",
             last_name="Master",
-            date_of_birth=date(1999,9,9),
+            date_of_birth="1999-09-09",
             contact_number="+48600500400",
             is_insured=True,
             insurance="1234567890",
