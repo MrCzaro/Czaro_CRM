@@ -78,7 +78,7 @@ class HospitalizationModelTest(TestCase):
         self.assertEqual(self.hospitalization.patient, self.patient)
         self.assertEqual(self.hospitalization.department, self.department)
         self.assertIsNotNone(self.hospitalization.admitted_on)
-        self.assertIsNone(self.hospitalization.dicharged_on)
+        self.assertIsNone(self.hospitalization.discharged_on)
         self.assertFalse(self.hospitalization.is_discharged)
         self.assertEqual(self.hospitalization.main_symptom, "Cough")
         self.assertEqual(self.hospitalization.additional_symptoms, "Fever")

@@ -460,14 +460,19 @@ class DepartmentListViewTest(TestCase):
             password="adminpassword",
             profession="admins",
         )
-        cls.department = Department.objects.create(
-                name="Test Department",
-                description="This is a test department",
+        cls.first_department = Department.objects.create(
+                name="The first Test Department",
+                description="This is the first test department",
                 created_by=cls.user
         )
-        cls.newdepartment = Department.objects.create(
-                name="Test New Department",
-                description="This is a test department",
+        cls.second_department = Department.objects.create(
+                name="The second Test New Department",
+                description="This is the second test department",
+                created_by=cls.user
+        )
+        cls.third_department = Department.objects.create(
+                name="The third Test New Department",
+                description="This is the third test department",
                 created_by=cls.user
         )
         cls.first_patient = Patient.objects.create(
@@ -498,13 +503,13 @@ class DepartmentListViewTest(TestCase):
         )
         cls.hospitalization = Hospitalization.objects.create(
             patient=cls.first_patient,
-            department=cls.department,
+            department=cls.first_department,
             main_symptom="Cough",
             additional_symptoms="Fever",
         )
         cls.hospitalization = Hospitalization.objects.create(
             patient=cls.second_patient,
-            department=cls.newdepartment,
+            department=cls.second_department,
             main_symptom="Cough",
             additional_symptoms="Fever",
         )
@@ -531,7 +536,7 @@ class DepartmentListViewTest(TestCase):
         self.client.login(username="testadmin@admin.com", password="adminpassword")
         response = self.client.get(reverse("department:department_list"))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.context["department_counts"]), 2)
+        self.assertEqual(len(response.context["department_counts"]), 3)
         self.assertEqual(response.context["total_admitted_patients"], 2)
         self.assertIn("departments", response.context)
         self.assertIn("department_counts", response.context)
