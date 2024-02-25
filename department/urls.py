@@ -14,7 +14,7 @@ urlpatterns = [
         name="hospitalization",
     ),
     path(
-        "<uuid:patient_id>/<uuid:hospitalization_id>/hospitalization-edit",
+        "<uuid:patient_id>/<uuid:hospitalization_id>/hospitalization-edit/",
         views.edit_patient_symptoms,
         name="hospitalization_update",
     ),

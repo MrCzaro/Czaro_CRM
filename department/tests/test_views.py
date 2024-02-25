@@ -1,12 +1,545 @@
+import uuid
 from django.test import TestCase
 from django.urls import reverse
-
+from django.utils import timezone
 from main.models import User
 
 from department.models import Consultation, Department, Hospitalization, Observation, VitalSigns
 from patient.models import Patient
 
+class HospitalizationDetailViewTest(TestCase):
+    @classmethod
+    def setUp(cls):
+        cls.user = User.objects.create_user(
+            first_name="AdminTest",
+            last_name="User",
+            email="testadmin@admin.com",
+            password="adminpassword",
+            profession="admins",
+        )
+        cls.department = Department.objects.create(
+                name="Test Department",
+                description="This is a test department",
+                created_by=cls.user
+        )
+        cls.patient = Patient.objects.create(
+            first_name="Stefan",
+            last_name="Master",
+            date_of_birth="1999-09-09",
+            contact_number="+48600500400",
+            is_insured=True,
+            insurance="1234567890",
+            country="Country",
+            city="City",
+            street="Street",
+            zip_code="00-00",
+            created_by=cls.user
+        )
+        cls.hospitalization = Hospitalization.objects.create(
+            patient=cls.patient,
+            department=cls.department,
+            main_symptom="Cough",
+            additional_symptoms="Fever",
+        )
+        
+    def test_authentication_required(self):
+        response = self.client.get(reverse("department:hospitalization", args=[self.hospitalization.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, f"/login/?next=/department/{self.hospitalization.id}/hospitalization/")
+    
+        
+    def test_successful_rendering(self):
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.get(reverse("department:hospitalization", args=[self.hospitalization.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "hospitalization_detail.html")
+
+    def test_context_data(self):
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.get(reverse("department:hospitalization", args=[self.hospitalization.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("bmis", response.context)
+        self.assertIn("consultations", response.context)
+        self.assertIn("glasgow_scales", response.context)
+        self.assertIn("hospitalization", response.context)
+        self.assertIn("observations", response.context)
+        self.assertIn("news_scales", response.context)
+        self.assertIn("norton_scales", response.context)
+        self.assertIn("pain_scales", response.context)
+        self.assertIn("vitals", response.context)
+        self.assertIn("title", response.context)
+        self.assertIn("back_url", response.context)
+        
+    def test_back_url(self):
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.get(reverse("department:hospitalization", args=[self.hospitalization.id]))
+        back_url = response.context["back_url"]
+        self.assertEqual(back_url, reverse("patient:detail", args=[self.patient.id]))
+        
+class AdmitPatientViewTest(TestCase):
+    @classmethod
+    def setUp(cls):
+        cls.user = User.objects.create_user(
+            first_name="AdminTest",
+            last_name="User",
+            email="testadmin@admin.com",
+            password="adminpassword",
+            profession="admins",
+        )
+        cls.department = Department.objects.create(
+                name="Test Department",
+                description="This is a test department",
+                created_by=cls.user
+        )
+        cls.patient = Patient.objects.create(
+            first_name="Stefan",
+            last_name="Master",
+            date_of_birth="1999-09-09",
+            contact_number="+48600500400",
+            is_insured=True,
+            insurance="1234567890",
+            country="Country",
+            city="City",
+            street="Street",
+            zip_code="00-00",
+            created_by=cls.user
+        )
+        
+    def test_authentication_required(self):
+        response = self.client.get(reverse("department:admit_patient", args=[self.patient.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, f"/login/?next=/department/{self.patient.id}/admit-patient/")
+
+    def test_successful_rendering(self):
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.get(reverse("department:admit_patient", args=[self.patient.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "admit_patient.html")
+
+    def test_context_data(self):
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.get(reverse("department:admit_patient", args=[self.patient.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("departments", response.context)
+        self.assertIn("form", response.context)
+        self.assertIn("title", response.context)
+        self.assertIn("patient", response.context)
+    
+    def test_form_submission_valid_data(self):
+        data = {
+            "main_symptom" : "Cough",
+            "additional_symptoms" : "Fever",
+            "department_id" : self.department.id,
+        }
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.post(reverse("department:admit_patient", args=[self.patient.id]), data=data)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("department:department_detail", args=[self.department.id]))
+        self.assertEqual(Hospitalization.objects.count(), 1) 
+        
+    def test_form_submission_invalid_data(self):
+        wrong_department_id = uuid.uuid4()
+        data = {
+            "main_symptom" : "Cough",
+            "additional_symptoms" : "Fever",
+            "department" : wrong_department_id
+        }
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.post(reverse("department:admit_patient", args=[self.patient.id]), data=data)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "admit_patient.html")
+        self.assertEqual(Hospitalization.objects.count(), 0)
+
+class EditPatientSymptomsViewTest(TestCase):
+    @classmethod
+    def setUp(cls):
+        cls.user = User.objects.create_user(
+            first_name="AdminTest",
+            last_name="User",
+            email="testadmin@admin.com",
+            password="adminpassword",
+            profession="admins",
+        )
+        cls.department = Department.objects.create(
+                name="Test Department",
+                description="This is a test department",
+                created_by=cls.user
+        )
+        cls.patient = Patient.objects.create(
+            first_name="Stefan",
+            last_name="Master",
+            date_of_birth="1999-09-09",
+            contact_number="+48600500400",
+            is_insured=True,
+            insurance="1234567890",
+            country="Country",
+            city="City",
+            street="Street",
+            zip_code="00-00",
+            created_by=cls.user
+        )
+        cls.hospitalization = Hospitalization.objects.create(
+            patient=cls.patient,
+            department=cls.department,
+            main_symptom="Cough",
+            additional_symptoms="Fever",
+        )
+        
+    def test_authentication_required(self):
+        response = self.client.get(reverse("department:hospitalization_update", args=[self.patient.id, self.hospitalization.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, f"/login/?next=/department/{self.patient.id}/{self.hospitalization.id}/hospitalization-edit/")
+    
+    def test_successful_rendering(self):
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.get(reverse("department:hospitalization_update", args=[self.patient.id, self.hospitalization.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "edit_patient_admission.html")
+
+    def test_context_data(self):
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.get(reverse("department:hospitalization_update", args=[self.patient.id, self.hospitalization.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("department_id", response.context)
+        self.assertIn("form", response.context)
+        self.assertIn("title", response.context)
+        self.assertIn("patient", response.context)
+        self.assertIn("hospitalization_id", response.context)
+        
+    
+    def test_form_submission(self):
+        data = {
+            "main_symptom" : "Diarrhea",
+            "additional_symptoms" : "Nausea",
+            "department_id" : self.department.id,
+        }
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.post(reverse("department:hospitalization_update", args=[self.patient.id, self.hospitalization.id]),data=data)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("department:hospitalization", args=[self.hospitalization.id]))
+        updated_hospitalization = Hospitalization.objects.get(id=self.hospitalization.id)
+        self.assertEqual(updated_hospitalization.main_symptom, "Diarrhea")
+        self.assertEqual(updated_hospitalization.additional_symptoms, "Nausea")
+        
+class TransferPatientViewTest(TestCase):
+    @classmethod
+    def setUp(cls):
+        cls.user = User.objects.create_user(
+            first_name="AdminTest",
+            last_name="User",
+            email="testadmin@admin.com",
+            password="adminpassword",
+            profession="admins",
+        )
+        cls.department = Department.objects.create(
+                name="Test Department",
+                description="This is a test department",
+                created_by=cls.user
+        )
+        cls.newdepartment = Department.objects.create(
+                name="Test New Department",
+                description="This is a test for a new department",
+                created_by=cls.user
+        )
+        cls.patient = Patient.objects.create(
+            first_name="Stefan",
+            last_name="Master",
+            date_of_birth="1999-09-09",
+            contact_number="+48600500400",
+            is_insured=True,
+            insurance="1234567890",
+            country="Country",
+            city="City",
+            street="Street",
+            zip_code="00-00",
+            created_by=cls.user
+        )
+        cls.hospitalization = Hospitalization.objects.create(
+            patient=cls.patient,
+            department=cls.department,
+            main_symptom="Cough",
+            additional_symptoms="Fever",
+        )
+        
+    def test_authentication_required(self):
+        response = self.client.get(reverse("department:transfer", args=[self.patient.id, self.hospitalization.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, f"/login/?next=/department/{self.patient.id}/{self.hospitalization.id}/transfer/")
+        
+    def test_successful_rendering(self):
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.get(reverse("department:transfer", args=[self.patient.id, self.hospitalization.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "transfer_patient.html")
+
+    def test_context_data(self):
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.get(reverse("department:transfer", args=[self.patient.id, self.hospitalization.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("departments", response.context)
+        self.assertIn("form", response.context)
+        self.assertIn("hospitalization", response.context)
+        self.assertIn("patient", response.context)
+        self.assertIn("title", response.context)
+        
+    def test_form_submission(self):
+        data = {
+            "department": self.newdepartment.id,
+        }
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.post(reverse("department:transfer", args=[self.patient.id, self.hospitalization.id]),data=data)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("department:department_detail", args=[self.newdepartment.id]))
+        updated_hospitalization = Hospitalization.objects.get(id=self.hospitalization.id)
+        self.assertEqual(updated_hospitalization.department, self.newdepartment)
+
+class DischargePatientViewTest(TestCase):
+    @classmethod
+    def setUp(cls):
+        cls.user = User.objects.create_user(
+            first_name="AdminTest",
+            last_name="User",
+            email="testadmin@admin.com",
+            password="adminpassword",
+            profession="admins",
+        )
+        cls.department = Department.objects.create(
+                name="Test Department",
+                description="This is a test department",
+                created_by=cls.user
+        )
+        cls.patient = Patient.objects.create(
+            first_name="Stefan",
+            last_name="Master",
+            date_of_birth="1999-09-09",
+            contact_number="+48600500400",
+            is_insured=True,
+            insurance="1234567890",
+            country="Country",
+            city="City",
+            street="Street",
+            zip_code="00-00",
+            created_by=cls.user
+        )
+        cls.hospitalization = Hospitalization.objects.create(
+            patient=cls.patient,
+            department=cls.department,
+            main_symptom="Cough",
+            additional_symptoms="Fever",
+        )
+    
+    def test_authentication_required(self):
+        response = self.client.get(reverse("department:discharge", args=[self.hospitalization.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, f"/login/?next=/department/{self.hospitalization.id}/discharge/")
+        
+    def test_successful_rendering(self):
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.get(reverse("department:discharge", args=[self.hospitalization.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "discharge_patient.html")
+
+    def test_context_data(self):
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.get(reverse("department:discharge", args=[self.hospitalization.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("default_discharge_date", response.context)
+        self.assertIn("default_discharge_time", response.context)
+        self.assertIn("form", response.context)
+        self.assertIn("hospitalization", response.context)
+        self.assertIn("title", response.context)
+        
+    def test_form_submission(self):
+        data = {
+            "discharge_date" : timezone.now().strftime("%Y-%m-%d"),
+            "discharge_time" : timezone.now().strftime("%H:%M"),
+        }
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.post(reverse("department:discharge", args=[self.hospitalization.id]),data=data)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("department:department_detail", args=[self.hospitalization.department.id]))
+        updated_hospitalization = Hospitalization.objects.get(id=self.hospitalization.id)
+        self.assertEqual(updated_hospitalization.is_discharged, True)
+        
+        
+class DepartmentDetailViewTest(TestCase):
+    @classmethod
+    def setUp(cls):
+        cls.user = User.objects.create_user(
+            first_name="AdminTest",
+            last_name="User",
+            email="testadmin@admin.com",
+            password="adminpassword",
+            profession="admins",
+        )
+        cls.department = Department.objects.create(
+                name="Test Department",
+                description="This is a test department",
+                created_by=cls.user
+        )
+        
+    def test_authentication_required(self):
+        response = self.client.get(reverse("department:department_detail", args=[self.department.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, f"/login/?next=/department/{self.department.id}/")
+    
+        
+    def test_successful_rendering(self):
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.get(reverse("department:department_detail", args=[self.department.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "department_detail.html")
+
+    def test_context_data(self):
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.get(reverse("department:department_detail", args=[self.department.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("department", response.context)
+        self.assertIn("hospitalizations", response.context)
+        self.assertIn("num_admitted_patients", response.context)
+        self.assertIn("title", response.context)
+
+class CreateDepartmentViewTest(TestCase):
+    @classmethod
+    def setUp(cls):
+        cls.user = User.objects.create_user(
+            first_name="AdminTest",
+            last_name="User",
+            email="testadmin@admin.com",
+            password="adminpassword",
+            profession="admins",
+        )
+        
+    def test_authentication_required(self):
+        response = self.client.get(reverse("department:create_department"))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, f"/login/?next=/department/create/")
+    
+        
+    def test_successful_rendering(self):
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.get(reverse("department:create_department"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "create_department.html")
+
+    def test_context_data(self):
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.get(reverse("department:create_department"))
+        self.assertIn("form", response.context)
+        self.assertIn("title", response.context)
+        
+    def test_form_submission_valid_data(self):
+        data = {
+            "name" : "Test Department",
+            "description" : "Test Description Department",
+        }
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.post(reverse("department:create_department"), data=data)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("department:department_list"))
+        self.assertEqual(Department.objects.count(), 1) 
+        
+    def test_form_submission_invalid_data(self):
+        data = {
+            "name" : "",
+            "description" : "Test Description Department",
+        }
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.post(reverse("department:create_department"), data=data)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "create_department.html")
+        self.assertEqual(Department.objects.count(), 0) 
+        
+class DepartmentListViewTest(TestCase):
+    @classmethod
+    def setUp(cls):
+        cls.user = User.objects.create_user(
+            first_name="AdminTest",
+            last_name="User",
+            email="testadmin@admin.com",
+            password="adminpassword",
+            profession="admins",
+        )
+        cls.department = Department.objects.create(
+                name="Test Department",
+                description="This is a test department",
+                created_by=cls.user
+        )
+        cls.newdepartment = Department.objects.create(
+                name="Test New Department",
+                description="This is a test department",
+                created_by=cls.user
+        )
+        cls.first_patient = Patient.objects.create(
+            first_name="Stefan",
+            last_name="Master",
+            date_of_birth="1999-09-09",
+            contact_number="+48600500400",
+            is_insured=True,
+            insurance="1234567890",
+            country="Country",
+            city="City",
+            street="Street",
+            zip_code="00-00",
+            created_by=cls.user
+        )
+        cls.second_patient = Patient.objects.create(
+            first_name="Stefan",
+            last_name="Master",
+            date_of_birth="1999-09-09",
+            contact_number="+48600500400",
+            is_insured=True,
+            insurance="1234567890",
+            country="Country",
+            city="City",
+            street="Street",
+            zip_code="00-00",
+            created_by=cls.user
+        )
+        cls.hospitalization = Hospitalization.objects.create(
+            patient=cls.first_patient,
+            department=cls.department,
+            main_symptom="Cough",
+            additional_symptoms="Fever",
+        )
+        cls.hospitalization = Hospitalization.objects.create(
+            patient=cls.second_patient,
+            department=cls.newdepartment,
+            main_symptom="Cough",
+            additional_symptoms="Fever",
+        )
+    
+    def test_authentication_required(self):
+        response = self.client.get(reverse("department:department_list"))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, f"/login/?next=/department/list/")
+    
+    def access_denied_for_secretaries(self):
+        self.client.login(username="testsecretary@admin.com", password="secretarypassword")
+        response = self.client.get(reverse("department:department_list"))
+        self.assertRedirects(response,reverse("access_denied"))
+        self.assertTemplateUsed(response, "access_denied.html")
+        
+        
+    def test_successful_rendering(self):
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.get(reverse("department:department_list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "department_list.html")
+
+    def test_context_data(self):
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.get(reverse("department:department_list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context["department_counts"]), 2)
+        self.assertEqual(response.context["total_admitted_patients"], 2)
+        self.assertIn("departments", response.context)
+        self.assertIn("department_counts", response.context)
+        self.assertIn("title", response.context)
+        self.assertIn("total_admitted_patients", response.context)
+        
 class CreatePatientConsultationViewTest(TestCase):
+    @classmethod
     def setUp(cls):
         cls.user = User.objects.create_user(
             first_name="AdminTest",
@@ -47,7 +580,7 @@ class CreatePatientConsultationViewTest(TestCase):
             additional_symptoms="Fever",
         )
         
-        
+    
     def test_authentication_required(self):
         response = self.client.get(reverse("department:consultation_create", args=[self.patient.id, self.hospitalization.id]))
         self.assertEqual(response.status_code, 302)
@@ -177,6 +710,7 @@ class UpdatePatientConsultationViewTest(TestCase):
         self.assertEqual(updated_consultation.consultation, "This is content for a test - Updated.")
         
 class CreatePatientObservationViewTest(TestCase):
+    @classmethod
     def setUp(cls):
         cls.user = User.objects.create_user(
             first_name="AdminTest",
@@ -340,6 +874,7 @@ class UpdatePatientObservationViewTest(TestCase):
         self.assertEqual(updated_observation .observation, "Updated observation.")
         
 class CreateVitalSignsViewTest(TestCase):
+    @classmethod
     def setUp(cls):
         cls.user = User.objects.create_user(
             first_name="AdminTest",

@@ -94,7 +94,6 @@ def edit_patient_symptoms(request, hospitalization_id, patient_id):
     )
 
     if request.method == "POST":
-        print(request.method)
         form = HospitalizationForm(request.POST, instance=hospitalization)
         if form.is_valid():
             hospitalization = form.save(commit=False)
@@ -102,7 +101,7 @@ def edit_patient_symptoms(request, hospitalization_id, patient_id):
 
             hospitalization.save()
             return redirect(
-                "department:department_detail", hospitalization.department.id
+                "department:hospitalization", hospitalization_id
             )
     else:
         form = HospitalizationForm(
@@ -138,11 +137,11 @@ def transfer_patient(request, patient_id, hospitalization_id):
         form = TransferPatientForm()
 
     context = {
-        "form": form,
-        "title": "Transfer Patient",
-        "patient": patient,
-        "hospitalization": hospitalization,
         "departments": Department.objects.all(),
+        "form": form,
+        "hospitalization": hospitalization,
+        "patient": patient,
+        "title": "Transfer Patient",
     }
 
     return render(request, "transfer_patient.html", context)
@@ -158,7 +157,7 @@ def discharge_patient(request, hospitalization_id):
             discharge_date = form.cleaned_data["discharge_date"]
             discharge_time = form.cleaned_data["discharge_time"]
             discharge_datetime = datetime.combine(discharge_date, discharge_time)
-            hospitalization.dicharged_on = discharge_datetime
+            hospitalization.discharged_on = discharge_datetime
             hospitalization.is_discharged = True
             hospitalization.save()
             return redirect(
@@ -171,11 +170,11 @@ def discharge_patient(request, hospitalization_id):
         default_discharge_time = timezone.now().strftime("%H:%M")
         form = DischargeForm()
         context = {
-            "form": form,
-            "title": "Discharge Patient",
-            "hospitalization": hospitalization,
             "default_discharge_date": default_discharge_date,
             "default_discharge_time": default_discharge_time,
+            "hospitalization": hospitalization,
+            "form": form,
+            "title": "Discharge Patient",
         }
 
     return render(request, "discharge_patient.html", context)
@@ -239,9 +238,9 @@ def department_list(request):
         department_counts[department.id] = department_count
 
     context = {
-        "title": "Department List",
         "departments": departments,
         "department_counts": department_counts,
+        "title": "Department List",
         "total_admitted_patients": total_admitted_patients,
     }
     return render(request, "department_list.html", context)

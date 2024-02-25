@@ -26,7 +26,7 @@ class Hospitalization(models.Model):
     )
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     admitted_on = models.DateTimeField(auto_now_add=True)
-    dicharged_on = models.DateTimeField(null=True, blank=True)
+    discharged_on = models.DateTimeField(null=True, blank=True)
     is_discharged = models.BooleanField(default=False)
     main_symptom = models.CharField(max_length=255)
     additional_symptoms = models.CharField(max_length=255, blank=True, null=True)

@@ -48,7 +48,7 @@
                             {% for admission in hospitalizations %}
                                 <li>
                                     {% if admission.is_discharged %}
-                                        {{ admission.admitted_on|date:"d F Y" }} - {{ admission.dicharged_on|date:"d F Y" }} (Admitted to the {{ admission.department }} Department)<a href="{% url 'department:hospitalization' admission.id %}" class="text-blue-500">Details</a>
+                                        {{ admission.admitted_on|date:"d F Y" }} - {{ admission.discharged_on|date:"d F Y" }} (Admitted to the {{ admission.department }} Department)<a href="{% url 'department:hospitalization' admission.id %}" class="text-blue-500">Details</a>
                                     {% else %}
                                         Ongoing Admission (Admitted on {{ admission.admitted_on|date:"d F Y" }} Admitted to the {{ admission.department }} Department)<a href="{% url 'department:hospitalization' admission.id %}" class="text-blue-500">Details</a>
                                     {% endif %}

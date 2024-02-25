@@ -33,7 +33,7 @@
                     </td>
                     <td class="py-3 px-6 text-left">
                         {% if hospitalization.is_discharged %}
-                            <strong class="font-bold">Dicharged on:</strong> {{ hospitalization.dicharged_on}}
+                            <strong class="font-bold">Dicharged on:</strong> {{ hospitalization.discharged_on}}
                         {% else %}
                             <a href="{% url 'department:discharge' hospitalization.id %}" class="inline-block px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">Discharge Patient</a>
                         {% endif %}

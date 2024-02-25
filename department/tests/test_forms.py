@@ -1,4 +1,3 @@
-from datetime import datetime, timedelta
 from django.test import TestCase
 
 from department.models import Department, Hospitalization, Consultation, Observation, VitalSigns
@@ -345,6 +344,7 @@ class TransferPatientFormTest(TestCase):
                 description="This is a test department",
                 created_by=cls.user
             )
+        
         cls.patient = Patient.objects.create(
             first_name="Stefan",
             last_name="Master",
