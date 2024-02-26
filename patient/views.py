@@ -37,7 +37,7 @@ def index(request):
             Case(
                 When(
                     hospitalizations__is_discharged=True,
-                    then="hospitalizations__dicharged_on",
+                    then="hospitalizations__discharged_on",
                 ),
                 default=None,
             )
