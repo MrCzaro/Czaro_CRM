@@ -398,6 +398,8 @@ class DepartmentDetailViewTest(TestCase):
         self.assertIn("hospitalizations", response.context)
         self.assertIn("num_admitted_patients", response.context)
         self.assertIn("title", response.context)
+        
+    
 
 class CreateDepartmentViewTest(TestCase):
     @classmethod
@@ -413,20 +415,21 @@ class CreateDepartmentViewTest(TestCase):
     def test_authentication_required(self):
         response = self.client.get(reverse("department:create_department"))
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, f"/login/?next=/department/create/")
+        self.assertRedirects(response, "/login/?next=/department/create/")
     
         
     def test_successful_rendering(self):
         self.client.login(username="testadmin@admin.com", password="adminpassword")
         response = self.client.get(reverse("department:create_department"))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "create_department.html")
+        self.assertTemplateUsed(response, "department_form.html")
 
     def test_context_data(self):
         self.client.login(username="testadmin@admin.com", password="adminpassword")
         response = self.client.get(reverse("department:create_department"))
         self.assertIn("form", response.context)
         self.assertIn("title", response.context)
+        self.assertIn("url", response.context)
         
     def test_form_submission_valid_data(self):
         data = {
@@ -447,8 +450,59 @@ class CreateDepartmentViewTest(TestCase):
         self.client.login(username="testadmin@admin.com", password="adminpassword")
         response = self.client.post(reverse("department:create_department"), data=data)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "create_department.html")
+        self.assertTemplateUsed(response, "department_form.html")
         self.assertEqual(Department.objects.count(), 0) 
+
+
+class UpdateDepartmentViewTest(TestCase):      
+    @classmethod
+    def setUp(cls):
+        cls.user = User.objects.create_user(
+            first_name="AdminTest",
+            last_name="User",
+            email="testadmin@admin.com",
+            password="adminpassword",
+            profession="admins",
+        )
+        cls.department = Department.objects.create(
+                name="Test Department",
+                description="This is a test department",
+                created_by=cls.user
+        )
+        
+    def test_authentication_required(self):
+        response = self.client.get(reverse("department:update_department", args=[self.department.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, f"/login/?next=/department/{self.department.id}/edit/")
+    
+        
+    def test_successful_rendering(self):
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.get(reverse("department:update_department", args=[self.department.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "department_form.html")
+
+    def test_context_data(self):
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.get(reverse("department:update_department", args=[self.department.id]))
+        self.assertIn("form", response.context)
+        self.assertIn("title", response.context)
+        self.assertIn("url", response.context)
+        
+    def test_form_submission(self):
+        data = {
+            "name" : "Test Department Edited",
+            "description" : "Test Description Department Edited",
+        }
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.post(reverse("department:update_department", args=[self.department.id]),data=data)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("department:department_detail", args=[self.department.id]))
+        updated_department = Department.objects.get(id=self.department.id)
+        self.assertEqual(updated_department.name, "Test Department Edited")
+        self.assertEqual(updated_department.description, "Test Description Department Edited")
+
+        
         
 class DepartmentListViewTest(TestCase):
     @classmethod

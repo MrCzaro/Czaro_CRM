@@ -208,14 +208,34 @@ def create_department(request):
             return redirect("department:department_list") 
     else:
         form = DepartmentForm()
-
+    back_url = reverse('department:department_list')
     context = {
         "form": form,
         "title": "Create Department",
+        "url" : back_url
     }
 
-    return render(request, "create_department.html", context)
+    return render(request, "department_form.html", context)
 
+@login_required(login_url="/login/")
+def update_department(request, department_id):
+    department = get_object_or_404(Department, id=department_id)
+    if request.method == "POST":
+        form = DepartmentForm(request.POST, instance=department)
+        if form.is_valid():
+            form.save()
+        return redirect("department:department_detail", department_id)
+    else:
+        form = DepartmentForm(instance=department)
+    
+    back_url = reverse("department:department_detail", args=[department.id])
+    context = {
+        "form" : form,
+        "title" : "Edit Department",
+        "url": back_url
+    }
+
+    return render(request, "department_form.html", context)
 
 @login_required(login_url="/login/")
 def department_list(request):
