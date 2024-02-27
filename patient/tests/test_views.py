@@ -1,9 +1,8 @@
 import uuid
 
-from django.test import TestCase, Client
+from django.test import TestCase
 from django.urls import reverse
 from main.models import User
-from department.models import Department, Hospitalization
 from patient.models import Patient
 from patient.forms import PatientForm
 
@@ -115,7 +114,7 @@ class PatientCreateViewTest(TestCase):
         self.client.login(username="testadmin@admin.com", password="adminpassword")
         response = self.client.get(reverse("patient:create"))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "patient_form_add.html")
+        self.assertTemplateUsed(response, "patient_form.html")
 
     def test_context_data(self):
         self.client.login(username="testadmin@admin.com", password="adminpassword")
@@ -123,6 +122,7 @@ class PatientCreateViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("form", response.context)
         self.assertIn("title", response.context)
+
         
     def test_form_submission_valid_data(self):
         data = {
@@ -160,7 +160,7 @@ class PatientCreateViewTest(TestCase):
         self.client.login(username="testadmin@admin.com", password="adminpassword")
         response = self.client.post(reverse("patient:create"), data=data)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "patient_form_add.html")
+        self.assertTemplateUsed(response, "patient_form.html")
         self.assertIsInstance(response.context["form"], PatientForm)
         
 class PatientUpdateViewTest(TestCase):
@@ -186,12 +186,17 @@ class PatientUpdateViewTest(TestCase):
             zip_code="00-00",
             created_by=cls.user
         )
-
+        
+    def test_authentication_required(self):
+        response = self.client.get(reverse("patient:update", args=[self.patient.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, f"/login/?next=/patient/{self.patient.id}/update/")
+        
     def test_successful_rendering(self):
         self.client.login(username="testadmin@admin.com", password="adminpassword")
         response = self.client.get(reverse("patient:update", args=[self.patient.id]))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "patient_form_update.html")
+        self.assertTemplateUsed(response, "patient_form.html")
 
     def test_context_data(self):
         self.client.login(username="testadmin@admin.com", password="adminpassword")
@@ -199,6 +204,7 @@ class PatientUpdateViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("form", response.context)
         self.assertIn("title", response.context)
+        self.assertIn("url", response.context)
     
     def test_form_submission(self):
         self.client.login(username="testadmin@admin.com", password="adminpassword")
@@ -216,7 +222,7 @@ class PatientUpdateViewTest(TestCase):
         }
         response = self.client.post(reverse("patient:update", args=[self.patient.id]),data=data)
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("patient:index"))
+        self.assertRedirects(response, reverse("patient:detail", args=[self.patient.id]))
         updated_patient = Patient.objects.get(id=self.patient.id)
         self.assertEqual(updated_patient.first_name, "Juzef")
 
@@ -243,19 +249,25 @@ class PatientDeleteViewTest(TestCase):
             zip_code="00-00",
             created_by=cls.user
         )
+        
+    def test_authentication_required(self):
+        response = self.client.get(reverse("patient:delete", args=[self.patient.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, f"/login/?next=/patient/{self.patient.id}/delete/")
 
     def test_successful_rendering(self):
         self.client.login(username="testadmin@admin.com", password="adminpassword")
         response = self.client.get(reverse("patient:delete", args=[self.patient.id]))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "patient_confirm_delete.html")
+        self.assertTemplateUsed(response, "confirm_delete.html")
 
     def test_context_data(self):
         self.client.login(username="testadmin@admin.com", password="adminpassword")
         response = self.client.get(reverse("patient:delete", args=[self.patient.id]))
         self.assertEqual(response.status_code, 200)
         self.assertIn("title", response.context)
-        self.assertIsInstance(response.context["object"], Patient)
+        self.assertIn("name", response.context)
+        self.assertIn("url", response.context)
         
     def test_patient_deletion(self):
         self.client.login(username="testadmin@admin.com", password="adminpassword")
@@ -263,5 +275,5 @@ class PatientDeleteViewTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse("patient:index"))
         with self.assertRaises(Patient.DoesNotExist):
-            deleted_patient = Patient.objects.get(id=self.patient.id)
+            Patient.objects.get(id=self.patient.id)
             

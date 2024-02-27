@@ -5,7 +5,7 @@
     <div class="max-w-xl py-8 bg-white text-center shadow-md rounded-md">
         <h1 class="mb-6 text-3xl">{{ title }}</h2>
         <div>
-            <p class="mx-5 text-2xl">Are you sure you want to <strong>delete</strong> {{ patient }}?</p>
+            <p class="mx-5 text-2xl">Are you sure you want to <strong>delete</strong> {{ name }}?</p>
         </div>
         <form class="mt-5 px-8 space-y-4" method="post">
             {% csrf_token %}
@@ -14,7 +14,7 @@
             </div>
         </form>
         <div class="text-white">
-            <a class="back-button" href="{% url 'patient:detail' patient.id %}">Cancel</a>
+            <a class="back-button" href={{ url }}>Cancel</a>
         </div>
     </div>
 </div>

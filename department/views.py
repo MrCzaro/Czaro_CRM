@@ -71,7 +71,7 @@ def admit_patient(request, patient_id):
         form = HospitalizationForm()
 
     departments = Department.objects.all()
-
+    
     context = {
         "departments": departments,
         "form": form,
@@ -200,6 +200,10 @@ def department_detail(request, department_id):
 
 @login_required(login_url="/login/")
 def create_department(request):
+    # Check if the user has the allowed profession
+    if request.user.profession != "admins":
+        # Redirect or show an error message
+        return redirect("access_denied")
     if request.method == "POST":
         form = DepartmentForm(request.POST)
         if form.is_valid():
@@ -219,6 +223,10 @@ def create_department(request):
 
 @login_required(login_url="/login/")
 def update_department(request, department_id):
+    # Check if the user has the allowed profession
+    if request.user.profession != "admins":
+        # Redirect or show an error message
+        return redirect("access_denied")
     department = get_object_or_404(Department, id=department_id)
     if request.method == "POST":
         form = DepartmentForm(request.POST, instance=department)
@@ -236,6 +244,26 @@ def update_department(request, department_id):
     }
 
     return render(request, "department_form.html", context)
+
+@login_required(login_url="/login/")
+def delete_department(request, department_id):
+    # Check if the user has the allowed profession
+    if request.user.profession != "admins":
+        # Redirect or show an error message
+        return redirect("access_denied")
+    department = get_object_or_404(Department, id=department_id)
+    name = f"{department.name} Department"
+    if request.method == "POST":
+        department.delete()
+        return redirect("department:department_list")
+    back_url = reverse("department:department_detail", args=[department.id])
+    context= {
+        "title": "Delete Department",
+        "name" : name,
+        "url" : back_url,
+        
+    }
+    return render(request, "confirm_delete.html", context)
 
 @login_required(login_url="/login/")
 def department_list(request):

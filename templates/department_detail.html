@@ -45,7 +45,7 @@
         <a href="{% url 'department:department_list' %}" class="back-button">Back</a>
         {% if request.user.profession == "admins" %}
             <a href="{% url 'department:update_department' department.id %}" class="edit-button">Edit Department</a>
-            <a href="#" class="delete-button">Delete Department</a>
+            <a href="{% url 'department:delete_department' department.id %}" class="delete-button">Delete Department</a>
         {% endif %}
     </div>
 </div>

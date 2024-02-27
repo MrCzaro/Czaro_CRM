@@ -83,33 +83,47 @@ def patient_create(request):
             return redirect("patient:index")
     else:
         form = PatientForm()
-
     context = {
         "title": "Add Patient",
         "form": form,
     }
 
-    return render(request, "patient_form_add.html", context)
+    return render(request, "patient_form.html", context)
 
 
-class PatientUpdateView(LoginRequiredMixin, UpdateView):
-    model = Patient
-    form_class = PatientForm
-    template_name = "patient_form_update.html"
-    success_url = reverse_lazy("patient:index")
+@login_required(login_url="/login/")
+def patient_update(request, patient_id):
+    patient = get_object_or_404(Patient, id=patient_id)
+    if request.method == "POST":
+        form = PatientForm(request.POST, instance=patient)
+        if form.is_valid():
+            form.save()
+            return redirect("patient:detail", patient.id)
+    else:
+        form = PatientForm(instance=patient)
+    back_url = reverse("patient:detail", args=[patient.id])
+    context = {
+        "title": "Edit Patient",
+        "form": form,
+        "url" : back_url
+    }
+    return render(request, "patient_form.html", context)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["title"] = "Edit Patient"
-        return context
+@login_required(login_url="/login/")
+def patient_delete(request, patient_id):
+    patient = get_object_or_404(Patient, id=patient_id)
+    name = f"{patient.first_name} {patient.last_name}"
+    if request.method == "POST":
+        patient.delete()
+        return redirect("patient:index")
+    back_url = reverse("patient:detail", args=[patient.id])
+    context= {
+        "title": "Delete Patient",
+        "name" : name,
+        "url" : back_url,
+        
+    }
+    return render(request, "confirm_delete.html", context)
 
 
-class PatientDeleteView(LoginRequiredMixin, DeleteView):
-    model = Patient
-    template_name = "patient_confirm_delete.html"
-    success_url = reverse_lazy("patient:index")
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["title"] = "Delete Patient"
-        return context

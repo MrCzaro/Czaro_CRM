@@ -411,12 +411,25 @@ class CreateDepartmentViewTest(TestCase):
             password="adminpassword",
             profession="admins",
         )
+        cls.secretary = User.objects.create_user(
+            first_name="SecretaryTest",
+            last_name="User",
+            email="testsecretary@admin.com",
+            password="secretarypassword",
+            profession="secretaries",
+        )
+        
         
     def test_authentication_required(self):
         response = self.client.get(reverse("department:create_department"))
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, "/login/?next=/department/create/")
     
+    def access_denied_for_non_admins_professions(self):
+        self.client.login(username="testsecretary@admin.com", password="secretarypassword")
+        response = self.client.get(reverse("department:create_department"))
+        self.assertRedirects(response,reverse("access_denied"))
+        self.assertTemplateUsed(response, "access_denied.html")
         
     def test_successful_rendering(self):
         self.client.login(username="testadmin@admin.com", password="adminpassword")
@@ -464,17 +477,31 @@ class UpdateDepartmentViewTest(TestCase):
             password="adminpassword",
             profession="admins",
         )
+        cls.secretary = User.objects.create_user(
+            first_name="SecretaryTest",
+            last_name="User",
+            email="testsecretary@admin.com",
+            password="secretarypassword",
+            profession="secretaries",
+        )
         cls.department = Department.objects.create(
                 name="Test Department",
                 description="This is a test department",
                 created_by=cls.user
         )
         
+    
+        
     def test_authentication_required(self):
         response = self.client.get(reverse("department:update_department", args=[self.department.id]))
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, f"/login/?next=/department/{self.department.id}/edit/")
     
+    def access_denied_for_non_admins_professions(self):
+        self.client.login(username="testsecretary@admin.com", password="secretarypassword")
+        response = self.client.get(reverse("department:update_department", args=[self.department.id]))
+        self.assertRedirects(response,reverse("access_denied"))
+        self.assertTemplateUsed(response, "access_denied.html")
         
     def test_successful_rendering(self):
         self.client.login(username="testadmin@admin.com", password="adminpassword")
@@ -502,7 +529,63 @@ class UpdateDepartmentViewTest(TestCase):
         self.assertEqual(updated_department.name, "Test Department Edited")
         self.assertEqual(updated_department.description, "Test Description Department Edited")
 
+       
+class DeleteDepartmentViewTest(TestCase):
+    @classmethod
+    def setUp(cls):
+        cls.user = User.objects.create_user(
+            first_name="AdminTest",
+            last_name="User",
+            email="testadmin@admin.com",
+            password="adminpassword",
+            profession="admins",
+        )
+        cls.secretary = User.objects.create_user(
+            first_name="SecretaryTest",
+            last_name="User",
+            email="testsecretary@admin.com",
+            password="secretarypassword",
+            profession="secretaries",
+        )
+
+        cls.department = Department.objects.create(
+                    name="Test Department",
+                    description="This is a test department",
+                    created_by=cls.user
+            )
+    def test_authentication_required(self):
+        response = self.client.get(reverse("department:delete_department", args=[self.department.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, f"/login/?next=/department/{self.department.id}/delete/")
         
+    def access_denied_for_non_admins_professions(self):
+        self.client.login(username="testsecretary@admin.com", password="secretarypassword")
+        response = self.client.get(reverse("department:delete_department", args=[self.department.id]))
+        self.assertRedirects(response,reverse("access_denied"))
+        self.assertTemplateUsed(response, "access_denied.html")
+    
+        
+    def test_successful_rendering(self):
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.get(reverse("department:delete_department", args=[self.department.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "confirm_delete.html")
+
+    def test_context_data(self):
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.get(reverse("department:delete_department", args=[self.department.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("title", response.context)
+        self.assertIn("name", response.context)
+        self.assertIn("url", response.context)
+        
+    def test_department_deletion(self):
+        self.client.login(username="testadmin@admin.com", password="adminpassword")
+        response = self.client.post(reverse("department:delete_department", args=[self.department.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("department:department_list"))
+        with self.assertRaises(Department.DoesNotExist):
+            Department.objects.get(id=self.department.id)
         
 class DepartmentListViewTest(TestCase):
     @classmethod
@@ -767,6 +850,7 @@ class UpdatePatientConsultationViewTest(TestCase):
         updated_consultation = Consultation.objects.get(id=self.consultation.id)
         self.assertEqual(updated_consultation.consultation_name, "Test Consultation Updated")
         self.assertEqual(updated_consultation.consultation, "This is content for a test - Updated.")
+ 
         
 class CreatePatientObservationViewTest(TestCase):
     @classmethod

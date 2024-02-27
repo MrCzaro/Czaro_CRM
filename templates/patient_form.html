@@ -55,7 +55,9 @@
         <div class="flex items-center mt-8 text-white">
             
             <button class="py-2 px-4 bg-teal-500 rounded-md text-white mr-3">{{ title }}</button>
-            <a href="{% url 'patient:detail' patient.id %}" class="back-button">Back</a>
+            {% if title == "Edit Patient"%}
+                <a href={{ url }} class="back-button">Back</a>
+            {% endif %}
 
         </div>
     </div>
