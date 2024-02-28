@@ -27,6 +27,7 @@ from scales.models import (
 
 @login_required(login_url="/login/")
 def hospitalization_detail(request, hospitalization_id):
+    # Retrieves details of a specific hospitalization, including related consultations, scales, and vitals.
     hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id)
     consultations = Consultation.objects.filter(hospitalization=hospitalization)
     bmis = BodyMassIndex.objects.filter(hospitalization=hospitalization)
@@ -55,6 +56,7 @@ def hospitalization_detail(request, hospitalization_id):
 
 @login_required(login_url="/login/")
 def admit_patient(request, patient_id):
+    # Handles admitting a patient to a department, using a form to select the department.
     patient = get_object_or_404(Patient, id=patient_id)
 
     if request.method == "POST":
@@ -84,6 +86,7 @@ def admit_patient(request, patient_id):
 
 @login_required(login_url="/login/")
 def edit_patient_symptoms(request, hospitalization_id, patient_id):
+    # Allows editing symptoms for a patient during a specific hospitalization.
     hospitalization = get_object_or_404(
         Hospitalization, id=hospitalization_id, patient_id=patient_id
     )
@@ -121,6 +124,7 @@ def edit_patient_symptoms(request, hospitalization_id, patient_id):
 
 @login_required(login_url="/login/")
 def transfer_patient(request, patient_id, hospitalization_id):
+    # Handles transferring a patient to a different department.
     patient = get_object_or_404(Patient, id=patient_id)
     hospitalization = get_object_or_404(
         Hospitalization, id=hospitalization_id, patient=patient
@@ -149,6 +153,7 @@ def transfer_patient(request, patient_id, hospitalization_id):
 
 @login_required(login_url="/login/")
 def discharge_patient(request, hospitalization_id):
+    # Handles discharging a patient, marking the hospitalization as discharged.
     hospitalization = get_object_or_404(Hospitalization, id=hospitalization_id)
 
     if request.method == "POST":
@@ -182,6 +187,7 @@ def discharge_patient(request, hospitalization_id):
 
 @login_required(login_url="/login/")
 def department_detail(request, department_id):
+    # Displays details of a specific department, including current hospitalizations.
     department = get_object_or_404(Department, id=department_id)
     hospitalizations = Hospitalization.objects.filter(
         department__id=department_id, is_discharged=False
@@ -200,7 +206,9 @@ def department_detail(request, department_id):
 
 @login_required(login_url="/login/")
 def create_department(request):
-    # Check if the user has the allowed profession
+    # Handles the creation of a new department using a form.
+    
+    # Allows creation of a new department by users with the "admins" profession.
     if request.user.profession != "admins":
         # Redirect or show an error message
         return redirect("access_denied")
@@ -223,6 +231,8 @@ def create_department(request):
 
 @login_required(login_url="/login/")
 def update_department(request, department_id):
+    # Handles the update of the department using a form.
+    
     # Check if the user has the allowed profession
     if request.user.profession != "admins":
         # Redirect or show an error message
@@ -247,6 +257,8 @@ def update_department(request, department_id):
 
 @login_required(login_url="/login/")
 def delete_department(request, department_id):
+    # Handles the deletion of the department.
+    
     # Check if the user has the allowed profession
     if request.user.profession != "admins":
         # Redirect or show an error message
@@ -267,6 +279,7 @@ def delete_department(request, department_id):
 
 @login_required(login_url="/login/")
 def department_list(request):
+    # Retrieve a list of all departments and count the total and individual admitted patients.
     departments = Department.objects.all()
     # Count the total number of admitted patients
     total_admitted_patients = Hospitalization.objects.filter(
@@ -296,6 +309,8 @@ def department_list(request):
 
 @login_required(login_url="/login/")
 def create_patient_consultation(request, patient_id, hospitalization_id):
+    # Handles the creation of a new patient consultation using a form.
+    
     # Check if the user has the allowed profession
     if request.user.profession in ["secretaries", "nurses"]:
         # Redirect or show an error message
@@ -330,6 +345,8 @@ def create_patient_consultation(request, patient_id, hospitalization_id):
 def update_patient_consultation(
     request, patient_id, hospitalization_id, consultation_id
 ):
+    # Handles the update of the patient consultation using a form.
+    
     # Check if the user has the allowed profession
     if request.user.profession in ["secretaries", "nurses"]:
         # Redirect or show an error message
@@ -362,6 +379,8 @@ def update_patient_consultation(
 
 @login_required(login_url="/login/")
 def create_patient_observation(request, patient_id, hospitalization_id):
+    # Handles the creation of a new patient observation using a form.
+    
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
         # Redirect or show an error message
@@ -395,6 +414,8 @@ def create_patient_observation(request, patient_id, hospitalization_id):
 
 @login_required(login_url="/login/")
 def update_patient_observation(request, patient_id, hospitalization_id, observation_id):
+    # Handles the update of the patient consultation using a form.
+    
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
         # Redirect or show an error message
@@ -427,6 +448,8 @@ def update_patient_observation(request, patient_id, hospitalization_id, observat
 
 @login_required(login_url="/login/")
 def create_vital_signs(request, patient_id, hospitalization_id):
+    # Handles the creation of a vital signs using a form.
+    
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
         # Redirect or show an error message
@@ -460,6 +483,7 @@ def create_vital_signs(request, patient_id, hospitalization_id):
 
 @login_required(login_url="/login/")
 def update_vital_signs(request, patient_id, hospitalization_id, vital_id):
+    # Handles the update the vital signs using a form.
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
         # Redirect or show an error message

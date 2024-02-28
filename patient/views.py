@@ -21,6 +21,7 @@ from department.models import Hospitalization
 
 @login_required(login_url="/login/")
 def index(request):
+    # Retrieves a list of patients with annotations and ordering based on their admissions.
     patients = Patient.objects.annotate(
         ongoing_admissions=Exists(
             Hospitalization.objects.filter(patient=OuterRef("pk"), is_discharged=False)
@@ -57,6 +58,7 @@ def index(request):
 
 @login_required(login_url="/login/")
 def patient_detail(request, patient_id):
+    # Displays details of a specific patient, including their hospitalizations and ongoing admission.
     patient = get_object_or_404(Patient, id=patient_id)
     hospitalizations = patient.hospitalizations.all()
     ongoing_admission = hospitalizations.filter(is_discharged=False).first()
@@ -74,6 +76,7 @@ def patient_detail(request, patient_id):
 
 @login_required(login_url="/login/")
 def patient_create(request):
+    # Handles the creation of a new patient using a form.
     if request.method == "POST":
         form = PatientForm(request.POST)
         if form.is_valid():
@@ -93,6 +96,7 @@ def patient_create(request):
 
 @login_required(login_url="/login/")
 def patient_update(request, patient_id):
+    # Handles the update of patient information using a form.
     patient = get_object_or_404(Patient, id=patient_id)
     if request.method == "POST":
         form = PatientForm(request.POST, instance=patient)
@@ -111,6 +115,7 @@ def patient_update(request, patient_id):
 
 @login_required(login_url="/login/")
 def patient_delete(request, patient_id):
+    # Handles the deletion of a patient with confirmation using a form.
     patient = get_object_or_404(Patient, id=patient_id)
     name = f"{patient.first_name} {patient.last_name}"
     if request.method == "POST":

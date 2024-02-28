@@ -16,6 +16,7 @@ class Department(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
+        # String representation of the Department
         return self.name
 
 
@@ -32,6 +33,7 @@ class Hospitalization(models.Model):
     additional_symptoms = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
+        # String representation of the Hospitalization record
         return f"{self.patient} - {self.department}"
 
     class Meta:
@@ -48,6 +50,7 @@ class Consultation(models.Model):
     modified_at = models.DateTimeField(auto_now=True, null=True)
 
     def __str__(self):
+        # String representation of the Consultation record
         return f"{self.created_by} - {self.created_at}"
 
     class Meta:
@@ -63,6 +66,7 @@ class Observation(models.Model):
     modified_at = models.DateTimeField(auto_now=True, null=True)
 
     def __str__(self):
+        # String representation of the Observation record
         return f"{self.created_by} - {self.created_at}"
 
     class Meta:
@@ -97,6 +101,7 @@ class VitalSigns(models.Model):
     )
 
     def __str__(self):
+        # String representation of the Vital Signs record
         return f"{self.created_by} - {self.created_at}"
 
     class Meta:

@@ -9,6 +9,7 @@ from .models import User, USER_CHOICES
 
 @login_required(login_url="/login/")
 def main(request):
+    # Main view, requires authentication. If not authenticated, redirects to login.
     context = {
         "title": "Main Page",
     }
@@ -17,6 +18,7 @@ def main(request):
 
 # Authentication
 def login_view(request):
+    # Handles user login.
     if request.method == "POST":
         email = request.POST.get("email", "")
         password = request.POST.get("password", "")
@@ -34,6 +36,7 @@ def login_view(request):
     return render(request, "login.html", context)
 
 def signup_view(request):
+    # Handles user signup. Validates input and creates a new user if conditions are met.
     if request.method == "POST":
         first_name = request.POST.get("first_name", "")
         last_name = request.POST.get("last_name", "")
@@ -84,5 +87,6 @@ def signup_view(request):
 
 
 def logout_view(request):
+    # Logs out the user and redirects to the login page.
     auth.logout(request)
     return redirect("main:login")

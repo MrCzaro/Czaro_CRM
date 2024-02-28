@@ -10,7 +10,7 @@ USER_CHOICES = [
     ("admins", "Admin"),
 ]
 
-
+# Custom manager for the User model
 class CustomUserManager(UserManager):
     def _create_user_(
         self, first_name, last_name, email, password, profession, **extra_fields
@@ -61,7 +61,7 @@ class CustomUserManager(UserManager):
             first_name, last_name, email, password, profession, **extra_fields
         )
 
-
+# Custom User model
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(unique=True)

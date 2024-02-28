@@ -109,14 +109,17 @@ class BodyMassIndex(models.Model):
         ordering = ("-created_at",)
 
     def __str__(self):
+        # String representation of the BMI record
         return f"{self.hospitalization.patient.first_name} {self.bmi}-points: {self.interpretation}"
 
     def calculate_bmi(self):
+        # Method to calculate BMI based on body height and body weight
         body_height = self.body_height / 100
         bmi = round((self.body_weight / (body_height**2)), 1)
         return bmi
 
     def interpretation(self):
+        # Method to provide interpretation based on BMI value
         if self.bmi < 18.5:
             return "Underweight"
         elif 18.5 <= self.bmi <= 24.9:
@@ -133,6 +136,7 @@ class BodyMassIndex(models.Model):
             return "Error"
 
     def save(self, *args, **kwargs):
+        # Overriding the save method to calculate BMI and set interpretation before saving
         self.bmi = self.calculate_bmi()
         self.interpretation = self.interpretation()
         super().save(*args, **kwargs)
@@ -153,9 +157,11 @@ class GlasgowComaScale(models.Model):
         ordering = ("-created_at",)
 
     def __str__(self):
+        # String representation of the Glasgow Coma Scale record,
         return f"{self.hospitalization.patient.first_name}"
 
     def calculate_total_points(self):
+        # Method to calculate total points based on chosen responses
         choices_values = {
             "6": 6,
             "5": 5,
@@ -173,6 +179,7 @@ class GlasgowComaScale(models.Model):
         return total
 
     def save(self, *args, **kwargs):
+        # Overriding the save method to calculate total points before saving
         self.total_points = self.calculate_total_points()
         super().save(*args, **kwargs)
 
@@ -195,9 +202,11 @@ class NortonScale(models.Model):
         ordering = ("-created_at",)
 
     def __str__(self):
+        # String representation of the Norton Scale record
         return f"{self.hospitalization.patient.first_name} points {self.total_points}"
 
     def calculate_total_points(self):
+        # Method to calculate total points based on chosen responses
         choices_values = {
             "4": 4,
             "3": 3,
@@ -215,6 +224,7 @@ class NortonScale(models.Model):
         return total
 
     def calculate_risk(self):
+        # Method to calculate pressure risk category based on total points
         if self.total_points in [19, 20]:
             risk = "Low Risk"
         elif 14 <= self.total_points <= 18:
@@ -229,11 +239,10 @@ class NortonScale(models.Model):
         return risk
 
     def save(self, *args, **kwargs):
+        # Overriding the save method to calculate total points and pressure risk before saving
         self.total_points = self.calculate_total_points()
         self.pressure_risk = self.calculate_risk()
         super().save(*args, **kwargs)
-
-
 
 
 class NewsScale(models.Model):
@@ -275,9 +284,11 @@ class NewsScale(models.Model):
         ordering = ("-created_at",)
 
     def __str__(self):
+        # String representation of the News Scale record
         return f"{self.hospitalization.patient.first_name} - {self.total_score} points in NEWS Score"
 
     def calculate_respiratory_respiratory_rate_score(self):
+        # Method to calculate the respiratory rate score based on NEWS criteria
         if self.respiratory_rate <= 8:
             return 3
         elif 9 <= self.respiratory_rate <= 11:
@@ -290,6 +301,7 @@ class NewsScale(models.Model):
             return 3
 
     def calculate_oxygen_saturation_score(self):
+        # Method to calculate the oxygen saturation score based on NEWS criteria
         if self.aecopd_state:
             if self.oxygen_saturation <= 83:
                 return 3
@@ -319,12 +331,14 @@ class NewsScale(models.Model):
                 return 0
 
     def calculate_is_on_oxygen_score(self):
+        # Method to calculate the score based on whether the patient is on oxygen
         if self.is_on_oxygen:
             return 2
         elif not self.is_on_oxygen:
             return 0
 
     def calculate_temperature_score(self):
+        # Method to calculate the body temperature score based on NEWS criteria
         if self.temperature <= 35.0:
             return 3
         elif 35.1 <= self.temperature <= 36.0:
@@ -337,6 +351,7 @@ class NewsScale(models.Model):
             return 2
 
     def calculate_systolic_blood_pressure_score(self):
+        # Method to calculate the systolic blood pressure score based on NEWS criteria
         if self.systolic_blood_pressure <= 90:
             return 3
         elif 91 <= self.systolic_blood_pressure <= 100:
@@ -349,6 +364,7 @@ class NewsScale(models.Model):
             return 3
 
     def calculate_heart_rate_score(self):
+        # Method to calculate the heart rate score based on NEWS criteria
         if self.heart_rate <= 40:
             return 3
         elif 40 <= self.heart_rate <= 50:
@@ -363,30 +379,26 @@ class NewsScale(models.Model):
             return 3
 
     def calculate_level_of_consciousness_score(self):
+        # Method to calculate the level of consciousness score based on NEWS criteria
         if self.level_of_consciousness == "awake":
             return 0
         elif self.level_of_consciousness in ["verbal", "pain", "unresponsive"]:
             return 3
 
     def calculate_total_score(self):
+        # Method to calculate the total score based on individual scores
         total = 0
         total += self.calculate_respiratory_respiratory_rate_score()
-        #print(f"RR {total}, {self.calculate_respiratory_respiratory_rate_score()}")
         total += self.calculate_oxygen_saturation_score()
-        #print(f"Oxy {total}, {self.calculate_oxygen_saturation_score()}")
         total += self.calculate_is_on_oxygen_score()
-        #print(f"OxySup {total}, {self.calculate_is_on_oxygen_score()}")
         total += self.calculate_temperature_score()
-        #print(f"Temp {total}, {self.calculate_temperature_score()}")
         total += self.calculate_systolic_blood_pressure_score()
-        #print(f"SBP {total}, {self.calculate_systolic_blood_pressure_score()}")
         total += self.calculate_heart_rate_score()
-        #print(f"HR {total}, {self.calculate_heart_rate_score()}")
         total += self.calculate_level_of_consciousness_score()
-        #print(f"LOC {total}, {self.calculate_level_of_consciousness_score()}")
         return total
 
     def calculate_score_interpretation(self):
+        # Method to provide a textual interpretation of the total score
         if self.total_score <= 4:
             return f"National Early Warning Score (NEWS) = {self.total_score}. Interpretation: This is a low score that suggests clinical monitoring should be continued and the medical professional, usually a registered nurse will decide further if clinical care needs to be updated."
         elif self.total_score in [5, 6]:
@@ -395,6 +407,7 @@ class NewsScale(models.Model):
             return f"National Early Warning Score (NEWS) = {self.total_score}. Interpretation: This is a high score (red score) that is indicative of urgent critical care need and the patient should be transferred to the appropriate specialized department for further care."
 
     def save(self, *args, **kwargs):
+        # Overriding the save method to calculate total score and interpretation before saving
         self.total_score = self.calculate_total_score()
         self.score_interpretation = self.calculate_score_interpretation()
         super().save(*args, **kwargs)
@@ -413,9 +426,11 @@ class PainScale(models.Model):
         ordering = ("-created_at",)
     
     def __str__(self):
+        # String representation of the Pain Scale record
         return f"{self.hospitalization.patient.first_name} - {self.pain_level} - {self.pain_interpretation}"
 
     def calculate_pain_intepretation(self):
+        # Method to calculate the textual interpretation of the pain level based on predefined criteria
         if int(self.pain_level) == 0:
             interpretation = "No Pain"
         elif int(self.pain_level) in [1, 2, 3]:
@@ -429,5 +444,6 @@ class PainScale(models.Model):
         return interpretation
 
     def save(self, *args, **kwargs):
+        # Overriding the save method to calculate pain interpretation before saving
         self.pain_interpretation = self.calculate_pain_intepretation()
         super().save(*args, **kwargs)

@@ -13,11 +13,17 @@ from department.models import Hospitalization
 
 
 def access_denied(request):
+    """
+    Renders the 'access_denied.html' template for cases where the user does not have
+    the necessary permissions to access a particular page or perform an action.
+    """
     return render(request, "access_denied.html")
 
 
 @login_required(login_url="/login/")
 def create_patient_bmi(request, patient_id, hospitalization_id):
+    # Handles the creation of a patient bmi using a form.
+    
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
         # Redirect or show an error message
@@ -50,6 +56,8 @@ def create_patient_bmi(request, patient_id, hospitalization_id):
 
 @login_required(login_url="/login/")
 def update_patient_bmi(request, patient_id, hospitalization_id, bmi_id):
+    # Handles the update of the patient bmi using a form.
+    
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
         # Redirect or show an error message
@@ -80,6 +88,8 @@ def update_patient_bmi(request, patient_id, hospitalization_id, bmi_id):
 
 @login_required(login_url="/login/")
 def create_glasgow_scale(request, patient_id, hospitalization_id):
+    # Handles the creation of a new glasgow scale using a form.
+    
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
         # Redirect or show an error message
@@ -112,6 +122,8 @@ def create_glasgow_scale(request, patient_id, hospitalization_id):
 
 @login_required(login_url="/login/")
 def update_glasgow_scale(request, patient_id, hospitalization_id, glasgow_id):
+    # Handles the update of the patient glascow scale using a form.
+    
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
         # Redirect or show an error message
@@ -144,6 +156,8 @@ def update_glasgow_scale(request, patient_id, hospitalization_id, glasgow_id):
 
 @login_required(login_url="/login/")
 def create_news_scale(request, patient_id, hospitalization_id):
+    # Handles the creation of a NEWS scale using a form.
+    
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
         # Redirect or show an error message
@@ -177,6 +191,8 @@ def create_news_scale(request, patient_id, hospitalization_id):
 
 @login_required(login_url="/login/")
 def update_news_scale(request, patient_id, hospitalization_id, news_id):
+    # Handles the update of the NEWS scale using a form.
+    
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
         # Redirect or show an error message
@@ -207,6 +223,8 @@ def update_news_scale(request, patient_id, hospitalization_id, news_id):
 
 @login_required(login_url="/login/")
 def create_norton_scale(request, patient_id, hospitalization_id):
+    # Handles the creation of a norton scale using a form.
+    
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
         # Redirect or show an error message
@@ -239,6 +257,8 @@ def create_norton_scale(request, patient_id, hospitalization_id):
 
 @login_required(login_url="/login/")
 def update_norton_scale(request, patient_id, hospitalization_id, norton_id):
+    # Handles the update of the norton scale using a form.
+    
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
         # Redirect or show an error message
@@ -271,6 +291,8 @@ def update_norton_scale(request, patient_id, hospitalization_id, norton_id):
 
 @login_required(login_url="/login/")
 def create_pain_scale(request, patient_id, hospitalization_id):
+    # Handles the creation of a pain scale using a form.
+    
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
         # Redirect or show an error message
@@ -303,6 +325,8 @@ def create_pain_scale(request, patient_id, hospitalization_id):
 
 @login_required(login_url="/login/")
 def update_pain_scale(request, patient_id, hospitalization_id, pain_id):
+    # Handles the update of the pain scale using a form.
+    
     # Check if the user has the allowed profession
     if request.user.profession == "secretaries":
         # Redirect or show an error message

@@ -30,4 +30,5 @@ class Patient(models.Model):
     modified_at = models.DateTimeField(auto_now=True, null=True)
 
     def __str__(self):
+        # String representation of the Patient record
         return f"{self.first_name} {self.last_name}"
