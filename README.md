@@ -68,7 +68,7 @@ CzaroCRM is a web-based application designed to streamline and manage various ta
 
 ## Usage
 
-1. Log in using the credentials created during superuser setup.
+1. Create an account and log in.
 
 2. Navigate to different sections based on your role to perform the respective tasks.
 
