@@ -56,7 +56,7 @@ CzaroCRM is a web-based application designed to streamline and manage various ta
 
 ## Installation
 
-1. Clone the repository:
+1. Clone the repository: https://github.com/MrCzaro/Czaro_CRM.git
 
 2. Install dependencies: pip install -r requirements.txt
 
