@@ -1,26 +1,26 @@
+from datetime import datetime
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
 from django.urls import reverse
 
-from datetime import datetime
-
-from .models import Department, Hospitalization, Observation, VitalSigns, Consultation
 from .forms import (
-    DepartmentForm,
-    ObservationForm,
-    HospitalizationForm,
-    TransferPatientForm,
-    DischargeForm,
-    VitalSignsForm,
     ConsultationForm,
+    DepartmentForm,
+    DischargeForm,
+    HospitalizationForm,
+    ObservationForm,
+    TransferPatientForm,
+    VitalSignsForm,
 )
+from .models import Consultation, Department, Hospitalization, Observation, VitalSigns
 from patient.models import Patient
 from scales.models import (
     BodyMassIndex,
-    NortonScale,
     GlasgowComaScale,
     NewsScale,
+    NortonScale,
     PainScale,
 )
 
@@ -229,6 +229,7 @@ def create_department(request):
 
     return render(request, "department_form.html", context)
 
+
 @login_required(login_url="/login/")
 def update_department(request, department_id):
     # Handles the update of the department using a form.
@@ -255,6 +256,7 @@ def update_department(request, department_id):
 
     return render(request, "department_form.html", context)
 
+
 @login_required(login_url="/login/")
 def delete_department(request, department_id):
     # Handles the deletion of the department.
@@ -276,6 +278,7 @@ def delete_department(request, department_id):
         
     }
     return render(request, "confirm_delete.html", context)
+
 
 @login_required(login_url="/login/")
 def department_list(request):

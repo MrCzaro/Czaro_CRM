@@ -1,10 +1,11 @@
 from django.test import TestCase
 from main.models import User
 
+
 class UserModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        
+
         cls.user = User.objects.create_user(
             first_name="Nurse",
             last_name="User",
@@ -19,6 +20,7 @@ class UserModelTest(TestCase):
             password="adminpassword",
             profession="admins",
         )
+
     def test_valid_normaluser(self):
         self.assertEqual(self.user.first_name, "Nurse")
         self.assertEqual(self.user.last_name, "User")
@@ -30,8 +32,7 @@ class UserModelTest(TestCase):
         self.assertFalse(self.user.is_superuser)
         self.assertEqual(str(self.user), "testnurse@admin.com")
         self.assertIsNotNone(self.user.date_joined)
-        
-    
+
     def test_valid_superuser(self):
         self.assertEqual(self.admin.first_name, "AdminTest")
         self.assertEqual(self.admin.last_name, "User")
@@ -43,4 +44,3 @@ class UserModelTest(TestCase):
         self.assertTrue(self.admin.is_superuser)
         self.assertEqual(str(self.admin), "testadmin@admin.com")
         self.assertIsNotNone(self.admin.date_joined)
-        

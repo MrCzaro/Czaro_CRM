@@ -1,6 +1,12 @@
 from django.test import TestCase
 
-from department.models import Department, Hospitalization, Consultation, Observation, VitalSigns
+from department.models import (
+    Department,
+    Hospitalization,
+    Consultation,
+    Observation,
+    VitalSigns,
+)
 from patient.models import Patient
 from main.models import User
 from datetime import date
@@ -17,28 +23,30 @@ class DepartmentModelTest(TestCase):
             profession="admins",
         )
         cls.department = Department.objects.create(
-            name="Test Department", 
-            description="This is a test department", 
-            created_by=cls.user)
-           
+            name="Test Department",
+            description="This is a test department",
+            created_by=cls.user,
+        )
+
     def test_valid_hospitalization(self):
         self.assertIsNotNone(self.department.created_at)
         self.assertEqual(self.department.name, "Test Department")
         self.assertEqual(self.department.description, "This is a test department")
         self.assertEqual(self.department.created_by, self.user)
-  
+
     def test_name_label(self):
         field_label = self.department._meta.get_field("name").verbose_name
         self.assertEqual(field_label, "name")
-        
+
     def test_description_label(self):
         field_label = self.department._meta.get_field("description").verbose_name
         self.assertEqual(field_label, "description")
-        
+
     def test_string_representation(self):
         # Test the __str__ representation
         self.assertEqual(str(self.department), "Test Department")
-        
+
+
 class HospitalizationModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -50,10 +58,10 @@ class HospitalizationModelTest(TestCase):
             profession="admins",
         )
         cls.department = Department.objects.create(
-                name="Test Department",
-                description="This is a test department",
-                created_by=cls.user
-            )
+            name="Test Department",
+            description="This is a test department",
+            created_by=cls.user,
+        )
         cls.patient = Patient.objects.create(
             first_name="Stefan",
             last_name="Master",
@@ -65,7 +73,7 @@ class HospitalizationModelTest(TestCase):
             city="City",
             street="Street",
             zip_code="00-00",
-            created_by=cls.user
+            created_by=cls.user,
         )
         cls.hospitalization = Hospitalization.objects.create(
             patient=cls.patient,
@@ -82,22 +90,23 @@ class HospitalizationModelTest(TestCase):
         self.assertFalse(self.hospitalization.is_discharged)
         self.assertEqual(self.hospitalization.main_symptom, "Cough")
         self.assertEqual(self.hospitalization.additional_symptoms, "Fever")
- 
-        
+
     def test_main_symptom_label(self):
         field_label = self.hospitalization._meta.get_field("main_symptom").verbose_name
         self.assertEqual(field_label, "main symptom")
-        
+
     def test_additional_symptoms_label(self):
-        field_label = self.hospitalization._meta.get_field("additional_symptoms").verbose_name
+        field_label = self.hospitalization._meta.get_field(
+            "additional_symptoms"
+        ).verbose_name
         self.assertEqual(field_label, "additional symptoms")
-    
+
     def test_string_representation(self):
         # Test the __str__ representation
         expected_str = f"{self.patient.first_name} {self.patient.last_name} - {self.department.name}"
         self.assertEqual(str(self.hospitalization), expected_str)
-        
-        
+
+
 class ConsultationModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -109,10 +118,10 @@ class ConsultationModelTest(TestCase):
             profession="admins",
         )
         cls.department = Department.objects.create(
-                name="Test Department",
-                description="This is a test department",
-                created_by=cls.user
-            )
+            name="Test Department",
+            description="This is a test department",
+            created_by=cls.user,
+        )
         cls.patient = Patient.objects.create(
             first_name="Stefan",
             last_name="Master",
@@ -124,7 +133,7 @@ class ConsultationModelTest(TestCase):
             city="City",
             street="Street",
             zip_code="00-00",
-            created_by=cls.user
+            created_by=cls.user,
         )
         cls.hospitalization = Hospitalization.objects.create(
             patient=cls.patient,
@@ -133,13 +142,12 @@ class ConsultationModelTest(TestCase):
             additional_symptoms="Fever",
         )
         cls.consultation = Consultation.objects.create(
-            hospitalization = cls.hospitalization,
-            consultation_name = "Test Consultation",
-            consultation = "This is content for a test.",
-            created_by = cls.user
+            hospitalization=cls.hospitalization,
+            consultation_name="Test Consultation",
+            consultation="This is content for a test.",
+            created_by=cls.user,
         )
 
-        
     def test_valid_consultation(self):
         self.assertEqual(self.consultation.consultation_name, "Test Consultation")
         self.assertEqual(self.consultation.consultation, "This is content for a test.")
@@ -147,24 +155,28 @@ class ConsultationModelTest(TestCase):
         self.assertIsNotNone(self.consultation.created_at)
         self.assertIsNotNone(self.consultation.modified_at)
         self.assertEqual(self.consultation.created_by, self.user)
-        self.assertLessEqual(self.consultation.created_at, self.consultation.modified_at)
-    
+        self.assertLessEqual(
+            self.consultation.created_at, self.consultation.modified_at
+        )
+
     def test_consultation_name_label(self):
-        field_label = self.consultation._meta.get_field("consultation_name").verbose_name
+        field_label = self.consultation._meta.get_field(
+            "consultation_name"
+        ).verbose_name
         self.assertEqual(field_label, "consultation name")
-        
+
     def test_consultation_label(self):
         field_label = self.consultation._meta.get_field("consultation").verbose_name
         self.assertEqual(field_label, "consultation")
 
-        
     def test_string_representation(self):
         # Test the __str__ representation
-        expected_str = f"{self.consultation.created_by} - {self.consultation.created_at}"
+        expected_str = (
+            f"{self.consultation.created_by} - {self.consultation.created_at}"
+        )
         self.assertEqual(str(self.consultation), expected_str)
-        
 
-        
+
 class ObservationModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -176,14 +188,14 @@ class ObservationModelTest(TestCase):
             profession="admins",
         )
         cls.department = Department.objects.create(
-                name="Test Department",
-                description="This is a test department",
-                created_by=cls.user
-            )
+            name="Test Department",
+            description="This is a test department",
+            created_by=cls.user,
+        )
         cls.patient = Patient.objects.create(
             first_name="Stefan",
             last_name="Master",
-            date_of_birth=date(1999,9,9),
+            date_of_birth=date(1999, 9, 9),
             contact_number="+48600500400",
             is_insured=True,
             insurance="1234567890",
@@ -191,21 +203,20 @@ class ObservationModelTest(TestCase):
             city="City",
             street="Street",
             zip_code="00-00",
-            created_by=cls.user
+            created_by=cls.user,
         )
-        cls.hospitalization=Hospitalization.objects.create(
+        cls.hospitalization = Hospitalization.objects.create(
             patient=cls.patient,
             department=cls.department,
             main_symptom="Cough",
             additional_symptoms="Fever",
         )
-        cls.observation=Observation.objects.create(
+        cls.observation = Observation.objects.create(
             hospitalization=cls.hospitalization,
             observation="Observation 1",
-            created_by = cls.user,
+            created_by=cls.user,
         )
 
-    
     def test_valid_observation(self):
         self.assertEqual(self.observation.observation, "Observation 1")
         self.assertEqual(self.observation.hospitalization, self.hospitalization)
@@ -213,16 +224,16 @@ class ObservationModelTest(TestCase):
         self.assertIsNotNone(self.observation.modified_at)
         self.assertEqual(self.observation.created_by, self.user)
         self.assertLessEqual(self.observation.created_at, self.observation.modified_at)
-    
+
     def test_observation_label(self):
         field_label = self.observation._meta.get_field("observation").verbose_name
         self.assertEqual(field_label, "observation")
-              
+
     def test_string_representation(self):
         # Test the __str__ representation
         expected_str = f"{self.observation.created_by} - {self.observation.created_at}"
         self.assertEqual(str(self.observation), expected_str)
-        
+
 
 class VitalSignsModelTest(TestCase):
     @classmethod
@@ -235,14 +246,14 @@ class VitalSignsModelTest(TestCase):
             profession="admins",
         )
         cls.department = Department.objects.create(
-                name="Test Department",
-                description="This is a test department",
-                created_by=cls.user
-            )
+            name="Test Department",
+            description="This is a test department",
+            created_by=cls.user,
+        )
         cls.patient = Patient.objects.create(
             first_name="Stefan",
             last_name="Master",
-            date_of_birth=date(1999,9,9),
+            date_of_birth=date(1999, 9, 9),
             contact_number="+48600500400",
             is_insured=True,
             insurance="1234567890",
@@ -250,7 +261,7 @@ class VitalSignsModelTest(TestCase):
             city="City",
             street="Street",
             zip_code="00-00",
-            created_by=cls.user
+            created_by=cls.user,
         )
         cls.hospitalization = Hospitalization.objects.create(
             patient=cls.patient,
@@ -281,35 +292,33 @@ class VitalSignsModelTest(TestCase):
         self.assertIsNotNone(self.vital.modified_at)
         self.assertEqual(self.vital.created_by, self.user)
         self.assertLessEqual(self.vital.created_at, self.vital.modified_at)
-        
+
     def test_systolic_blood_pressure_label(self):
         field_label = self.vital._meta.get_field("systolic_blood_pressure").verbose_name
         self.assertEqual(field_label, "systolic blood pressure")
-        
+
     def test_systolic_diastolic_blood_pressure_label(self):
-        field_label = self.vital._meta.get_field("diastolic_blood_pressure").verbose_name
+        field_label = self.vital._meta.get_field(
+            "diastolic_blood_pressure"
+        ).verbose_name
         self.assertEqual(field_label, "diastolic blood pressure")
-    
+
     def test_respiratory_rate_label(self):
         field_label = self.vital._meta.get_field("respiratory_rate").verbose_name
         self.assertEqual(field_label, "respiratory rate")
-    
+
     def test_oxygen_saturation_label(self):
         field_label = self.vital._meta.get_field("oxygen_saturation").verbose_name
         self.assertEqual(field_label, "oxygen saturation")
-    
+
     def test_temperature_label(self):
         field_label = self.vital._meta.get_field("temperature").verbose_name
         self.assertEqual(field_label, "temperature")
-        
+
     def test_heart_rate_label(self):
         field_label = self.vital._meta.get_field("heart_rate").verbose_name
         self.assertEqual(field_label, "heart rate")
-    
-    
+
     def test_string_representation(self):
         expected_str = f"{self.vital.created_by} - {self.vital.created_at}"
         self.assertEqual(str(self.vital), expected_str)
-        
-    
-

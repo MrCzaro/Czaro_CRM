@@ -1,10 +1,10 @@
 import uuid
 
+from django.core.validators import MaxValueValidator, MinValueValidator, MinLengthValidator
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator
 
-from patient.models import Patient
 from main.models import User
+from patient.models import Patient
 
 
         

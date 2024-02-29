@@ -1,6 +1,6 @@
+from django.contrib.messages import get_messages
 from django.test import TestCase
 from django.urls import reverse
-from django.contrib.messages import get_messages
 
 from main.models import User
 
@@ -15,21 +15,25 @@ class LoginViewTest(TestCase):
             password="adminpassword",
             profession="admins",
         )
-        
-        
+
     def test_successful_rendering(self):
         response = self.client.get("/login/")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "login.html")
         self.assertIn("title", response.context)
-    
+
     def test_successful_login(self):
-        response = self.client.post("/login/", {"email": "testadmin@admin.com", "password": "adminpassword"})
+        response = self.client.post(
+            "/login/", {"email": "testadmin@admin.com", "password": "adminpassword"}
+        )
         self.assertRedirects(response, reverse("patient:index"))
-        
+
     def test_unsuccessful_login(self):
-        response = self.client.post("/login/", {"email": "wrong@email.com", "password": "wrongpassword"})
+        response = self.client.post(
+            "/login/", {"email": "wrong@email.com", "password": "wrongpassword"}
+        )
         self.assertContains(response, "Invalid login credentials. Please try again.")
+
 
 class SignUpViewTest(TestCase):
     @classmethod
@@ -48,16 +52,16 @@ class SignUpViewTest(TestCase):
         self.assertTemplateUsed(response, "signup.html")
         self.assertIn("title", response.context)
         self.assertIn("USER_CHOICES", response.context)
-    
+
     def test_successful_account_creation(self):
         data = {
-            "first_name" : "Nurse",
-            "last_name" : "Test",
-            "email" : "nursetest@admin.com",
-            "password1" : "123testnurse123",
-            "password2" : "123testnurse123",
-            "profession" : "nurses"
-        }   
+            "first_name": "Nurse",
+            "last_name": "Test",
+            "email": "nursetest@admin.com",
+            "password1": "123testnurse123",
+            "password2": "123testnurse123",
+            "profession": "nurses",
+        }
         response = self.client.post("/signup/", data)
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse("main:login"))
@@ -66,37 +70,42 @@ class SignUpViewTest(TestCase):
         # Check for success messages
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(len(messages), 1)
-        self.assertEqual(str(messages[0]), "Your account has been created. You can login.")
-    
+        self.assertEqual(
+            str(messages[0]), "Your account has been created. You can login."
+        )
+
     def test_missing_fields(self):
         data = {
-            "first_name" : "",
-            "last_name" : "Test",
-            "email" : "nursetest@admin.com",
-            "password1" : "123testnurse123",
-            "password2" : "123testnurse123",
-            "profession" : "nurses"
-        }  
+            "first_name": "",
+            "last_name": "Test",
+            "email": "nursetest@admin.com",
+            "password1": "123testnurse123",
+            "password2": "123testnurse123",
+            "profession": "nurses",
+        }
         response = self.client.post("/signup/", data)
         self.assertEqual(response.status_code, 200)
-        
+
         # Check if a user was not created
         self.assertFalse(User.objects.filter(email=data["email"]).exists())
         # Check for error messages
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(len(messages), 1)
-        self.assertEqual(str(messages[0]), "Error while creating an account. Please provide a valid email address, name, and password.")
-        
+        self.assertEqual(
+            str(messages[0]),
+            "Error while creating an account. Please provide a valid email address, name, and password.",
+        )
+
     def test_password_mismatch(self):
         data = {
-            "first_name" : "Nurse",
-            "last_name" : "Test",
-            "email" : "nursetest@admin.com",
-            "password1" : "123testnurse123",
-            "password2" : "321testnurse321",
-            "profession" : "nurses"
+            "first_name": "Nurse",
+            "last_name": "Test",
+            "email": "nursetest@admin.com",
+            "password1": "123testnurse123",
+            "password2": "321testnurse321",
+            "profession": "nurses",
         }
-        
+
         response = self.client.post("/signup/", data)
         self.assertEqual(response.status_code, 200)
         # Check if a user was not created
@@ -105,19 +114,19 @@ class SignUpViewTest(TestCase):
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(len(messages), 1)
         self.assertEqual(str(messages[0]), "Your password do not match.")
-    
+
     def test_incorrect_email(self):
         data = {
-            "first_name" : "Nurse",
-            "last_name" : "Test",
-            "email" : "email",
-            "password1" : "123testnurse123",
-            "password2" : "123testnurse123",
-            "profession" : "nurses"
+            "first_name": "Nurse",
+            "last_name": "Test",
+            "email": "email",
+            "password1": "123testnurse123",
+            "password2": "123testnurse123",
+            "profession": "nurses",
         }
         response = self.client.post("/signup/", data)
         self.assertEqual(response.status_code, 200)
-       
+
         # Check if a user was not created
         self.assertFalse(User.objects.filter(email=data["email"]).exists())
         print
@@ -125,15 +134,15 @@ class SignUpViewTest(TestCase):
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(len(messages), 1)
         self.assertEqual(str(messages[0]), "Please provide a valid email address.")
-        
+
     def test_existing_email(self):
         data = {
-            "first_name" : "AdminTest",
-            "last_name" : "User",
-            "email" : "testadmin@admin.com",
-            "password1" : "adminpassword",
-            "password2" : "adminpassword",
-            "profession" : "admins",
+            "first_name": "AdminTest",
+            "last_name": "User",
+            "email": "testadmin@admin.com",
+            "password1": "adminpassword",
+            "password2": "adminpassword",
+            "profession": "admins",
         }
         response = self.client.post("/signup/", data)
         self.assertEqual(response.status_code, 200)
@@ -141,7 +150,7 @@ class SignUpViewTest(TestCase):
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(len(messages), 1)
         self.assertEqual(str(messages[0]), "An account with this email already exists.")
-        
+
 
 class LogoutViewTest(TestCase):
     def test_logout(self):
@@ -156,4 +165,3 @@ class LogoutViewTest(TestCase):
         response = self.client.get(reverse("main:logout"))
         self.assertRedirects(response, reverse("main:login"))
         self.assertFalse(response.wsgi_request.user.is_authenticated)
-        
