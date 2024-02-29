@@ -1,8 +1,8 @@
 import uuid
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from main.models import User
 from department.models import Hospitalization
+from main.models import User
 
 # Global variables for NortonScale
 PHYSICAL_CHOICES = [

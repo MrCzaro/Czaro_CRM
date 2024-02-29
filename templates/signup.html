@@ -1,58 +1,51 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="flex items-center justify-center min-h-screen">
-    <div>
-        <div class="space-y-4">
-            {% for message in messages %}
-                <div class="mb-4 text-red-500">{{ message }}</div>
-            {% endfor %}
-        </div>
+<div class="flex items-center justify-center h-screen">
+    <div class="max-w-xl py-8 bg-blue-300 text-center">
+        <h1 class="text-3xl text-black">Sign up</h1>
         
-        <div class="max-w-xl py-8 bg-blue-300 text-center">
-            <h1 class="text-3xl text-black">Sign up</h1>
+        <form class="mt-9 px-8 space-y-4" method="post">
+            {% csrf_token %}
         
-            <form class="mt-9 px-8 space-y-4" method="post">
-                {% csrf_token %}
-        
-                <div class="mb-4">
-                    <label for="first_name" class="text-black">First Name</label><br>
-                    <input name="first_name" type="text" id="first_name" class="w-full py-3 px-4 bg-stone-200 rounded-md text-black focus:outline-none focus:ring focus:border-blue-300">
-                </div>
+            <div class="mb-4">
+                <label for="first_name" class="text-black">First Name</label><br>
+                <input name="first_name" type="text" id="first_name" class="w-full py-3 px-4 bg-stone-200 rounded-md text-black focus:outline-none focus:ring focus:border-blue-300">
+            </div>
 
-                <div class="mb-4">
-                    <label for="last_name" class="text-black">Last Name</label><br>
-                    <input name="last_name" type="text" id="last_name" class="w-full py-3 px-4 bg-stone-200 rounded-md text-black focus:outline-none focus:ring focus:border-blue-300">
-                </div>
-        
-                <div class="mb-4">
-                    <label for="email" class="text-black">E-mail</label><br>
-                    <input name="email" type="email" id="email" class="w-full py-3 px-4 bg-stone-200 rounded-md text-black focus:outline-none focus:ring focus:border-blue-300">
-                </div>
-                
-                <div class="mb-4">
-                    <label for="profession" class="text-black">Profession</label><br>
-                    <select name="profession" id="profession" class="w-full py-3 px-4 bg-stone-200 rounded-md text-black focus:outline-none focus:ring focus:border-blue-300">
-                        {% for value, label in USER_CHOICES %}
-                            <option value="{{ value }}">{{ label }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+            <div class="mb-4">
+                <label for="last_name" class="text-black">Last Name</label><br>
+                <input name="last_name" type="text" id="last_name" class="w-full py-3 px-4 bg-stone-200 rounded-md text-black focus:outline-none focus:ring focus:border-blue-300">
+            </div>
+    
+            <div class="mb-4">
+                <label for="email" class="text-black">E-mail</label><br>
+                <input name="email" type="email" id="email" class="w-full py-3 px-4 bg-stone-200 rounded-md text-black focus:outline-none focus:ring focus:border-blue-300">
+            </div>
+            
+            <div class="mb-4">
+                <label for="profession" class="text-black">Profession</label><br>
+                <select name="profession" id="profession" class="w-full py-3 px-4 bg-stone-200 rounded-md text-black focus:outline-none focus:ring focus:border-blue-300">
+                    {% for value, label in USER_CHOICES %}
+                        <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
 
-                <div class="mb-4">
-                    <label for="password1" class="text-black">Password</label><br>
-                    <input name="password1" type="password" id="password1" class="w-full py-3 px-4 bg-stone-200 rounded-md text-black focus:outline-none focus:ring focus:border-blue-300">
-                </div>
-        
-                <div class="mb-4">
-                    <label for="password2" class="text-black">Repeat password</label><br>
-                    <input name="password2" type="password" id="password2" class="w-full py-3 px-4 bg-stone-200 rounded-md text-black focus:outline-none focus:ring focus:border-blue-300">
-                </div>
-        
-                <div>
-                    <button class="py-2 px-4 bg-blue-700 rounded-md text-white">Sign up</button>
-                </div>
-            </form>
-        </div>
+            <div class="mb-4">
+                <label for="password1" class="text-black">Password</label><br>
+                <input name="password1" type="password" id="password1" class="w-full py-3 px-4 bg-stone-200 rounded-md text-black focus:outline-none focus:ring focus:border-blue-300">
+            </div>
+    
+            <div class="mb-4">
+                <label for="password2" class="text-black">Repeat password</label><br>
+                <input name="password2" type="password" id="password2" class="w-full py-3 px-4 bg-stone-200 rounded-md text-black focus:outline-none focus:ring focus:border-blue-300">
+            </div>
+    
+            <div>
+                <button class="py-2 px-4 bg-blue-700 rounded-md text-white">Sign up</button>
+            </div>
+        </form>
+    </div>
 </div>
 {% endblock %}

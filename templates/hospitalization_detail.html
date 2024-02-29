@@ -57,7 +57,9 @@
           <div class="w-2/3">
               <h2 class="text-3xl font-bold mb-4">Observations:</h2>
               <div class="mb-5 text-white">
-                <a href="{% url 'department:observation_create' hospitalization.patient.id hospitalization.id %}" class="normal-button">Add Observation</a>
+                {% if request.user.profession != "secretaries" %}
+                    <a href="{% url 'department:observation_create' hospitalization.patient.id hospitalization.id %}" class="normal-button">Add Observation</a>
+                {% endif %}
               </div>
               {% if observations %}
                   <ul>
@@ -85,7 +87,9 @@
           <div class="w-2/3">
               <h2 class="text-3xl font-bold mb-4">Consultations:</h2>
               <div class="mb-5 text-white">
-                <a href="{% url 'department:consultation_create' hospitalization.patient.id hospitalization.id %}" class="normal-button">Add Consultation</a>
+                {% if request.user.profession != "secretaries" %}
+                    <a href="{% url 'department:consultation_create' hospitalization.patient.id hospitalization.id %}" class="normal-button">Add Consultation</a>
+                {% endif %}
               </div>
               {% if consultations %}
                   <ul>
@@ -115,7 +119,9 @@
           <h2 class="text-3xl font-bold mb-4">Vital Signs:</h2>
             {% if not hospitalization.is_discharged %}
                 <div class="mb-5 text-white">
-                    <a href="{% url 'department:vitals_create' hospitalization.patient.id hospitalization.id %}" class="normal-button">Add Vital Signs</a>
+                    {% if request.user.profession != "secretaries" %}
+                        <a href="{% url 'department:vitals_create' hospitalization.patient.id hospitalization.id %}" class="normal-button">Add Vital Signs</a>
+                    {% endif %}
                 </div>
             {% endif %}
             {% if vitals %}
@@ -150,7 +156,9 @@
         
         {% if not hospitalization.is_discharged %}
             <div class="mb-5 text-white">
-            <a href="{% url 'scales:pain_create' hospitalization.patient.id hospitalization.id %}" class="normal-button">Add Pain Scale</a>
+                {% if request.user.profession != "secretaries" %}
+                    <a href="{% url 'scales:pain_create' hospitalization.patient.id hospitalization.id %}" class="normal-button">Add Pain Scale</a>
+                {% endif %}
             </div>
         {% endif %}
         {% if pain_scales %}
@@ -182,7 +190,9 @@
         <h2 class="text-3xl font-bold mb-4">Body Mass Index:</h2>
         {% if not hospitalization.is_discharged %}
             <div class="mb-5 text-white">
-                <a href="{% url 'scales:bmi_create' hospitalization.patient.id hospitalization.id %}" class="normal-button">Add Body Mass Index</a>
+                {% if request.user.profession != "secretaries" %}
+                    <a href="{% url 'scales:bmi_create' hospitalization.patient.id hospitalization.id %}" class="normal-button">Add Body Mass Index</a>
+                {% endif %}
             </div>  
         {% endif %}
         {% if bmis %}
@@ -216,7 +226,9 @@
         <h2 class="text-3xl font-bold mb-4">Norton Scales:</h2>
         {% if not hospitalization.is_discharged %}
             <div class="mb-5 text-white">
-            <a href="{% url 'scales:norton_create' hospitalization.patient.id hospitalization.id %}" class="normal-button">Add Norton Scale</a>
+                {% if request.user.profession != "secretaries" %}
+                    <a href="{% url 'scales:norton_create' hospitalization.patient.id hospitalization.id %}" class="normal-button">Add Norton Scale</a>
+                {% endif %}
             </div>
         {% endif %}
         {% if norton_scales %}
@@ -253,7 +265,9 @@
     <h2 class="text-3xl font-bold mb-4">Glasgow Coma Scales:</h2>
     {% if not hospitalization.is_discharged %}
         <div class="mb-5 text-white">
-        <a href="{% url 'scales:glasgow_create' hospitalization.patient.id hospitalization.id %}" class="normal-button">Add Glasgow Coma Scale</a>
+            {% if request.user.profession != "secretaries" %}
+                <a href="{% url 'scales:glasgow_create' hospitalization.patient.id hospitalization.id %}" class="normal-button">Add Glasgow Coma Scale</a>
+            {% endif %}
         </div>  
     {% endif %}
     {% if glasgow_scales %}
@@ -286,7 +300,9 @@
     <h2 class="text-3xl font-bold mb-4">National Early Warning Score Scales:</h2>
     {% if not hospitalization.is_discharged %}
         <div class="mb-5 text-white">
-        <a href="{% url 'scales:news_create' hospitalization.patient.id hospitalization.id %}" class="normal-button">Add NEWS Scale</a>
+            {% if request.user.profession != "secretaries" %}
+                <a href="{% url 'scales:news_create' hospitalization.patient.id hospitalization.id %}" class="normal-button">Add NEWS Scale</a>
+            {% endif %}
         </div>
     {% endif %}
     {% if news_scales %}

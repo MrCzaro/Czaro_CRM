@@ -1,21 +1,19 @@
+from django.contrib.auth.decorators import login_required
 from django.db.models import (
-    Count,
-    Max,
     Case,
+    Count,
+    Exists,
+    F,
+    IntegerField,
+    Max,
+    OuterRef,
     When,
     Value,
-    IntegerField,
-    Exists,
-    OuterRef,
-    F,
 )
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect, render, get_object_or_404
-from django.urls import reverse_lazy, reverse
-from django.views.generic.edit import UpdateView, DeleteView
-from .models import Patient
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from .forms import PatientForm
+from .models import Patient
 from department.models import Hospitalization
 
 
@@ -112,6 +110,7 @@ def patient_update(request, patient_id):
         "url" : back_url
     }
     return render(request, "patient_form.html", context)
+
 
 @login_required(login_url="/login/")
 def patient_delete(request, patient_id):

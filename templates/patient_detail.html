@@ -72,7 +72,10 @@
             {% endif %}
             <a href="{{ back_url }}" class="back-button">Back</a>
             <a href="{% url 'patient:update' patient.id %}" class="edit-button">Edit</a>
-            <a href="{% url 'patient:delete' patient.id %}" class="delete-button">Delete</a>
+            {% if request.user.profession == "admins" %}
+                <a href="{% url 'patient:delete' patient.id %}" class="delete-button">Delete</a>
+            {% endif %}
+            
         </div>
     </div>
 {% endblock %}

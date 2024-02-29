@@ -1,13 +1,13 @@
-from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import BodyMassIndex, NortonScale, GlasgowComaScale, NewsScale, PainScale
+from django.shortcuts import get_object_or_404, redirect, render
 from .forms import (
     BodyMassIndexForm,
-    NortonScaleForm,
     GlasgowComaScaleForm,
     NewsScaleForm,
+    NortonScaleForm,
     PainScaleForm,
 )
+from .models import BodyMassIndex, GlasgowComaScale, NewsScale, NortonScale, PainScale
 from patient.models import Patient
 from department.models import Hospitalization
 

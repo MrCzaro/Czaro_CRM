@@ -1,10 +1,17 @@
 from datetime import date
 from django.test import TestCase
 
-from scales.models import BodyMassIndex, GlasgowComaScale, NortonScale, NewsScale, PainScale
 from department.models import Department, Hospitalization
 from main.models import User
 from patient.models import Patient
+from scales.models import (
+    BodyMassIndex,
+    GlasgowComaScale,
+    NewsScale,
+    NortonScale,
+    PainScale,
+)
+
 
 class BodyMassIndexModelTest(TestCase):
     @classmethod
@@ -17,14 +24,14 @@ class BodyMassIndexModelTest(TestCase):
             profession="admins",
         )
         cls.department = Department.objects.create(
-                name="Test Department",
-                description="This is a test department",
-                created_by=cls.user
-            )
+            name="Test Department",
+            description="This is a test department",
+            created_by=cls.user,
+        )
         cls.patient = Patient.objects.create(
             first_name="Stefan",
             last_name="Master",
-            date_of_birth=date(1999,9,9),
+            date_of_birth=date(1999, 9, 9),
             contact_number="+48600500400",
             is_insured=True,
             insurance="1234567890",
@@ -32,7 +39,7 @@ class BodyMassIndexModelTest(TestCase):
             city="City",
             street="Street",
             zip_code="00-00",
-            created_by=cls.user
+            created_by=cls.user,
         )
         cls.hospitalization = Hospitalization.objects.create(
             patient=cls.patient,
@@ -41,7 +48,7 @@ class BodyMassIndexModelTest(TestCase):
             additional_symptoms="Fever",
         )
         cls.body_mass_index = BodyMassIndex.objects.create(
-            hospitalization = cls.hospitalization,
+            hospitalization=cls.hospitalization,
             created_by=cls.user,
             body_height=170,
             body_weight=70,
@@ -53,37 +60,39 @@ class BodyMassIndexModelTest(TestCase):
         self.assertIsNotNone(self.body_mass_index.created_at)
         self.assertIsNotNone(self.body_mass_index.modified_at)
         self.assertEqual(self.body_mass_index.created_by, self.user)
-        self.assertLessEqual(self.body_mass_index.created_at, self.body_mass_index.modified_at)
+        self.assertLessEqual(
+            self.body_mass_index.created_at, self.body_mass_index.modified_at
+        )
         self.assertEqual(self.body_mass_index.interpretation, "Normal weight")
-        
+
     def test_body_height_label(self):
         field_label = self.body_mass_index._meta.get_field("body_height").verbose_name
         self.assertEqual(field_label, "body height")
-        
+
     def test_body_weight_label(self):
         field_label = self.body_mass_index._meta.get_field("body_weight").verbose_name
         self.assertEqual(field_label, "body weight")
-    
+
     def test_bmi_calculate(self):
         self.assertEqual(self.body_mass_index.calculate_bmi(), 24.2)
-        
+
     def test_save_method(self):
         body_mass_index = BodyMassIndex(
             hospitalization=self.hospitalization,
-            created_by = self.user,
+            created_by=self.user,
             body_height=180,
             body_weight=80,
         )
         body_mass_index.save()
         self.assertIsNotNone(body_mass_index.bmi)
         self.assertIsNotNone(body_mass_index.interpretation)
-        
-        
+
     def test_string_representation(self):
         # Test the __str__ representation
         expected_str = f"{self.body_mass_index.hospitalization.patient.first_name} {self.body_mass_index.bmi}-points: {self.body_mass_index.interpretation}"
         self.assertEqual(str(self.body_mass_index), expected_str)
-        
+
+
 class GlasgowComaScaleModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -95,14 +104,14 @@ class GlasgowComaScaleModelTest(TestCase):
             profession="admins",
         )
         cls.department = Department.objects.create(
-                name="Test Department",
-                description="This is a test department",
-                created_by=cls.user
-            )
+            name="Test Department",
+            description="This is a test department",
+            created_by=cls.user,
+        )
         cls.patient = Patient.objects.create(
             first_name="Stefan",
             last_name="Master",
-            date_of_birth=date(1999,9,9),
+            date_of_birth=date(1999, 9, 9),
             contact_number="+48600500400",
             is_insured=True,
             insurance="1234567890",
@@ -110,7 +119,7 @@ class GlasgowComaScaleModelTest(TestCase):
             city="City",
             street="Street",
             zip_code="00-00",
-            created_by=cls.user
+            created_by=cls.user,
         )
         cls.hospitalization = Hospitalization.objects.create(
             patient=cls.patient,
@@ -125,31 +134,31 @@ class GlasgowComaScaleModelTest(TestCase):
             verbal_response="3",
             motor_response="5",
         )
-        
+
     def test_valid_glasgow_coma_scale(self):
-        self.assertEqual(self.glasgow.eye_response,"4")
-        self.assertEqual(self.glasgow.verbal_response,"3")
+        self.assertEqual(self.glasgow.eye_response, "4")
+        self.assertEqual(self.glasgow.verbal_response, "3")
         self.assertEqual(self.glasgow.motor_response, "5")
         self.assertEqual(self.glasgow.created_by, self.user)
         self.assertIsNotNone(self.glasgow.created_at)
         self.assertIsNotNone(self.glasgow.modified_at)
         self.assertLessEqual(self.glasgow.created_at, self.glasgow.modified_at)
-        
+
     def test_eye_response_label(self):
         field_label = self.glasgow._meta.get_field("eye_response").verbose_name
         self.assertEqual(field_label, "eye response")
-        
+
     def test_motor_response_label(self):
         field_label = self.glasgow._meta.get_field("motor_response").verbose_name
         self.assertEqual(field_label, "motor response")
-        
+
     def test_verbal_response_label(self):
         field_label = self.glasgow._meta.get_field("verbal_response").verbose_name
         self.assertEqual(field_label, "verbal response")
-        
+
     def test_calculate_total_points(self):
         self.assertEqual(self.glasgow.total_points, 12)
-        
+
     def test_save_method(self):
         glasgow = GlasgowComaScale(
             hospitalization=self.hospitalization,
@@ -160,12 +169,13 @@ class GlasgowComaScaleModelTest(TestCase):
         )
         glasgow.save()
         self.assertIsNotNone(glasgow.total_points)
-        
+
     def test_string_representation(self):
         # Test the __str__ representation
         expected_str = f"{self.glasgow.hospitalization.patient.first_name}"
         self.assertEqual(str(self.glasgow), expected_str)
-        
+
+
 class NortonScaleModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -177,14 +187,14 @@ class NortonScaleModelTest(TestCase):
             profession="admins",
         )
         cls.department = Department.objects.create(
-                name="Test Department",
-                description="This is a test department",
-                created_by=cls.user
-            )
+            name="Test Department",
+            description="This is a test department",
+            created_by=cls.user,
+        )
         cls.patient = Patient.objects.create(
             first_name="Stefan",
             last_name="Master",
-            date_of_birth=date(1999,9,9),
+            date_of_birth=date(1999, 9, 9),
             contact_number="+48600500400",
             is_insured=True,
             insurance="1234567890",
@@ -192,7 +202,7 @@ class NortonScaleModelTest(TestCase):
             city="City",
             street="Street",
             zip_code="00-00",
-            created_by=cls.user
+            created_by=cls.user,
         )
         cls.hospitalization = Hospitalization.objects.create(
             patient=cls.patient,
@@ -207,46 +217,46 @@ class NortonScaleModelTest(TestCase):
             mental_condition="4",
             activity="4",
             mobility="4",
-            incontinence="4",        
+            incontinence="4",
         )
-    
+
     def test_valid_norton_scale(self):
         self.assertEqual(self.norton.physical_condition, "4")
         self.assertEqual(self.norton.mental_condition, "4")
-        self.assertEqual(self.norton.activity,"4")
+        self.assertEqual(self.norton.activity, "4")
         self.assertEqual(self.norton.mobility, "4")
         self.assertEqual(self.norton.incontinence, "4")
         self.assertEqual(self.norton.created_by, self.user)
         self.assertIsNotNone(self.norton.created_at)
         self.assertIsNotNone(self.norton.modified_at)
         self.assertLessEqual(self.norton.created_at, self.norton.modified_at)
-        
+
     def test_physical_condition_label(self):
         field_label = self.norton._meta.get_field("physical_condition").verbose_name
         self.assertEqual(field_label, "physical condition")
-    
+
     def test_mental_condition_label(self):
         field_label = self.norton._meta.get_field("mental_condition").verbose_name
         self.assertEqual(field_label, "mental condition")
-        
+
     def test_activity_label(self):
         field_label = self.norton._meta.get_field("activity").verbose_name
         self.assertEqual(field_label, "activity")
-        
+
     def test_mobility_label(self):
         field_label = self.norton._meta.get_field("mobility").verbose_name
         self.assertEqual(field_label, "mobility")
-        
+
     def test_incontinence_label(self):
         field_label = self.norton._meta.get_field("incontinence").verbose_name
         self.assertEqual(field_label, "incontinence")
-        
+
     def test_calculate_total_points(self):
         self.assertEqual(self.norton.calculate_total_points(), 20)
-        
+
     def test_calculate_ris(self):
         self.assertEqual(self.norton.calculate_risk(), "Low Risk")
-        
+
     def test_save_method(self):
         norton = NortonScale(
             hospitalization=self.hospitalization,
@@ -260,7 +270,8 @@ class NortonScaleModelTest(TestCase):
         norton.save()
         self.assertIsNotNone(norton.total_points)
         self.assertIsNotNone(norton.pressure_risk)
-        
+
+
 class NewsScaleModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -272,14 +283,14 @@ class NewsScaleModelTest(TestCase):
             profession="admins",
         )
         cls.department = Department.objects.create(
-                name="Test Department",
-                description="This is a test department",
-                created_by=cls.user
-            )
+            name="Test Department",
+            description="This is a test department",
+            created_by=cls.user,
+        )
         cls.patient = Patient.objects.create(
             first_name="Stefan",
             last_name="Master",
-            date_of_birth=date(1999,9,9),
+            date_of_birth=date(1999, 9, 9),
             contact_number="+48600500400",
             is_insured=True,
             insurance="1234567890",
@@ -287,7 +298,7 @@ class NewsScaleModelTest(TestCase):
             city="City",
             street="Street",
             zip_code="00-00",
-            created_by=cls.user
+            created_by=cls.user,
         )
         cls.hospitalization = Hospitalization.objects.create(
             patient=cls.patient,
@@ -306,10 +317,10 @@ class NewsScaleModelTest(TestCase):
             systolic_blood_pressure=120,
             diastolic_blood_pressure=70,
             heart_rate=64,
-            level_of_consciousness="awake"        
+            level_of_consciousness="awake",
         )
         cls.news.save()
-        
+
     def test_valid_news_scale(self):
         self.assertEqual(self.news.respiratory_rate, 20)
         self.assertEqual(self.news.oxygen_saturation, 99)
@@ -324,46 +335,46 @@ class NewsScaleModelTest(TestCase):
         self.assertIsNotNone(self.news.created_at)
         self.assertIsNotNone(self.news.modified_at)
         self.assertLessEqual(self.news.created_at, self.news.modified_at)
-        
+
     def test_respiratory_rate_label(self):
         field_label = self.news._meta.get_field("respiratory_rate").verbose_name
         self.assertEqual(field_label, "respiratory rate")
-        
+
     def test_oxygen_saturation_label(self):
         field_label = self.news._meta.get_field("oxygen_saturation").verbose_name
         self.assertEqual(field_label, "oxygen saturation")
-    
+
     def test_is_on_oxygen_label(self):
         field_label = self.news._meta.get_field("is_on_oxygen").verbose_name
         self.assertEqual(field_label, "is on oxygen")
-        
+
     def test_aecopd_state_label(self):
         field_label = self.news._meta.get_field("aecopd_state").verbose_name
         self.assertEqual(field_label, "aecopd state")
-        
+
     def test_temperature_label(self):
         field_label = self.news._meta.get_field("temperature").verbose_name
         self.assertEqual(field_label, "temperature")
-        
+
     def test_systolic_blood_pressure_label(self):
         field_label = self.news._meta.get_field("systolic_blood_pressure").verbose_name
         self.assertEqual(field_label, "systolic blood pressure")
-        
+
     def test_diastolic_blood_pressure_label(self):
         field_label = self.news._meta.get_field("diastolic_blood_pressure").verbose_name
         self.assertEqual(field_label, "diastolic blood pressure")
-    
+
     def test_heart_rate_label(self):
         field_label = self.news._meta.get_field("heart_rate").verbose_name
         self.assertEqual(field_label, "heart rate")
-    
+
     def test_level_of_consciousness_label(self):
         field_label = self.news._meta.get_field("level_of_consciousness").verbose_name
         self.assertEqual(field_label, "level of consciousness")
-        
+
     def test_calculate_respiratory_respiratory_rate_score(self):
         self.assertEqual(self.news.calculate_respiratory_respiratory_rate_score(), 0)
-        
+
         news_second = NewsScale(
             hospitalization=self.hospitalization,
             created_by=self.user,
@@ -375,13 +386,13 @@ class NewsScaleModelTest(TestCase):
             systolic_blood_pressure=120,
             diastolic_blood_pressure=70,
             heart_rate=64,
-            level_of_consciousness="awake"        
+            level_of_consciousness="awake",
         )
         self.assertEqual(news_second.calculate_respiratory_respiratory_rate_score(), 3)
-        
+
     def test_calculate_oxygen_saturation_score(self):
         self.assertEqual(self.news.calculate_oxygen_saturation_score(), 0)
-        
+
         news_second = NewsScale(
             hospitalization=self.hospitalization,
             created_by=self.user,
@@ -393,13 +404,13 @@ class NewsScaleModelTest(TestCase):
             systolic_blood_pressure=120,
             diastolic_blood_pressure=70,
             heart_rate=64,
-            level_of_consciousness="awake"        
+            level_of_consciousness="awake",
         )
         self.assertEqual(news_second.calculate_oxygen_saturation_score(), 3)
-        
+
     def test_calculate_is_on_oxygen_score(self):
         self.assertEqual(self.news.calculate_is_on_oxygen_score(), 0)
-        
+
         news_second = NewsScale(
             hospitalization=self.hospitalization,
             created_by=self.user,
@@ -411,13 +422,13 @@ class NewsScaleModelTest(TestCase):
             systolic_blood_pressure=120,
             diastolic_blood_pressure=70,
             heart_rate=64,
-            level_of_consciousness="awake"        
+            level_of_consciousness="awake",
         )
         self.assertEqual(news_second.calculate_is_on_oxygen_score(), 2)
-        
+
     def test_calculate_temperature_score(self):
         self.assertEqual(self.news.calculate_temperature_score(), 0)
-        
+
         news_second = NewsScale(
             hospitalization=self.hospitalization,
             created_by=self.user,
@@ -429,13 +440,13 @@ class NewsScaleModelTest(TestCase):
             systolic_blood_pressure=120,
             diastolic_blood_pressure=70,
             heart_rate=64,
-            level_of_consciousness="awake"        
+            level_of_consciousness="awake",
         )
         self.assertEqual(news_second.calculate_temperature_score(), 3)
-        
+
     def test_calculate_systolic_blood_pressure_score(self):
         self.assertEqual(self.news.calculate_systolic_blood_pressure_score(), 0)
-        
+
         news_second = NewsScale(
             hospitalization=self.hospitalization,
             created_by=self.user,
@@ -447,13 +458,13 @@ class NewsScaleModelTest(TestCase):
             systolic_blood_pressure=60,
             diastolic_blood_pressure=70,
             heart_rate=64,
-            level_of_consciousness="awake"        
+            level_of_consciousness="awake",
         )
         self.assertEqual(news_second.calculate_systolic_blood_pressure_score(), 3)
-        
+
     def test_calculate_heart_rate_score(self):
         self.assertEqual(self.news.calculate_heart_rate_score(), 0)
-        
+
         news_second = NewsScale(
             hospitalization=self.hospitalization,
             created_by=self.user,
@@ -465,13 +476,13 @@ class NewsScaleModelTest(TestCase):
             systolic_blood_pressure=60,
             diastolic_blood_pressure=70,
             heart_rate=164,
-            level_of_consciousness="awake"        
+            level_of_consciousness="awake",
         )
         self.assertEqual(news_second.calculate_heart_rate_score(), 3)
-        
+
     def test_calculate_level_of_consciousness_score(self):
         self.assertEqual(self.news.calculate_level_of_consciousness_score(), 0)
-        
+
         news_second = NewsScale(
             hospitalization=self.hospitalization,
             created_by=self.user,
@@ -483,13 +494,13 @@ class NewsScaleModelTest(TestCase):
             systolic_blood_pressure=60,
             diastolic_blood_pressure=70,
             heart_rate=164,
-            level_of_consciousness="unresponsive"        
+            level_of_consciousness="unresponsive",
         )
         self.assertEqual(news_second.calculate_level_of_consciousness_score(), 3)
-        
+
     def test_calculate_total_score(self):
-        self.assertEqual(self.news.calculate_total_score(),0)
-        
+        self.assertEqual(self.news.calculate_total_score(), 0)
+
         news_second = NewsScale(
             hospitalization=self.hospitalization,
             created_by=self.user,
@@ -501,14 +512,14 @@ class NewsScaleModelTest(TestCase):
             systolic_blood_pressure=60,
             diastolic_blood_pressure=70,
             heart_rate=164,
-            level_of_consciousness="unresponsive"        
+            level_of_consciousness="unresponsive",
         )
         self.assertEqual(news_second.calculate_total_score(), 20)
-        
+
     def test_calculate_score_interpretation(self):
         expected_str = f"National Early Warning Score (NEWS) = {self.news.total_score}. Interpretation: This is a low score that suggests clinical monitoring should be continued and the medical professional, usually a registered nurse will decide further if clinical care needs to be updated."
-        self.assertEqual(self.news.calculate_score_interpretation(),expected_str)
-        
+        self.assertEqual(self.news.calculate_score_interpretation(), expected_str)
+
         news_second = NewsScale(
             hospitalization=self.hospitalization,
             created_by=self.user,
@@ -520,12 +531,12 @@ class NewsScaleModelTest(TestCase):
             systolic_blood_pressure=60,
             diastolic_blood_pressure=70,
             heart_rate=164,
-            level_of_consciousness="unresponsive"        
+            level_of_consciousness="unresponsive",
         )
         news_second.save()
         expected_str = f"National Early Warning Score (NEWS) = {news_second.total_score}. Interpretation: This is a high score (red score) that is indicative of urgent critical care need and the patient should be transferred to the appropriate specialized department for further care."
         self.assertEqual(news_second.calculate_score_interpretation(), expected_str)
-        
+
     def test_save_method(self):
         news_second = NewsScale(
             hospitalization=self.hospitalization,
@@ -538,19 +549,18 @@ class NewsScaleModelTest(TestCase):
             systolic_blood_pressure=60,
             diastolic_blood_pressure=70,
             heart_rate=164,
-            level_of_consciousness="unresponsive"        
+            level_of_consciousness="unresponsive",
         )
         news_second.save()
         self.assertIsNotNone(news_second.total_score)
         self.assertIsNotNone(news_second.score_interpretation)
-        
+
     def test_string_representation(self):
         # Test the __str__ representation
         expected_str = f"{self.news.hospitalization.patient.first_name} - {self.news.total_score} points in NEWS Score"
         self.assertEqual(str(self.news), expected_str)
-        
-        
-        
+
+
 class PainScaleModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -562,14 +572,14 @@ class PainScaleModelTest(TestCase):
             profession="admins",
         )
         cls.department = Department.objects.create(
-                name="Test Department",
-                description="This is a test department",
-                created_by=cls.user
-            )
+            name="Test Department",
+            description="This is a test department",
+            created_by=cls.user,
+        )
         cls.patient = Patient.objects.create(
             first_name="Stefan",
             last_name="Master",
-            date_of_birth=date(1999,9,9),
+            date_of_birth=date(1999, 9, 9),
             contact_number="+48600500400",
             is_insured=True,
             insurance="1234567890",
@@ -577,7 +587,7 @@ class PainScaleModelTest(TestCase):
             city="City",
             street="Street",
             zip_code="00-00",
-            created_by=cls.user
+            created_by=cls.user,
         )
         cls.hospitalization = Hospitalization.objects.create(
             patient=cls.patient,
@@ -591,7 +601,7 @@ class PainScaleModelTest(TestCase):
             pain_level="5",
             pain_comment="",
         )
-    
+
     def test_valid_pain_scale(self):
         self.assertEqual(self.pain.pain_level, "5")
         self.assertEqual(self.pain.pain_comment, "")
@@ -599,19 +609,18 @@ class PainScaleModelTest(TestCase):
         self.assertIsNotNone(self.pain.created_at)
         self.assertIsNotNone(self.pain.modified_at)
         self.assertLessEqual(self.pain.created_at, self.pain.modified_at)
-        
+
     def test_pain_level_label(self):
         field_label = self.pain._meta.get_field("pain_level").verbose_name
         self.assertEqual(field_label, "pain level")
-        
+
     def test_eye_response_label(self):
         field_label = self.pain._meta.get_field("pain_comment").verbose_name
         self.assertEqual(field_label, "pain comment")
-    
+
     def test_calculate_pain_intepretation(self):
         self.assertEqual(self.pain.calculate_pain_intepretation(), "Moderate Pain")
-        
-        
+
     def test_save_method(self):
         pain = PainScale.objects.create(
             hospitalization=self.hospitalization,

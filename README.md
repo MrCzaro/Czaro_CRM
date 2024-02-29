@@ -16,6 +16,9 @@ CzaroCRM is a web-based application designed to streamline and manage various ta
 
 ### Medical Professionals (Physicians and Nurses)
 
+**Manage Patients:**
+  - Create, and update patient.
+
 - **Create and Update Patient Records:**
   - Medical professionals can manage patient information, ensuring accuracy and up-to-date records.
 
@@ -40,7 +43,7 @@ CzaroCRM is a web-based application designed to streamline and manage various ta
   - Create, update, and delete hospital departments.
 
 - **Manage Patients:**
-  - Create, update, and delete patient records.
+  - Create, update, and delete patient.
 
 ### Secretary
 
