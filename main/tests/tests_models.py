@@ -1,3 +1,5 @@
+from django.contrib.auth import get_user_model
+from django.db import IntegrityError
 from django.test import TestCase
 from main.models import User
 
@@ -44,3 +46,14 @@ class UserModelTest(TestCase):
         self.assertTrue(self.admin.is_superuser)
         self.assertEqual(str(self.admin), "testadmin@admin.com")
         self.assertIsNotNone(self.admin.date_joined)
+        
+    def test_email_unique(self):
+        User = get_user_model()
+        with self.assertRaises(IntegrityError):
+            User.objects.create_user(
+            first_name="Nurse",
+            last_name="User",
+            email="testnurse@admin.com",
+            password="nursepassword",
+            profession="nurses",
+            )
